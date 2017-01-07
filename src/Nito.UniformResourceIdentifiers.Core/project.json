@@ -20,10 +20,12 @@
   },
 
   "dependencies": {
+    "Nito.Comparers": "1.0.0-eta-01",
     "System.Globalization": "4.0.11",
     "System.Linq": "4.1.0",
     "System.Net.Primitives": "4.0.11",
     "System.Runtime": "4.1.0",
+    "System.Runtime.Extensions": "4.1.0",
     "System.Text.Encoding": "4.0.11",
     "System.Text.Encoding.Extensions": "4.0.11",
     "System.Text.RegularExpressions": "4.1.0"
