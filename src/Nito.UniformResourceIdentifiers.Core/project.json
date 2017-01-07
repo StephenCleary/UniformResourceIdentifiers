@@ -1,0 +1,30 @@
+﻿{
+  "version": "1.0.0-alpha-01",
+  "description": "Utilities and base types for URI builders and parsers.",
+  "authors": ["Stephen Cleary"],
+
+  "buildOptions": {
+    "warningsAsErrors": true,
+    "xmlDoc":  true, 
+    "debugType": "portable"
+  },
+
+  "packOptions": {
+    "tags": [ "uri", "url" ],
+    "projectUrl": "https://github.com/StephenCleary/UniformResourceIdentifiers",
+    "licenseUrl": "https://raw.githubusercontent.com/StephenCleary/UniformResourceIdentifiers/master/LICENSE",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/StephenCleary/UniformResourceIdentifiers.git"
+    }
+  },
+
+  "dependencies": {
+    "System.Runtime": "4.1.0"
+  },
+
+  "frameworks": {
+    "netstandard1.0": {
+    }
+  }
+}
