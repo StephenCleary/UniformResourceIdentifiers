@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -97,7 +95,86 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         public static bool IsValidPort(string value) => PortRegex.IsMatch(value);
         private static Regex PortRegex { get; } = new Regex("^[0-9]*$", RegexOptions.CultureInvariant);
 
+        /// <summary>
+        /// Whether a host string is an <c>IPvFuture</c> (see 3.2.2).
+        /// </summary>
+        /// <param name="value">The string to test.</param>
+        public static bool HostIsFutureIpLiteral(string value) => HostIPvFutureRegex.IsMatch(value);
         private static Regex HostIPvFutureRegex { get; } = new Regex(@"^\[v[0-9a-f]+\.[a-z0-9-._~!$&'()*+,;=:]+\]$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        // TODO: Include an implementation of RFC5952 to canonicalize IPv6 addresses when they are detected.
+
+        /// <summary>
+        /// Attempts to parse an <c>IPv6address</c> (see 3.2.2 and RFC6874).
+        /// </summary>
+        /// <param name="value">The string to convert.</param>
+        /// <param name="octets">The octets of the address.</param>
+        /// <param name="zoneId">The resulting zone id.</param> // TODO: Not yet supported
+        /// <param name="octetsOffset">The index of <paramref name="octets"/> at which to begin writing.</param>
+        public static bool TryParseIpV6Address(string value, byte[] octets, out string zoneId, int octetsOffset = 0)
+        {
+            if (octets.Length - 16 < octetsOffset)
+                throw new ArgumentException("Not enough remaining space in octets array.");
+            zoneId = null;
+            var elisionSplit = value.Split(new [] { "::" }, StringSplitOptions.None);
+            if (elisionSplit.Length == 1)
+            {
+                var pieces = value.Split(':');
+                switch (pieces.Length)
+                {
+                    case 7:
+                        if (!ParseIpV6Pieces(pieces, pieces.Length - 1, octets, ref octetsOffset))
+                            return false;
+                        return TryParseIpV4Address(pieces[6], octets, octetsOffset);
+                    case 8:
+                        return ParseIpV6Pieces(pieces, pieces.Length, octets, ref octetsOffset);
+                    default:
+                        return false;
+                }
+            }
+            if (elisionSplit.Length == 2)
+            {
+                for (var i = octetsOffset; i != octetsOffset + 16; ++i)
+                    octets[i] = 0;
+                var pieces1 = elisionSplit[0].Split(':');
+                var pieces2 = elisionSplit[1].Split(':');
+                if (pieces1.Length + pieces2.Length > 7)
+                    return false;
+                var pieces2octets = 2 * pieces2.Length;
+                if (pieces2.Length > 0 && pieces2[pieces2.Length - 1].Contains('.'))
+                {
+                    if (pieces1.Length + pieces2.Length > 6)
+                        return false;
+                    if (!TryParseIpV4Address(pieces2[pieces2.Length - 1], octets, octetsOffset + 12))
+                        return false;
+                    pieces2[pieces2.Length - 1] = null;
+                    pieces2octets += 2;
+                }
+                if (!ParseIpV6Pieces(pieces1, pieces1.Length, octets, ref octetsOffset))
+                    return false;
+                octetsOffset = 16 - pieces2octets;
+                return ParseIpV6Pieces(pieces2, pieces2.Length, octets, ref octetsOffset);
+            }
+            return false;
+        }
+        private static Regex H16Regex { get; } = new Regex(@"^[0-9a-f]{1,4}$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        private static bool ParseIpV6Pieces(string[] pieces, int piecesEnd, byte[] octets, ref int octetsOffset)
+        {
+            for (var i = 0; i != piecesEnd; ++i)
+            {
+                if (pieces[i] == null)
+                    return true;
+                if (!H16Regex.IsMatch(pieces[i]))
+                    return false;
+                ushort piece;
+                if (!ushort.TryParse(pieces[i], NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out piece))
+                    return false;
+                octets[octetsOffset++] = (byte)(piece >> 8);
+                octets[octetsOffset++] = (byte)(piece & 0xFF);
+            }
+            return true;
+        }
 
         /// <summary>
         /// Whether a host string is an <c>IP-literal</c> (see 3.2.2).
@@ -109,10 +186,34 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 return false;
             if (HostIPvFutureRegex.IsMatch(value))
                 return true;
-            IPAddress address;
-            if (!IPAddress.TryParse(value.Substring(1, value.Length - 2), out address)) // TODO: see 7.4 and RFC6874
+            var octets = new byte[16];
+            var zoneId = "";
+            return TryParseIpV6Address(value.Substring(1, value.Length - 2), octets, out zoneId);
+        }
+
+        /// <summary>
+        /// Attempts to parse an <c>IPv4address</c> (see 3.2.2). Note that this algorithm only expects the restricted IPv4 address style allowed in URIs.
+        /// </summary>
+        /// <param name="value">The string to convert.</param>
+        /// <param name="octets">The octets of the address.</param>
+        /// <param name="octetsOffset">The index of <paramref name="octets"/> at which to begin writing.</param>
+        public static bool TryParseIpV4Address(string value, byte[] octets, int octetsOffset = 0)
+        {
+            if (octets.Length - 4 < octetsOffset)
+                throw new ArgumentException("Not enough remaining space in octets array.");
+            var octetStrings = value.Split('.');
+            if (octetStrings.Length != 4)
                 return false;
-            return address.AddressFamily == AddressFamily.InterNetworkV6;
+            for (var i = 0; i != 4; ++i)
+            {
+                byte result;
+                if (!byte.TryParse(octetStrings[i], NumberStyles.None, CultureInfo.InvariantCulture, out result))
+                    return false;
+                if (result.ToString(CultureInfo.InvariantCulture) != octetStrings[i]) // Disallow 0-prefixed values.
+                    return false;
+                octets[octetsOffset + i] = result;
+            }
+            return true;
         }
 
         /// <summary>
@@ -121,10 +222,8 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="value">The string to test.</param>
         public static bool HostIsIpV4Address(string value)
         {
-            IPAddress address;
-            if (!IPAddress.TryParse(value, out address)) // TODO: See 7.4
-                return false;
-            return address.AddressFamily == AddressFamily.InterNetwork;
+            var junk = new byte[4];
+            return TryParseIpV4Address(value, junk);
         }
 
         /// <summary>
