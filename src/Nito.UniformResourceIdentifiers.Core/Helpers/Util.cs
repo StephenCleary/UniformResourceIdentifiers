@@ -141,7 +141,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 if (pieces1.Length + pieces2.Length > 7)
                     return false;
                 var pieces2octets = 2 * pieces2.Length;
-                if (pieces2.Length > 0 && pieces2[pieces2.Length - 1].Contains('.'))
+                if (pieces2.Length > 0 && pieces2[pieces2.Length - 1].Contains("."))
                 {
                     if (pieces1.Length + pieces2.Length > 6)
                         return false;

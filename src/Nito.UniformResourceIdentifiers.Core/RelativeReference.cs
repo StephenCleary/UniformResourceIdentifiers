@@ -51,7 +51,7 @@ namespace Nito.UniformResourceIdentifiers
             {
                 if (first)
                 {
-                    if (segment.Contains(':'))
+                    if (segment.Contains(":"))
                         yield return ".";
                     first = false;
                 }
