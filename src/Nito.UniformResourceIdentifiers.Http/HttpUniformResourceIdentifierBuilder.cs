@@ -9,7 +9,7 @@ namespace Nito.UniformResourceIdentifiers
     /// <summary>
     /// A URI builder for HTTP URIs.
     /// </summary>
-    public sealed class HttpUniformResourceIdentifierBuilder : HttpUniformResourceIdentifierBuilderBase
+    public sealed class HttpUniformResourceIdentifierBuilder : HttpUniformResourceIdentifierBuilderBase<HttpUniformResourceIdentifierBuilder>
     {
         /// <summary>
         /// Builds the HTTP URI instance.

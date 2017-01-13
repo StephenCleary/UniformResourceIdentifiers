@@ -31,5 +31,19 @@ namespace Nito.UniformResourceIdentifiers
             : base(HttpScheme, host, port, pathSegments, query, fragment)
         {
         }
+
+        private static readonly DelegateFactory<HttpUniformResourceIdentifier> Factory = CreateFactory(() => new HttpUniformResourceIdentifierBuilder(), x => x.Build());
+
+        /// <summary>
+        /// Resolves a relative URI against this URI.
+        /// </summary>
+        /// <param name="relativeUri">The relative URI to resolve.</param>
+        public HttpUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
+
+        /// <summary>
+        /// Resolves a reference URI against this URI.
+        /// </summary>
+        /// <param name="referenceUri">The reference URI to resolve.</param>
+        public UniformResourceIdentifier Resolve(UniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
     }
 }

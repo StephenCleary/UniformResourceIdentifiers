@@ -335,5 +335,97 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             }
             return result;
         }
+
+        /// <summary>
+        /// Whether the given path is empty.
+        /// </summary>
+        /// <param name="pathSegments">The path to test.</param>
+        public static bool PathIsEmpty(IReadOnlyList<string> pathSegments) => pathSegments.Count == 0 || (pathSegments.Count == 1 && pathSegments[0] == "");
+
+        /// <summary>
+        /// Whether the given path is absolute (i.e., starts with a forward-slash when converted to a string).
+        /// </summary>
+        /// <param name="pathSegments">The path to test.</param>
+        public static bool PathIsAbsolute(IReadOnlyList<string> pathSegments) => pathSegments.Count > 1 && pathSegments[0] == "";
+
+        /// <summary>
+        /// A delegate used to create a type of URI.
+        /// </summary>
+        /// <typeparam name="T">The type of URI to create.</typeparam>
+        /// <param name="userInfo">The user information portion of the authority.</param>
+        /// <param name="host">The host portion of the authority.</param>
+        /// <param name="port">The port portion of the authority.</param>
+        /// <param name="pathSegments">The path segments.</param>
+        /// <param name="query">The query string.</param>
+        /// <param name="fragment">The fragment string.</param>
+        public delegate T DelegateFactory<T>(string userInfo, string host, string port, IReadOnlyList<string> pathSegments, string query, string fragment);
+
+        /// <summary>
+        /// Resolves a relative URI against a base URI.
+        /// </summary>
+        /// <typeparam name="T">The type of the base URI; also the type of the result.</typeparam>
+        /// <param name="baseUri">The base URI.</param>
+        /// <param name="relativeUri">The relative URI.</param>
+        /// <param name="factory">The factory method used to create a new URI.</param>
+        public static T Resolve<T>(T baseUri, RelativeReference relativeUri, DelegateFactory<T> factory)
+            where T : UniformResourceIdentifier
+        {
+            // See 5.2.2, except that referenceUri will always have a null Scheme and we always do strict resolution.
+            string userInfo, host, port, query;
+            IReadOnlyList<string> pathSegments;
+            if (relativeUri.AuthorityIsDefined)
+            {
+                userInfo = relativeUri.UserInfo;
+                host = relativeUri.Host;
+                port = relativeUri.Port;
+                pathSegments = relativeUri.PathSegments;
+                query = relativeUri.Query;
+            }
+            else
+            {
+                if (relativeUri.PathIsEmpty)
+                {
+                    pathSegments = baseUri.PathSegments;
+                    query = relativeUri.Query ?? baseUri.Query;
+                }
+                else
+                {
+                    if (relativeUri.PathIsAbsolute)
+                    {
+                        pathSegments = relativeUri.PathSegments;
+                    }
+                    else
+                    {
+                        // See 5.2.3
+                        if (baseUri.AuthorityIsDefined && baseUri.PathIsEmpty)
+                            pathSegments = Enumerable.Repeat("", 1).Concat(relativeUri.PathSegments).ToList();
+                        else
+                            pathSegments = baseUri.PathSegments.Take(baseUri.PathSegments.Count - 1).Concat(relativeUri.PathSegments).ToList();
+                    }
+                    query = relativeUri.Query;
+                }
+                userInfo = baseUri.UserInfo;
+                host = baseUri.Host;
+                port = baseUri.Port;
+            }
+            return factory(userInfo, host, port, pathSegments, query, relativeUri.Fragment);
+        }
+
+        /// <summary>
+        /// Resolves a reference URI against a base URI. The reference URI may be relative or a URI.
+        /// </summary>
+        /// <typeparam name="T">The type of the base URI. This may be different than the type of the result.</typeparam>
+        /// <param name="baseUri">The base URI.</param>
+        /// <param name="referenceUri">The reference URI.</param>
+        /// <param name="factory">The factory method used to create a new URI.</param>
+        public static UniformResourceIdentifier Resolve<T>(T baseUri, UniformResourceIdentifierReference referenceUri, DelegateFactory<T> factory)
+            where T : UniformResourceIdentifier
+        {
+            // See 5.2.2, except we always do strict resolution.
+            var relativeReference = referenceUri as RelativeReference;
+            if (relativeReference != null)
+                return Resolve(baseUri, relativeReference, factory);
+            return (UniformResourceIdentifier) referenceUri;
+        }
     }
 }

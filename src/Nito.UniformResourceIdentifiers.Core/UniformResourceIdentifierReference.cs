@@ -73,9 +73,24 @@ namespace Nito.UniformResourceIdentifiers
         public virtual string Port { get; }
 
         /// <summary>
+        /// Returns <c>true</c> if the authority is defined. Note that it is possible (though unusual) for the authority to be defined as the empty string.
+        /// </summary>
+        public bool AuthorityIsDefined => UserInfo != null || Host != null || Port != null;
+
+        /// <summary>
         /// Gets the path segments of the URI, e.g., { "", "folder", "subfolder", "file.jpg" }. This can never be <c>null</c>, but it can be empty. Note that for some schemes, it is common for the first path segment to be the empty string to generate an initial forward-slash.
         /// </summary>
         public virtual IReadOnlyList<string> PathSegments { get; }
+
+        /// <summary>
+        /// Returns <c>true</c> if the path is empty.
+        /// </summary>
+        public bool PathIsEmpty => Util.PathIsEmpty(PathSegments);
+
+        /// <summary>
+        /// Returns <c>true</c> if the path is absolute (i.e., starts with a forward-slash).
+        /// </summary>
+        public bool PathIsAbsolute => Util.PathIsAbsolute(PathSegments);
 
         /// <summary>
         /// Gets the query of the URI, e.g., "q=test&amp;page=4". This can be <c>null</c> if there is no query, or an empty string if the query is empty.

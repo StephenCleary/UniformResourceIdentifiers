@@ -35,16 +35,14 @@ namespace Nito.UniformResourceIdentifiers
         {
         }
 
-        // TODO: Normalization isn't correct for prefixless paths with authority. Actually needs to be applied on the base class!
-
         private static IEnumerable<string> NormalizePath(string userInfo, string host, string port, IEnumerable<string> pathSegments)
         {
             if (userInfo != null || host != null || port != null)
                 return pathSegments;
-            return NormalizePath(pathSegments);
+            return NormalizePathWithoutAuthority(pathSegments);
         }
 
-        private static IEnumerable<string> NormalizePath(IEnumerable<string> pathSegments)
+        private static IEnumerable<string> NormalizePathWithoutAuthority(IEnumerable<string> pathSegments)
         { 
             var first = true;
             foreach (var segment in pathSegments)

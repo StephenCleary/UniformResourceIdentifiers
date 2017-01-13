@@ -9,18 +9,19 @@ namespace Nito.UniformResourceIdentifiers
     /// <summary>
     /// A URI builder base type for HTTP and HTTPS URIs.
     /// </summary>
-    public abstract class HttpUniformResourceIdentifierBuilderBase : UniformResourceIdentifierBuilder
+    public abstract class HttpUniformResourceIdentifierBuilderBase<T> : UniformResourceIdentifierBuilder<T>
+        where T : HttpUniformResourceIdentifierBuilderBase<T>
     {
         /// <summary>
         /// User information is no longer valid on HTTP or HTTPS URIs, as of RFC7230. This method throws <c>InvalidOperationException</c> if <paramref name="userInfo"/> is not <c>null</c>.
         /// </summary>
         /// <param name="userInfo">The user information. Must be <c>null</c>.</param>
-        public override UniformResourceIdentifierBuilder WithUserInfo(string userInfo)
+        public override T WithUserInfo(string userInfo)
         {
             if (userInfo != null)
                 throw new InvalidOperationException("HTTP/HTTPS URIs can no longer have UserInfo portions, as of RFC7230.");
             UserInfo = null;
-            return this;
+            return (T)this;
         }
 
         // TODO: Query kvp support.

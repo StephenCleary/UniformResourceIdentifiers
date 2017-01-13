@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nito.Comparers;
 using Nito.Comparers.Util;
 using Nito.UniformResourceIdentifiers.Helpers;
+using static Nito.UniformResourceIdentifiers.Helpers.Util;
 // ReSharper disable VirtualMemberNeverOverridden.Global
 
 // TODO: Parsing - performed by builder or (derived) URI types. The generic URI parser should only live in Util. Possibly also have a factory, with registration???
@@ -56,6 +57,20 @@ namespace Nito.UniformResourceIdentifiers
             if (scheme == null)
                 throw new ArgumentNullException(nameof(scheme));
             SchemeSpecificComparerProxy = new GenericComparerProxy(this);
+        }
+
+        /// <summary>
+        /// Creates a factory delegate for use by derived classes.
+        /// </summary>
+        /// <typeparam name="TBuilder">The type of the builder for the derived URI type.</typeparam>
+        /// <typeparam name="TUri">The type of the derived URI.</typeparam>
+        /// <param name="builderFactory">A factory for the builder.</param>
+        /// <param name="build">Calls the <c>Build</c> method of the builder.</param>
+        protected static DelegateFactory<TUri> CreateFactory<TBuilder, TUri>(Func<TBuilder> builderFactory, Func<TBuilder, TUri> build)
+            where TBuilder : UniformResourceIdentifierBuilder<TBuilder>
+        {
+            return (userInfo, host, port, pathSegments, query, fragment) =>
+                build(builderFactory().WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPathSegments(pathSegments).WithQuery(query).WithFragment(fragment));
         }
 
         /// <summary>
