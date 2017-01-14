@@ -12,7 +12,7 @@ using static Nito.UniformResourceIdentifiers.Helpers.Util;
 namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
-    /// An immutable, normalized URI reference.
+    /// An immutable URI reference. If the URI reference is not a relative reference, then it is also normalized.
     /// </summary>
     public abstract class UniformResourceIdentifierReference
     {
@@ -26,7 +26,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="pathSegments">The path segments. Dot segments are normalized. May not be <c>null</c>, neither may any element be <c>null</c>.</param>
         /// <param name="query">The query. This may be <c>null</c> to indicate no query, or the empty string to indicate an empty query.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
-        protected UniformResourceIdentifierReference(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
+        internal UniformResourceIdentifierReference(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
         {
             if (pathSegments == null)
                 throw new ArgumentNullException(nameof(pathSegments));

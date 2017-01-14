@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nito.UniformResourceIdentifiers.Helpers;
-using static Nito.UniformResourceIdentifiers.Helpers.Util;
 
-namespace Nito.UniformResourceIdentifiers
+namespace Nito.UniformResourceIdentifiers.Helpers
 {
     /// <summary>
     /// Base class for HTTP and HTTPS URIs, providing common functionality.

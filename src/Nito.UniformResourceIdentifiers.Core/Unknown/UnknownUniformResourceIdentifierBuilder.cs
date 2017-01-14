@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using Nito.UniformResourceIdentifiers.Helpers;
-using static Nito.UniformResourceIdentifiers.Helpers.Util;
 
-namespace Nito.UniformResourceIdentifiers
+namespace Nito.UniformResourceIdentifiers.Unknown
 {
     /// <summary>
     /// A URI builder for URIs with unknown schemes.
     /// </summary>
-    public sealed class UnknownUniformResourceIdentifierBuilder : UniformResourceIdentifierBuilder<UnknownUniformResourceIdentifierBuilder>
+    public sealed class UnknownUniformResourceIdentifierBuilder : UniformResourceIdentifierBuilderBase<UnknownUniformResourceIdentifierBuilder>
     {
         /// <summary>
         /// The URI scheme. May not be <c>null</c>. Must be a valid scheme according to <see cref="Util.IsValidScheme"/>.
@@ -23,7 +19,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="scheme">The scheme. May not be <c>null</c>. Must be a valid scheme according to <see cref="Util.IsValidScheme"/>.</param>
         public UnknownUniformResourceIdentifierBuilder WithScheme(string scheme)
         {
-            if (scheme == null || !IsValidScheme(scheme))
+            if (scheme == null || !Util.IsValidScheme(scheme))
                 throw new ArgumentException("Invalid scheme " + scheme, nameof(scheme));
             Scheme = scheme;
             return this;

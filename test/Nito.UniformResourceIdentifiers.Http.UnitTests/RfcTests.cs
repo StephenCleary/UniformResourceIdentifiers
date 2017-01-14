@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Nito.UniformResourceIdentifiers.Helpers;
+using Nito.UniformResourceIdentifiers.Unknown;
 using Xunit;
 
 namespace Nito.UniformResourceIdentifiers.Http.UnitTests

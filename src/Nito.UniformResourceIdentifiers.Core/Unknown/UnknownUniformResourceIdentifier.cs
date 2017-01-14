@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Nito.UniformResourceIdentifiers.Helpers;
-using static Nito.UniformResourceIdentifiers.Helpers.Util;
 
-namespace Nito.UniformResourceIdentifiers
+namespace Nito.UniformResourceIdentifiers.Unknown
 {
     /// <summary>
     /// A URI with an unrecognized scheme.
@@ -30,7 +24,7 @@ namespace Nito.UniformResourceIdentifiers
             Factory = CreateFactory(() => new UnknownUniformResourceIdentifierBuilder().WithScheme(Scheme), x => x.Build());
         }
 
-        private readonly DelegateFactory<UnknownUniformResourceIdentifier> Factory;
+        private readonly Util.DelegateFactory<UnknownUniformResourceIdentifier> Factory;
 
         /// <summary>
         /// Resolves a relative URI against this URI.

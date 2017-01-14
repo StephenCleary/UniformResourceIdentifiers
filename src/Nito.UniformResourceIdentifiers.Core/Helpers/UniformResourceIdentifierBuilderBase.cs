@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using static Nito.UniformResourceIdentifiers.Helpers.Util;
+
 // ReSharper disable VirtualMemberNeverOverridden.Global
 
-namespace Nito.UniformResourceIdentifiers
+namespace Nito.UniformResourceIdentifiers.Helpers
 {
     /// <summary>
     /// A builder base type for <see cref="UniformResourceIdentifierReference"/>-derived types.
     /// </summary>
-    public abstract class UniformResourceIdentifierBuilder<T>
-        where T : UniformResourceIdentifierBuilder<T>
+    public abstract class UniformResourceIdentifierBuilderBase<T>
+        where T : UniformResourceIdentifierBuilderBase<T>
     {
         /// <summary>
         /// The user information portion of the authority. For most schemes, this is a deprecated component. May be <c>null</c> or the empty string.
@@ -69,7 +69,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="port">The port. May be <c>null</c> or the empty string.</param>
         public virtual T WithPort(string port)
         {
-            if (port != null && !IsValidPort(port))
+            if (port != null && !Util.IsValidPort(port))
                 throw new ArgumentException("Invalid port " + port, nameof(port));
             Port = port;
             return (T)this;

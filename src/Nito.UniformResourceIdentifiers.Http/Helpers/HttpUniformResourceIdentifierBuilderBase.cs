@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using Nito.UniformResourceIdentifiers.Helpers;
 
-namespace Nito.UniformResourceIdentifiers
+namespace Nito.UniformResourceIdentifiers.Helpers
 {
     /// <summary>
     /// A URI builder base type for HTTP and HTTPS URIs.
     /// </summary>
-    public abstract class HttpUniformResourceIdentifierBuilderBase<T> : UniformResourceIdentifierBuilder<T>
+    public abstract class HttpUniformResourceIdentifierBuilderBase<T> : UniformResourceIdentifierBuilderBase<T>
         where T : HttpUniformResourceIdentifierBuilderBase<T>
     {
         /// <summary>
