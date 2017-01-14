@@ -318,13 +318,17 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         public static List<string> RemoveDotSegments(IEnumerable<string> pathSegments)
         {
             var result = new List<string>();
+            bool lastIsDot = false;
             foreach (var segment in pathSegments.SkipWhile(x => x == "." || x == ".."))
             {
+                lastIsDot = false;
                 switch (segment)
                 {
                     case ".":
+                        lastIsDot = true;
                         break;
                     case "..":
+                        lastIsDot = true;
                         if (result.Count > 1)
                             result.RemoveAt(result.Count - 1);
                         break;
@@ -333,7 +337,50 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                         break;
                 }
             }
+            if (lastIsDot)
+                result.Add("");
             return result;
+        }
+
+        ///// <summary>
+        ///// Removes dot segments from a path sequence, normalizing it.
+        ///// </summary>
+        ///// <param name="pathSegments">The path segments to normalize.</param>
+        //public static List<string> RemoveDotSegments(IEnumerable<string> pathSegments)
+        //{
+        //    var output = new List<string>();
+        //    var input = pathSegments.SkipWhile(x => x == "." || x == "..").ToList();
+        //    while (input.Count > 0)
+        //    {
+        //        if (HasPrefixOf(input, "", "."))
+        //            input.RemoveAt(1);
+        //        else if (HasPrefixOf(input, "", ".."))
+        //        {
+        //            input.RemoveAt(1);
+        //            if (output.Count > 1)
+        //                output.RemoveAt(output.Count - 1);
+        //        }
+        //        else if (input.Count == 1 && (input[0] == "." || input[0] == ".."))
+        //            input.RemoveAt(0);
+        //        else
+        //        {
+        //            output.Add(input[0]);
+        //            input.RemoveAt(0);
+        //        }
+        //    }
+        //    return output;
+        //}
+
+        private static bool HasPrefixOf(IReadOnlyList<string> path, params string[] prefix)
+        {
+            if (path.Count < prefix.Length)
+                return false;
+            for (int i = 0; i != prefix.Length; ++i)
+            {
+                if (path[i] != prefix[i])
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -358,7 +405,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="pathSegments">The path segments.</param>
         /// <param name="query">The query string.</param>
         /// <param name="fragment">The fragment string.</param>
-        public delegate T DelegateFactory<T>(string userInfo, string host, string port, IReadOnlyList<string> pathSegments, string query, string fragment);
+        public delegate T DelegateFactory<out T>(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment);
 
         /// <summary>
         /// Resolves a relative URI against a base URI.
@@ -370,9 +417,9 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         public static T Resolve<T>(T baseUri, RelativeReference relativeUri, DelegateFactory<T> factory)
             where T : UniformResourceIdentifier
         {
-            // See 5.2.2, except that referenceUri will always have a null Scheme and we always do strict resolution.
+            // See 5.2.2, except that referenceUri will always have a null Scheme.
             string userInfo, host, port, query;
-            IReadOnlyList<string> pathSegments;
+            IEnumerable<string> pathSegments;
             if (relativeUri.AuthorityIsDefined)
             {
                 userInfo = relativeUri.UserInfo;
@@ -398,9 +445,9 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                     {
                         // See 5.2.3
                         if (baseUri.AuthorityIsDefined && baseUri.PathIsEmpty)
-                            pathSegments = Enumerable.Repeat("", 1).Concat(relativeUri.PathSegments).ToList();
+                            pathSegments = Enumerable.Repeat("", 1).Concat(relativeUri.PathSegments);
                         else
-                            pathSegments = baseUri.PathSegments.Take(baseUri.PathSegments.Count - 1).Concat(relativeUri.PathSegments).ToList();
+                            pathSegments = baseUri.PathSegments.Take(baseUri.PathSegments.Count - 1).Concat(relativeUri.PathSegments);
                     }
                     query = relativeUri.Query;
                 }

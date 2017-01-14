@@ -52,7 +52,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <para>Since path segments are normalized when creating URIs, all URI instances are also path segment normalized (see 6.2.2.3).</para>
         /// </remarks>
         protected UniformResourceIdentifier(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
-            : base(scheme, userInfo, host, port, pathSegments, query, fragment)
+            : base(scheme, userInfo, host, port, RemoveDotSegments(pathSegments), query, fragment)
         {
             if (scheme == null)
                 throw new ArgumentNullException(nameof(scheme));
@@ -60,7 +60,7 @@ namespace Nito.UniformResourceIdentifiers
         }
 
         /// <summary>
-        /// Creates a factory delegate for use by derived classes.
+        /// Creates a factory delegate for use by derived classes to implement relative/reference resolution.
         /// </summary>
         /// <typeparam name="TBuilder">The type of the builder for the derived URI type.</typeparam>
         /// <typeparam name="TUri">The type of the derived URI.</typeparam>
@@ -70,7 +70,7 @@ namespace Nito.UniformResourceIdentifiers
             where TBuilder : UniformResourceIdentifierBuilder<TBuilder>
         {
             return (userInfo, host, port, pathSegments, query, fragment) =>
-                build(builderFactory().WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPathSegments(pathSegments).WithQuery(query).WithFragment(fragment));
+                build(builderFactory().WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegments).WithQuery(query).WithFragment(fragment));
         }
 
         /// <summary>

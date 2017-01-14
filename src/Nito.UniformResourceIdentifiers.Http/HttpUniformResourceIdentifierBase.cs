@@ -46,7 +46,8 @@ namespace Nito.UniformResourceIdentifiers
                     yield return segment;
                     first = false;
                 }
-                yield return segment;
+                else
+                    yield return segment;
             }
             if (first)
                 yield return "";

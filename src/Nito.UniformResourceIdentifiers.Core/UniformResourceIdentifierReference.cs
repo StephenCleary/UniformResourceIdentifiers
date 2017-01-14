@@ -34,7 +34,7 @@ namespace Nito.UniformResourceIdentifiers
                 throw new ArgumentException("Invalid scheme " + scheme, nameof(scheme));
             if (port != null && !IsValidPort(port))
                 throw new ArgumentException("Invalid port " + port, nameof(port));
-            var segments = RemoveDotSegments(pathSegments);
+            var segments = pathSegments.ToList();
             if (segments.Any(x => x == null))
                 throw new ArgumentException("Path contains null segments", nameof(pathSegments));
             if (userInfo != null || host != null || port != null)
