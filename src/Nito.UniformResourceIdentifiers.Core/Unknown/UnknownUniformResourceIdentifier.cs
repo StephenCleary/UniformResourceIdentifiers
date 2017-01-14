@@ -4,7 +4,7 @@ using Nito.UniformResourceIdentifiers.Helpers;
 namespace Nito.UniformResourceIdentifiers.Unknown
 {
     /// <summary>
-    /// A URI with an unrecognized scheme.
+    /// A URI with an unrecognized scheme. This URI is normalized as an arbitrary URI, but will not be fully normalized with respect to its scheme.
     /// </summary>
     public sealed class UnknownUniformResourceIdentifier : UniformResourceIdentifier
     {

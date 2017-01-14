@@ -7,12 +7,11 @@ using static Nito.UniformResourceIdentifiers.Helpers.Util;
 // ReSharper disable VirtualMemberNeverOverridden.Global
 
 // TODO: Parsing - performed by builder or (derived) URI types. The generic URI parser should only live in Util. Possibly also have a factory, with registration???
-// TODO: Relative URIs
 
 namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
-    /// An immutable URI reference. If the URI reference is not a relative reference, then it is also normalized.
+    /// An immutable URI reference (either a URI or a relative reference). If the URI reference is not a relative reference, then it is also normalized as much as possible.
     /// </summary>
     public abstract class UniformResourceIdentifierReference
     {
@@ -23,7 +22,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="userInfo">The user information portion of the authority, if any. This may be <c>null</c> to indicate no user info, or the empty string to indicate empty user info.</param>
         /// <param name="host">The host name portion of the authority, if any. This is converted to lowercase. This may be <c>null</c> to indicate no host name, or the empty string to indicate an empty host name.</param>
         /// <param name="port">The port portion of the authority, if any. This may be <c>null</c> to indicate no port, or the empty string to indicate an empty port. This must be <c>null</c>, the empty string, or a valid port as defined by <see cref="Util.IsValidPort"/>.</param>
-        /// <param name="pathSegments">The path segments. Dot segments are normalized. May not be <c>null</c>, neither may any element be <c>null</c>.</param>
+        /// <param name="pathSegments">The path segments. May not be <c>null</c>, neither may any element be <c>null</c>.</param>
         /// <param name="query">The query. This may be <c>null</c> to indicate no query, or the empty string to indicate an empty query.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
         internal UniformResourceIdentifierReference(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)

@@ -7,7 +7,6 @@ using static Nito.UniformResourceIdentifiers.Helpers.Util;
 // ReSharper disable VirtualMemberNeverOverridden.Global
 
 // TODO: Parsing - performed by builder or (derived) URI types. The generic URI parser should only live in Util. Possibly also have a factory, with registration???
-//  Should we support an UnknownURI for unrecognized schemes? The problem is they won't be normalized!
 
 namespace Nito.UniformResourceIdentifiers
 {

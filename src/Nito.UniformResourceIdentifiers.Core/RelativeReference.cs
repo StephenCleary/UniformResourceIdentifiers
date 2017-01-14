@@ -4,12 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nito.Comparers;
-using Nito.Comparers.Util;
 using Nito.UniformResourceIdentifiers.Helpers;
 // ReSharper disable VirtualMemberNeverOverridden.Global
-
-// TODO: Relative URIs
 
 namespace Nito.UniformResourceIdentifiers
 {
