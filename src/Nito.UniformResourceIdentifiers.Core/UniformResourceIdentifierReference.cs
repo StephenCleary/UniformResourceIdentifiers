@@ -16,7 +16,7 @@ namespace Nito.UniformResourceIdentifiers
     public abstract class UniformResourceIdentifierReference
     {
         /// <summary>
-        /// Constructs a new URI reference.
+        /// Constructs a new URI reference. This constructor may only be called by derived type constructors!
         /// </summary>
         /// <param name="scheme">The scheme, if any. This is converted to lowercase. This must be <c>null</c> or a valid scheme as defined by <see cref="Util.IsValidScheme"/>.</param>
         /// <param name="userInfo">The user information portion of the authority, if any. This may be <c>null</c> to indicate no user info, or the empty string to indicate empty user info.</param>
@@ -124,26 +124,26 @@ namespace Nito.UniformResourceIdentifiers
                 sb.Append("//");
             if (userInfo != null)
             {
-                sb.Append(PercentEncodeUserInfo(userInfo));
+                sb.Append(PercentEncode(userInfo, UserInfoCharIsSafe));
                 sb.Append('@');
             }
             if (host != null)
-                sb.Append(PercentEncodeHost(host));
+                sb.Append(HostIsIpAddress(host) ? host : PercentEncode(host, HostRegNameCharIsSafe));
             if (port != null)
             {
                 sb.Append(':');
                 sb.Append(port);
             }
-            sb.Append(PercentEncdePathSegments(pathSegments));
+            sb.Append(string.Join("/", pathSegments.Select(x => PercentEncode(x, PathSegmentCharIsSafe))));
             if (query != null)
             {
                 sb.Append('?');
-                sb.Append(PercentEncodeQuery(query));
+                sb.Append(PercentEncode(query, QueryCharIsSafe));
             }
             if (fragment != null)
             {
                 sb.Append('#');
-                sb.Append(PercentEncodeFragment(fragment));
+                sb.Append(PercentEncode(fragment, FragmentCharIsSafe));
             }
             return sb.ToString();
         }

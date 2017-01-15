@@ -20,16 +20,16 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// </summary>
         private static IEnumerable<byte> GenerateUnreservedCharacters()
         {
-            yield return (byte)'-';
-            yield return (byte)'.';
-            for (var ch = (byte)'0'; ch <= '9'; ++ch)
+            yield return (byte) '-';
+            yield return (byte) '.';
+            for (var ch = (byte) '0'; ch <= '9'; ++ch)
                 yield return ch;
-            for (var ch = (byte)'A'; ch <= 'Z'; ++ch)
+            for (var ch = (byte) 'A'; ch <= 'Z'; ++ch)
                 yield return ch;
-            yield return (byte)'_';
-            for (var ch = (byte)'a'; ch <= 'z'; ++ch)
+            yield return (byte) '_';
+            for (var ch = (byte) 'a'; ch <= 'z'; ++ch)
                 yield return ch;
-            yield return (byte)'~';
+            yield return (byte) '~';
         }
 
         /// <summary>
@@ -45,17 +45,17 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <summary>
         /// All the general delimiter characters (<c>gen-delims</c>) (see 2.2), in ASCII order.
         /// </summary>
-        public static byte[] GeneralDelimiterCharacters { get; } = { (byte)'#', (byte)'/', (byte)':', (byte)'?', (byte)'@', (byte)'[', (byte)']' };
+        public static byte[] GeneralDelimiterCharacters { get; } = { (byte) '#', (byte) '/', (byte) ':', (byte) '?', (byte) '@', (byte) '[', (byte) ']' };
 
         /// <summary>
         /// All the subcomponent delimiter characters (<c>sub-delims</c>) (see 2.2), in ASCII order.
         /// </summary>
-        public static byte[] SubcomponentDelimiterCharacters { get; } = { (byte)'!', (byte)'$', (byte)'&', (byte)'\'', (byte)'(', (byte)')', (byte)'*', (byte)'+', (byte)',', (byte)';', (byte)'=' };
+        public static byte[] SubcomponentDelimiterCharacters { get; } = { (byte) '!', (byte) '$', (byte) '&', (byte) '\'', (byte) '(', (byte) ')', (byte) '*', (byte) '+', (byte) ',', (byte) ';', (byte) '=' };
 
         /// <summary>
         /// Map of the percent-encoded unreserved characters to their unencoded representation.
         /// </summary>
-        public static IReadOnlyDictionary<string, string> EncodedUnreservedCharacters { get; } = GenerateUnreservedCharacters().ToDictionary(PercentEncode, x => ((char)x).ToString());
+        public static IReadOnlyDictionary<string, string> EncodedUnreservedCharacters { get; } = GenerateUnreservedCharacters().ToDictionary(PercentEncode, x => ((char) x).ToString());
 
         /// <summary>
         /// Whether a character is unreserved (see 2.3).
@@ -86,6 +86,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// </summary>
         /// <param name="value">The string to test.</param>
         public static bool IsValidScheme(string value) => SchemeRegex.IsMatch(value);
+
         private static Regex SchemeRegex { get; } = new Regex("^[a-z][a-z0-9+-.]*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         /// <summary>
@@ -93,6 +94,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// </summary>
         /// <param name="value">The string to test.</param>
         public static bool IsValidPort(string value) => PortRegex.IsMatch(value);
+
         private static Regex PortRegex { get; } = new Regex("^[0-9]*$", RegexOptions.CultureInvariant);
 
         /// <summary>
@@ -100,6 +102,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// </summary>
         /// <param name="value">The string to test.</param>
         public static bool HostIsFutureIpLiteral(string value) => HostIPvFutureRegex.IsMatch(value);
+
         private static Regex HostIPvFutureRegex { get; } = new Regex(@"^\[v[0-9a-f]+\.[a-z0-9-._~!$&'()*+,;=:]+\]$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         // TODO: Include an implementation of RFC5952 to canonicalize IPv6 addresses when they are detected.
@@ -116,7 +119,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             if (octets.Length - 16 < octetsOffset)
                 throw new ArgumentException("Not enough remaining space in octets array.");
             zoneId = null;
-            var elisionSplit = value.Split(new [] { "::" }, StringSplitOptions.None);
+            var elisionSplit = value.Split(new[] { "::" }, StringSplitOptions.None);
             if (elisionSplit.Length == 1)
             {
                 var pieces = value.Split(':');
@@ -157,6 +160,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             }
             return false;
         }
+
         private static Regex H16Regex { get; } = new Regex(@"^[0-9a-f]{1,4}$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         private static bool ParseIpV6Pieces(string[] pieces, int piecesEnd, byte[] octets, ref int octetsOffset)
@@ -170,8 +174,8 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 ushort piece;
                 if (!ushort.TryParse(pieces[i], NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out piece))
                     return false;
-                octets[octetsOffset++] = (byte)(piece >> 8);
-                octets[octetsOffset++] = (byte)(piece & 0xFF);
+                octets[octetsOffset++] = (byte) (piece >> 8);
+                octets[octetsOffset++] = (byte) (piece & 0xFF);
             }
             return true;
         }
@@ -250,7 +254,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             foreach (var ch in bytes)
             {
                 if (isSafe(ch))
-                    sb.Append((char)ch);
+                    sb.Append((char) ch);
                 else
                     sb.Append(PercentEncode(ch));
             }
@@ -258,46 +262,70 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         }
 
         /// <summary>
-        /// Percent-encodes the user information portion of an authority string.
+        /// Percent-decodes the string <paramref name="value"/>, verifying that the only non-encoded characters are those for which <paramref name="isSafe"/> returns <c>true</c>.
         /// </summary>
-        /// <param name="value">The value to encode.</param>
-        public static string PercentEncodeUserInfo(string value) => PercentEncode(value, x => IsUnreserved(x) || IsSubcomponentDelimiter(x) || x == ':');
+        /// <param name="value">The value to decode.</param>
+        /// <param name="isSafe">A function determining whether a character is safe (i.e., does not need encoding).</param>
+        public static string PercentDecode(string value, Func<byte, bool> isSafe)
+        {
+            var sb = new StringBuilder(value.Length);
+            for (var i = 0; i != value.Length; ++i)
+            {
+                var ch = value[i];
+                if (ch >= 256)
+                    throw new InvalidOperationException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
+                if (ch == '%')
+                {
+                    if (i + 2 >= value.Length)
+                        throw new InvalidOperationException($"Unterminated percent-encoding at index {i} in string \"{value}\".");
+                    var hexString = value.Substring(i + 1, 2);
+                    byte encodedValue;
+                    if (!byte.TryParse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out encodedValue))
+                        throw new InvalidOperationException($"Invalid percent-encoding at index {i} in string \"{value}\".");
+                    sb.Append((char) encodedValue);
+                    i += 2;
+                }
+                else if (isSafe((byte) ch))
+                {
+                    sb.Append(ch);
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
+                }
+            }
+            return sb.ToString();
+        }
 
         /// <summary>
-        /// Percent-encodes the host portion of an authoirty string.
+        /// A delegate for determining whether a user info character is safe (does not require encoding).
         /// </summary>
-        /// <param name="value">The value to encode.</param>
-        public static string PercentEncodeHost(string value) => HostIsIpAddress(value) ? value : PercentEncode(value, x => IsUnreserved(x) || IsSubcomponentDelimiter(x));
+        public static readonly Func<byte, bool> UserInfoCharIsSafe = x => IsUnreserved(x) || IsSubcomponentDelimiter(x) || x == ':';
 
         /// <summary>
-        /// Percent-encodes a path segment.
+        /// A delegate for determining whether a host reg-name character is safe (does not require encoding).
         /// </summary>
-        /// <param name="value">The value to encode.</param>
-        public static string PercentEncodePathSegment(string value) => PercentEncode(value, x => IsUnreserved(x) || IsSubcomponentDelimiter(x) || x == ':' || x == '@');
+        public static readonly Func<byte, bool> HostRegNameCharIsSafe = x => IsUnreserved(x) || IsSubcomponentDelimiter(x);
 
         /// <summary>
-        /// Percent-encodes a sequence of path segments and separates them with forward slashes.
+        /// A delegate for determining whether a path segment character is safe (does not require encoding).
         /// </summary>
-        /// <param name="segments">The values to encode.</param>
-        public static string PercentEncdePathSegments(IEnumerable<string> segments) => string.Join("/", segments.Select(PercentEncodePathSegment));
+        public static readonly Func<byte, bool> PathSegmentCharIsSafe = x => IsUnreserved(x) || IsSubcomponentDelimiter(x) || x == ':' || x == '@';
 
         /// <summary>
-        /// Percent-encodes a query string.
+        /// A delegate for determining whether a query character is safe (does not require encoding).
         /// </summary>
-        /// <param name="value">The value to encode.</param>
-        public static string PercentEncodeQuery(string value) => PercentEncode(value, x => IsUnreserved(x) || IsSubcomponentDelimiter(x) || x == ':' || x == '@' || x == '/' || x == '?');
+        public static readonly Func<byte, bool> QueryCharIsSafe = x => IsUnreserved(x) || IsSubcomponentDelimiter(x) || x == ':' || x == '@' || x == '/' || x == '?';
 
         /// <summary>
-        /// Percent-encodes a frament string.
+        /// A delegate for determining whether a fragment character is safe (does not require encoding).
         /// </summary>
-        /// <param name="value">The value to encode.</param>
-        public static string PercentEncodeFragment(string value) => PercentEncode(value, x => IsUnreserved(x) || IsSubcomponentDelimiter(x) || x == ':' || x == '@' || x == '/' || x == '?');
+        public static readonly Func<byte, bool> FragmentCharIsSafe = QueryCharIsSafe;
 
         /// <summary>
-        /// Percent-encodes an IPv6 ZoneId for use within an IP-literal host string.
+        /// A delegate for determining whether a zone ID character is safe (does not require encoding).
         /// </summary>
-        /// <param name="value">The value to encode.</param>
-        public static string PercentEncodeZoneId(string value) => PercentEncode(value, IsUnreserved);
+        public static readonly Func<byte, bool> ZoneIdCharIsSafe = IsUnreserved;
 
         /// <summary>
         /// Unencodes only the unreserved characters in a URI string. This is always a safe operation and does not change semantics (see 2.4).
@@ -342,47 +370,6 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             return result;
         }
 
-        ///// <summary>
-        ///// Removes dot segments from a path sequence, normalizing it.
-        ///// </summary>
-        ///// <param name="pathSegments">The path segments to normalize.</param>
-        //public static List<string> RemoveDotSegments(IEnumerable<string> pathSegments)
-        //{
-        //    var output = new List<string>();
-        //    var input = pathSegments.SkipWhile(x => x == "." || x == "..").ToList();
-        //    while (input.Count > 0)
-        //    {
-        //        if (HasPrefixOf(input, "", "."))
-        //            input.RemoveAt(1);
-        //        else if (HasPrefixOf(input, "", ".."))
-        //        {
-        //            input.RemoveAt(1);
-        //            if (output.Count > 1)
-        //                output.RemoveAt(output.Count - 1);
-        //        }
-        //        else if (input.Count == 1 && (input[0] == "." || input[0] == ".."))
-        //            input.RemoveAt(0);
-        //        else
-        //        {
-        //            output.Add(input[0]);
-        //            input.RemoveAt(0);
-        //        }
-        //    }
-        //    return output;
-        //}
-
-        private static bool HasPrefixOf(IReadOnlyList<string> path, params string[] prefix)
-        {
-            if (path.Count < prefix.Length)
-                return false;
-            for (int i = 0; i != prefix.Length; ++i)
-            {
-                if (path[i] != prefix[i])
-                    return false;
-            }
-            return true;
-        }
-
         /// <summary>
         /// Whether the given path is empty.
         /// </summary>
@@ -390,7 +377,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         public static bool PathIsEmpty(IReadOnlyList<string> pathSegments) => pathSegments.Count == 0 || (pathSegments.Count == 1 && pathSegments[0] == "");
 
         /// <summary>
-        /// Whether the given path is absolute (i.e., starts with a forward-slash when converted to a string).
+        /// Whether the given path is absolute (i.e., starts with a forward-slash when converted to a string). Note that this does return <c>true</c> if the path starts with two forward-slashes (<c>//</c>).
         /// </summary>
         /// <param name="pathSegments">The path to test.</param>
         public static bool PathIsAbsolute(IReadOnlyList<string> pathSegments) => pathSegments.Count > 1 && pathSegments[0] == "";
