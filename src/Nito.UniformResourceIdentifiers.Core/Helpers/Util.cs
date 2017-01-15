@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-// TODO: RFC6570
 // TODO: Refactor IPAddress support into a netstandard1.3 addon.
 
 namespace Nito.UniformResourceIdentifiers.Helpers

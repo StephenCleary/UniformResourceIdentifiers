@@ -6,8 +6,6 @@ using Nito.UniformResourceIdentifiers.Helpers;
 using static Nito.UniformResourceIdentifiers.Helpers.Util;
 // ReSharper disable VirtualMemberNeverOverridden.Global
 
-// TODO: Parsing - performed by builder or (derived) URI types. The generic URI parser should only live in Util. Possibly also have a factory, with registration???
-
 namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
