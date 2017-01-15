@@ -145,5 +145,39 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             Fragment = fragment;
             return (T)this;
         }
+
+        /// <summary>
+        /// Deconstructs a URI reference into this builder.
+        /// </summary>
+        /// <param name="uri">The URI reference to deconstruct.</param>
+        protected virtual void ApplyUriReference(UniformResourceIdentifierReference uri)
+        {
+            WithUserInfo(uri.UserInfo).WithHost(uri.Host).WithPort(uri.Port).WithPrefixlessPathSegments(uri.PathSegments).WithQuery(uri.Query).WithFragment(uri.Fragment);
+        }
+
+        /// <summary>
+        /// Parses and deconstructs a URI reference into this builder. Returns the scheme of the URI reference, if any.
+        /// </summary>
+        /// <param name="uri">The URI reference to deconstruct.</param>
+        protected virtual string ApplyUriReference(string uri)
+        {
+            string scheme, userInfo, host, port, query, fragment;
+            IReadOnlyList<string> pathSegements;
+            Parser.ParseUriReference(uri, out scheme, out userInfo, out host, out port, out pathSegements, out query, out fragment);
+            WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegements).WithQuery(query).WithFragment(fragment);
+            return scheme;
+        }
+
+        /// <summary>
+        /// Parses and deconstructs a URI reference into this builder, and verifies that the URI scheme matches what was expected.
+        /// </summary>
+        /// <param name="uri">The URI reference to deconstruct.</param>
+        /// <param name="expectedScheme">The expected URI scheme.</param>
+        protected virtual void ApplyUriReference(string uri, string expectedScheme)
+        {
+            var scheme = ApplyUriReference(uri);
+            if (scheme != expectedScheme)
+                throw new InvalidOperationException($"URI scheme \"{scheme}\" does not match expected scheme \"{expectedScheme ?? ""}\" in URI \"{uri}\".");
+        }
     }
 }

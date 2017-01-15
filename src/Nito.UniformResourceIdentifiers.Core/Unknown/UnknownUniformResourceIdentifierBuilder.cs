@@ -9,6 +9,29 @@ namespace Nito.UniformResourceIdentifiers.Unknown
     public sealed class UnknownUniformResourceIdentifierBuilder : UniformResourceIdentifierBuilderBase<UnknownUniformResourceIdentifierBuilder>
     {
         /// <summary>
+        /// Constructs an empty builder.
+        /// </summary>
+        public UnknownUniformResourceIdentifierBuilder() { }
+
+        /// <summary>
+        /// Constructs a builder from an existing URI.
+        /// </summary>
+        /// <param name="uri">The URI used to set the builder's initial values.</param>
+        public UnknownUniformResourceIdentifierBuilder(UnknownUniformResourceIdentifier uri)
+        {
+            ApplyUriReference(uri);
+        }
+
+        /// <summary>
+        /// Parses a URI string and constructs a builder.
+        /// </summary>
+        /// <param name="uri">The URI used to set the builder's initial values.</param>
+        public UnknownUniformResourceIdentifierBuilder(string uri)
+        {
+            WithScheme(ApplyUriReference(uri));
+        }
+
+        /// <summary>
         /// The URI scheme. May not be <c>null</c>. Must be a valid scheme according to <see cref="Util.IsValidScheme"/>.
         /// </summary>
         private string Scheme { get; set; }
