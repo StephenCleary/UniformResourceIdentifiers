@@ -112,7 +112,21 @@ namespace Nito.UniformResourceIdentifiers
         public override Uri ToUri() => new Uri(Uri, UriKind.Absolute);
 
         /// <summary>
-        /// Parses a URI.
+        /// Resolves a relative URI against this URI. If this base URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
+        /// </summary>
+        /// <param name="relativeUri">The relative URI to resolve.</param>
+        public virtual UniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri,
+            (info, host, port, segments, query, fragment) => (UniformResourceIdentifier)Factories.Create(Scheme, info, host, port, segments, query, fragment));
+
+        /// <summary>
+        /// Resolves a reference URI against this URI. If this base URI's scheme is not registered and <paramref name="referenceUri"/> is a <see cref="RelativeReference"/>, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
+        /// </summary>
+        /// <param name="referenceUri">The reference URI to resolve.</param>
+        public virtual UniformResourceIdentifier Resolve(UniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri,
+            (info, host, port, segments, query, fragment) => (UniformResourceIdentifier)Factories.Create(Scheme, info, host, port, segments, query, fragment));
+
+        /// <summary>
+        /// Parses a URI. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="uri">The URI to parse.</param>
         public new static UniformResourceIdentifier Parse(string uri)

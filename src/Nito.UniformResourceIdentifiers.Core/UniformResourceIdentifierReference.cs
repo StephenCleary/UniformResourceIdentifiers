@@ -164,7 +164,7 @@ namespace Nito.UniformResourceIdentifiers
         public abstract Uri ToUri();
 
         /// <summary>
-        /// Parses a URI reference.
+        /// Parses a URI reference. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="uriReference">The URI reference to parse.</param>
         public static UniformResourceIdentifierReference Parse(string uriReference)

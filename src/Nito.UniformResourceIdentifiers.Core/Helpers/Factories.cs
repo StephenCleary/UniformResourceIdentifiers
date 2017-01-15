@@ -33,7 +33,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         }
 
         /// <summary>
-        /// Creates a URI or relative URI from its components. If the scheme is unknown, returns an instance of <see cref="UnknownUniformResourceIdentifier"/>.
+        /// Creates a URI or relative URI from its components. If the scheme is not registered, returns an instance of <see cref="UnknownUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="scheme">The scheme. This may be <c>null</c>. If this is not <c>null</c>, then it must be a valid scheme.</param>
         /// <param name="userInfo">The user information.</param>
