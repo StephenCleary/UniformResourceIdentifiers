@@ -64,10 +64,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="relativeUri">The relative URI to parse.</param>
         public new static RelativeReference Parse(string relativeUri)
         {
-            var result = UniformResourceIdentifierReference.Parse(relativeUri) as RelativeReference;
-            if (result == null)
-                throw new InvalidOperationException($"URI is not a relative reference: {relativeUri}");
-            return result;
+            return new RelativeReferenceBuilder(relativeUri).Build();
         }
     }
 }

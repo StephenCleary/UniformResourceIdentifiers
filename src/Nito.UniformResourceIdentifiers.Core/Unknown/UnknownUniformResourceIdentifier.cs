@@ -45,12 +45,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// <param name="uri">The URI to parse.</param>
         public new static UnknownUniformResourceIdentifier Parse(string uri)
         {
-            string scheme, userInfo, host, port, query, fragment;
-            IReadOnlyList<string> pathSegments;
-            Parser.ParseUriReference(uri, out scheme, out userInfo, out host, out port, out pathSegments, out query, out fragment);
-            return new UnknownUniformResourceIdentifierBuilder()
-                .WithScheme(scheme).WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegments).WithQuery(query).WithFragment(fragment)
-                .Build();
+            return new UnknownUniformResourceIdentifierBuilder(uri).Build();
         }
     }
 }

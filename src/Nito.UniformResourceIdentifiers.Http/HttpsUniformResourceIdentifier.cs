@@ -57,10 +57,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The HTTPS URI to parse.</param>
         public new static HttpsUniformResourceIdentifier Parse(string uri)
         {
-            var result = UniformResourceIdentifierReference.Parse(uri) as HttpsUniformResourceIdentifier;
-            if (result == null)
-                throw new InvalidOperationException($"URI is not an HTTPS URI: {uri}");
-            return result;
+            return new HttpsUniformResourceIdentifierBuilder(uri).Build();
         }
     }
 }
