@@ -76,11 +76,18 @@ namespace Nito.UniformResourceIdentifiers
         protected virtual object SchemeSpecificComparerProxy { get; }
 
         /// <summary>
+        /// A numeric string comparer, capable of comparing numeric strings of any length. This comparer assumes its operands only consist of the digits 0-9 and have leading zeroes removed (this is true of the <see cref="UniformResourceIdentifierReference.Port"/> values.
+        /// </summary>
+        protected static IFullComparer<string> NumericStringComparer { get; } = ComparerBuilder.For<string>()
+            .OrderBy(x => x.Length)
+            .ThenBy(x => x, StringComparer.Ordinal);
+
+        /// <summary>
         /// The generic URI comparer, which is used to compare URIs if their schemes match and the scheme does not override <see cref="SchemeSpecificComparerProxy"/>.
         /// </summary>
         protected static IFullComparer<UniformResourceIdentifier> GenericComparer { get; } = ComparerBuilder.For<UniformResourceIdentifier>()
             .OrderBy(x => x.Host, StringComparer.Ordinal)
-            .ThenBy(x => x.Port) // TODO: numeric comparer
+            .ThenBy(x => x.Port, NumericStringComparer)
             .ThenBy(x => x.UserInfo, StringComparer.Ordinal)
             .ThenBy(x => x.PathSegments, ComparerBuilder.For<string>().OrderBy(x => x, StringComparer.Ordinal).Sequence())
             .ThenBy(x => x.Query, StringComparer.Ordinal)
