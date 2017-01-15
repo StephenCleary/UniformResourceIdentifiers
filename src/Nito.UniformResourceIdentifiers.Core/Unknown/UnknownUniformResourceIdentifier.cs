@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Nito.UniformResourceIdentifiers.Helpers;
 
 namespace Nito.UniformResourceIdentifiers.Unknown
@@ -37,5 +38,19 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// </summary>
         /// <param name="referenceUri">The reference URI to resolve.</param>
         public UniformResourceIdentifier Resolve(UniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
+
+        /// <summary>
+        /// Parses a URI.
+        /// </summary>
+        /// <param name="uri">The URI to parse.</param>
+        public new static UnknownUniformResourceIdentifier Parse(string uri)
+        {
+            string scheme, userInfo, host, port, query, fragment;
+            IReadOnlyList<string> pathSegments;
+            Parser.ParseUriReference(uri, out scheme, out userInfo, out host, out port, out pathSegments, out query, out fragment);
+            return new UnknownUniformResourceIdentifierBuilder()
+                .WithScheme(scheme).WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegments).WithQuery(query).WithFragment(fragment)
+                .Build();
+        }
     }
 }
