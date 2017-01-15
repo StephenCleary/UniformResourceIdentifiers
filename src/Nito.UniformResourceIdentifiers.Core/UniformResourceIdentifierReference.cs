@@ -152,5 +152,17 @@ namespace Nito.UniformResourceIdentifiers
         /// Converts to a <see cref="Uri"/>.
         /// </summary>
         public abstract Uri ToUri();
+
+        /// <summary>
+        /// Parses a URI reference.
+        /// </summary>
+        /// <param name="uriReference">The URI reference to parse.</param>
+        public static UniformResourceIdentifierReference Parse(string uriReference)
+        {
+            string scheme, userInfo, host, port, query, fragment;
+            IReadOnlyList<string> pathSegments;
+            Parser.ParseUriReference(uriReference, out scheme, out userInfo, out host, out port, out pathSegments, out query, out fragment);
+            return Factories.Create(scheme, userInfo, host, port, pathSegments, query, fragment);
+        }
     }
 }

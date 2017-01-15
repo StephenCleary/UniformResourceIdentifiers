@@ -57,5 +57,17 @@ namespace Nito.UniformResourceIdentifiers
         /// Converts to a relative <see cref="Uri"/>.
         /// </summary>
         public override Uri ToUri() => new Uri(Uri, UriKind.Relative);
+
+        /// <summary>
+        /// Parses a relative URI.
+        /// </summary>
+        /// <param name="relativeUri">The relative URI to parse.</param>
+        public new static RelativeReference Parse(string relativeUri)
+        {
+            var result = UniformResourceIdentifierReference.Parse(relativeUri) as RelativeReference;
+            if (result == null)
+                throw new InvalidOperationException($"URI is not a relative reference: {relativeUri}");
+            return result;
+        }
     }
 }

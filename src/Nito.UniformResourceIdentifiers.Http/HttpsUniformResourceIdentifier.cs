@@ -34,6 +34,11 @@ namespace Nito.UniformResourceIdentifiers
 
         private static readonly DelegateFactory<HttpsUniformResourceIdentifier> Factory = CreateFactory(() => new HttpsUniformResourceIdentifierBuilder(), x => x.Build());
 
+        static HttpsUniformResourceIdentifier()
+        {
+            Factories.RegisterSchemeFactory(HttpsScheme, Factory);
+        }
+
         /// <summary>
         /// Resolves a relative URI against this URI.
         /// </summary>
@@ -45,5 +50,17 @@ namespace Nito.UniformResourceIdentifiers
         /// </summary>
         /// <param name="referenceUri">The reference URI to resolve.</param>
         public UniformResourceIdentifier Resolve(UniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
+
+        /// <summary>
+        /// Parses an HTTPS URI.
+        /// </summary>
+        /// <param name="uri">The HTTPS URI to parse.</param>
+        public new static HttpsUniformResourceIdentifier Parse(string uri)
+        {
+            var result = UniformResourceIdentifierReference.Parse(uri) as HttpsUniformResourceIdentifier;
+            if (result == null)
+                throw new InvalidOperationException($"URI is not an HTTPS URI: {uri}");
+            return result;
+        }
     }
 }

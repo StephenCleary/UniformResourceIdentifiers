@@ -106,6 +106,18 @@ namespace Nito.UniformResourceIdentifiers
         /// </summary>
         public override Uri ToUri() => new Uri(Uri, UriKind.Absolute);
 
+        /// <summary>
+        /// Parses a URI.
+        /// </summary>
+        /// <param name="uri">The URI to parse.</param>
+        public new static UniformResourceIdentifier Parse(string uri)
+        {
+            var result = UniformResourceIdentifierReference.Parse(uri) as UniformResourceIdentifier;
+            if (result == null)
+                throw new InvalidOperationException($"URI reference is not a URI: {uri}");
+            return result;
+        }
+
         private sealed class GenericComparerProxy : ComparableBase<GenericComparerProxy>
         {
             private readonly UniformResourceIdentifier _uri;
