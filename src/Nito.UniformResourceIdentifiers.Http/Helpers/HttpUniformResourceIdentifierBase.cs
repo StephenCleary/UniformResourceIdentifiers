@@ -48,6 +48,9 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 yield return "";
         }
 
-        // TODO: Query kvp support. Override Query { get; } and pass null in the constructor.
+        /// <summary>
+        /// Parses the query of the URI as a series of name/value pairs, e.g., "q=test&amp;page=4". This can be <c>null</c> if there is no query, or an empty collection if the query is empty. Names can be empty but never <c>null</c>; values can be <c>null</c> (if there is no <c>=</c>) or empty.
+        /// </summary>
+        public virtual IEnumerable<KeyValuePair<string, string>> QueryValues => Query == null ? null : Util.FormUrlDecodeValues(Query);
     }
 }

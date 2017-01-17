@@ -127,7 +127,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         public virtual T WithPathSegments(params string[] segments) => WithPathSegments((IEnumerable<string>)segments);
 
         /// <summary>
-        /// Applies the query portion of the authority to this builder, overwriting any existing query.
+        /// Applies the query string to this builder, overwriting any existing query.
         /// </summary>
         /// <param name="query">The query.</param>
         public virtual T WithQuery(string query)
@@ -137,7 +137,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         }
 
         /// <summary>
-        /// Applies the fragment portion of the authority to this builder, overwriting any existing fragment.
+        /// Applies the fragment string to this builder, overwriting any existing fragment.
         /// </summary>
         /// <param name="fragment">The fragment.</param>
         public virtual T WithFragment(string fragment)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Nito.UniformResourceIdentifiers.Helpers
 {
@@ -20,7 +21,12 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             return (T)this;
         }
 
-        // TODO: Query kvp support.
+        /// <summary>
+        /// Applies the query string to this builder, overwriting any existing query.
+        /// </summary>
+        /// <param name="values">The query values to encode.</param>
+        public virtual T WithQueryValues(IEnumerable<KeyValuePair<string, string>> values) => WithQuery(Util.FormUrlEncode(values));
+
         // TODO: Fragment path segment support? Other query/fragment support?
     }
 }

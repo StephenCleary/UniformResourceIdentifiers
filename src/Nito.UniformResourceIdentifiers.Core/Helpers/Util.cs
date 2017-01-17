@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-// TODO: Refactor IPAddress support into a netstandard1.3 addon.
-
 namespace Nito.UniformResourceIdentifiers.Helpers
 {
     /// <summary>
@@ -246,14 +244,17 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// </summary>
         /// <param name="value">The value to encode.</param>
         /// <param name="isSafe">A function determining whether a character is safe (i.e., does not need encoding).</param>
-        public static string PercentEncode(string value, Func<byte, bool> isSafe)
+        /// <param name="safeTransform">A function used to transform safe characters during encoding.</param>
+        public static string PercentEncode(string value, Func<byte, bool> isSafe, Func<byte, char> safeTransform = null)
         {
+            if (safeTransform == null)
+                safeTransform = b => (char) b;
             var bytes = Utf8EncodingWithoutBom.GetBytes(value);
             var sb = new StringBuilder(bytes.Length);
             foreach (var ch in bytes)
             {
                 if (isSafe(ch))
-                    sb.Append((char) ch);
+                    sb.Append(safeTransform(ch));
                 else
                     sb.Append(PercentEncode(ch));
             }
@@ -265,8 +266,11 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// </summary>
         /// <param name="value">The value to decode.</param>
         /// <param name="isSafe">A function determining whether a character is safe (i.e., does not need encoding).</param>
-        public static string PercentDecode(string value, Func<byte, bool> isSafe)
+        /// <param name="transform">A function transforming a safe character. May be <c>null</c>.</param>
+        public static string PercentDecode(string value, Func<byte, bool> isSafe, Func<char, char> transform = null)
         {
+            if (transform == null)
+                transform = b => b;
             var sb = new StringBuilder(value.Length);
             for (var i = 0; i != value.Length; ++i)
             {
@@ -286,7 +290,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 }
                 else if (isSafe((byte) ch))
                 {
-                    sb.Append(ch);
+                    sb.Append(transform(ch));
                 }
                 else
                 {
@@ -459,6 +463,63 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             if (relativeReference != null)
                 return Resolve(baseUri, relativeReference, factory);
             return (UniformResourceIdentifier) referenceUri;
+        }
+
+        private static readonly Func<byte, bool> EncodeFormUrlIsSafe =
+            b => (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || (b >= '0' && b <= '9') || b == '*' || b == '-' || b == '.' || b == '_' || b == ' ';
+
+        private static readonly Func<byte, bool> DecodeFormUrlIsSafe =
+            b => (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || (b >= '0' && b <= '9') || b == '*' || b == '-' || b == '.' || b == '_' || b == '+';
+
+        /// <summary>
+        /// Encodes a string using <c>application/x-www-form-urlencoded</c> (https://www.w3.org/TR/html5/forms.html#application/x-www-form-urlencoded-encoding-algorithm). Always uses UTF-8 encoding.
+        /// </summary>
+        /// <param name="value">The string to encode.</param>
+        public static string FormUrlEncode(string value) => PercentEncode(value, EncodeFormUrlIsSafe, b => b == ' ' ? '+' : (char) b);
+
+        /// <summary>
+        /// Encodes a sequence of name/value pairs using <c>application/x-www-form-urlencoded</c>. Always uses UTF-8 encoding, and does not do any special handling for known names (e.g., <c>_charset_</c>).
+        /// </summary>
+        /// <param name="values">The values to encode.</param>
+        public static string FormUrlEncode(IEnumerable<KeyValuePair<string, string>> values)
+        {
+            return string.Join("&", values.Select(x => FormUrlEncode(x.Key) + "=" + FormUrlEncode(x.Value)));
+        }
+
+        /// <summary>
+        /// Decodes an individual <c>application/x-www-form-urlencoded</c> string. Always uses UTF-8 encoding.
+        /// </summary>
+        /// <param name="value">The string to decode.</param>
+        public static string FormUrlDecode(string value) => PercentDecode(value, DecodeFormUrlIsSafe, b => b == '+' ? ' ' : b);
+
+        /// <summary>
+        /// Decodes a sequence of name/value pairs using <c>application/x-www-form-urlencoded</c>. Always uses UTF-8 encoding.
+        /// </summary>
+        /// <param name="query">The query string to decode.</param>
+        public static IEnumerable<KeyValuePair<string, string>> FormUrlDecodeValues(string query)
+        {
+            var pairs = query.Split('&');
+            foreach (var pair in pairs)
+            {
+                if (pair == "")
+                {
+                    yield return new KeyValuePair<string, string>("", null);
+                    continue;
+                }
+                var parts = pair.Split('=');
+                if (parts.Length == 1)
+                {
+                    yield return new KeyValuePair<string, string>(FormUrlDecode(parts[0]), null);
+                }
+                else if (parts.Length == 2)
+                {
+                    yield return new KeyValuePair<string, string>(FormUrlDecode(parts[0]), FormUrlDecode(parts[1]));
+                }
+                else
+                {
+                    throw new InvalidOperationException($"More than one '=' in query expression {query}");
+                }
+            }
         }
     }
 }
