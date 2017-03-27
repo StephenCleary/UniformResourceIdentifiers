@@ -244,17 +244,14 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// </summary>
         /// <param name="value">The value to encode.</param>
         /// <param name="isSafe">A function determining whether a character is safe (i.e., does not need encoding).</param>
-        /// <param name="safeTransform">A function used to transform safe characters during encoding.</param>
-        public static string PercentEncode(string value, Func<byte, bool> isSafe, Func<byte, char> safeTransform = null)
+        public static string PercentEncode(string value, Func<byte, bool> isSafe)
         {
-            if (safeTransform == null)
-                safeTransform = b => (char) b;
             var bytes = Utf8EncodingWithoutBom.GetBytes(value);
             var sb = new StringBuilder(bytes.Length);
             foreach (var ch in bytes)
             {
                 if (isSafe(ch))
-                    sb.Append(safeTransform(ch));
+                    sb.Append((char)ch);
                 else
                     sb.Append(PercentEncode(ch));
             }
@@ -266,11 +263,8 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// </summary>
         /// <param name="value">The value to decode.</param>
         /// <param name="isSafe">A function determining whether a character is safe (i.e., does not need encoding).</param>
-        /// <param name="transform">A function transforming a safe character. May be <c>null</c>.</param>
-        public static string PercentDecode(string value, Func<byte, bool> isSafe, Func<char, char> transform = null)
+        public static string PercentDecode(string value, Func<byte, bool> isSafe)
         {
-            if (transform == null)
-                transform = b => b;
             var sb = new StringBuilder(value.Length);
             for (var i = 0; i != value.Length; ++i)
             {
@@ -290,7 +284,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 }
                 else if (isSafe((byte) ch))
                 {
-                    sb.Append(transform(ch));
+                    sb.Append(ch);
                 }
                 else
                 {
@@ -465,17 +459,14 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             return (UniformResourceIdentifier) referenceUri;
         }
 
-        private static readonly Func<byte, bool> EncodeFormUrlIsSafe =
+        private static readonly Func<byte, bool> FormUrlIsSafe =
             b => (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || (b >= '0' && b <= '9') || b == '*' || b == '-' || b == '.' || b == '_' || b == ' ';
-
-        private static readonly Func<byte, bool> DecodeFormUrlIsSafe =
-            b => (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || (b >= '0' && b <= '9') || b == '*' || b == '-' || b == '.' || b == '_' || b == '+';
 
         /// <summary>
         /// Encodes a string using <c>application/x-www-form-urlencoded</c> (https://www.w3.org/TR/html5/forms.html#application/x-www-form-urlencoded-encoding-algorithm). Always uses UTF-8 encoding.
         /// </summary>
         /// <param name="value">The string to encode.</param>
-        public static string FormUrlEncode(string value) => PercentEncode(value, EncodeFormUrlIsSafe, b => b == ' ' ? '+' : (char) b);
+        public static string FormUrlEncode(string value) => PercentEncode(value, FormUrlIsSafe).Replace(' ', '+');
 
         /// <summary>
         /// Encodes a sequence of name/value pairs using <c>application/x-www-form-urlencoded</c>. Always uses UTF-8 encoding, and does not do any special handling for known names (e.g., <c>_charset_</c>).
@@ -490,7 +481,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// Decodes an individual <c>application/x-www-form-urlencoded</c> string. Always uses UTF-8 encoding.
         /// </summary>
         /// <param name="value">The string to decode.</param>
-        public static string FormUrlDecode(string value) => PercentDecode(value, DecodeFormUrlIsSafe, b => b == '+' ? ' ' : b);
+        public static string FormUrlDecode(string value) => PercentDecode(value.Replace('+', ' '), FormUrlIsSafe);
 
         /// <summary>
         /// Decodes a sequence of name/value pairs using <c>application/x-www-form-urlencoded</c>. Always uses UTF-8 encoding.
