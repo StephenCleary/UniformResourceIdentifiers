@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Utilities and base types for URI builders and parsers.</Description>
+    <VersionPrefix>1.0.0-alpha-01</VersionPrefix>
+    <Authors>Stephen Cleary</Authors>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>portable</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Nito.UniformResourceIdentifiers.Core</AssemblyName>
+    <PackageId>Nito.UniformResourceIdentifiers.Core</PackageId>
+    <PackageTags>uri;url</PackageTags>
+    <PackageProjectUrl>https://github.com/StephenCleary/UniformResourceIdentifiers</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/StephenCleary/UniformResourceIdentifiers/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/StephenCleary/UniformResourceIdentifiers.git</RepositoryUrl>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nito.Comparers" Version="1.0.0-eta-01" />
+  </ItemGroup>
+
+</Project>
