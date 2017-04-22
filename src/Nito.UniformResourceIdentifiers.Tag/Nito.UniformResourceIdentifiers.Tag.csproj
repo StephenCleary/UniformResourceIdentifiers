@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <RootNamespace>Nito.UniformResourceIdentifiers</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nito.UniformResourceIdentifiers.Core\Nito.UniformResourceIdentifiers.Core.csproj" />
+  </ItemGroup>
+
+</Project>
