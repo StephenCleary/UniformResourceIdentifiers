@@ -1,26 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nito.UniformResourceIdentifiers.Core", "src\Nito.UniformResourceIdentifiers.Core\Nito.UniformResourceIdentifiers.Core.xproj", "{565AF216-1F96-45E8-A38C-E6ED35D73CA5}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{2415BEA5-CFA5-4F95-9A66-8498326A8E40}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1603D2BC-FE3D-4B18-B55A-1EC3A8AA895E}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nito.UniformResourceIdentifiers.Core.UnitTests", "test\Nito.UniformResourceIdentifiers.Core.UnitTests\Nito.UniformResourceIdentifiers.Core.UnitTests.xproj", "{F2BFB199-BBA8-4CD2-BCB0-9A138697563E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{63F24525-F514-4D6A-893C-2781D08C6143}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nito.UniformResourceIdentifiers.Http", "src\Nito.UniformResourceIdentifiers.Http\Nito.UniformResourceIdentifiers.Http.xproj", "{E26AA74C-0048-4B2C-96A9-BE0D91C48BEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nito.UniformResourceIdentifiers.Core", "src\Nito.UniformResourceIdentifiers.Core\Nito.UniformResourceIdentifiers.Core.csproj", "{565AF216-1F96-45E8-A38C-E6ED35D73CA5}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nito.UniformResourceIdentifiers.Http.UnitTests", "test\Nito.UniformResourceIdentifiers.Http.UnitTests\Nito.UniformResourceIdentifiers.Http.UnitTests.xproj", "{7DE1107C-4ED5-49B1-B505-3DC89D81547A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nito.UniformResourceIdentifiers.Core.UnitTests", "test\Nito.UniformResourceIdentifiers.Core.UnitTests\Nito.UniformResourceIdentifiers.Core.UnitTests.csproj", "{F2BFB199-BBA8-4CD2-BCB0-9A138697563E}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nito.UniformResourceIdentifiers.IPAddress", "src\Nito.UniformResourceIdentifiers.IPAddress\Nito.UniformResourceIdentifiers.IPAddress.xproj", "{30F08CC6-A2BE-4EE3-A562-BDBF1644A757}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nito.UniformResourceIdentifiers.Http", "src\Nito.UniformResourceIdentifiers.Http\Nito.UniformResourceIdentifiers.Http.csproj", "{E26AA74C-0048-4B2C-96A9-BE0D91C48BEA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nito.UniformResourceIdentifiers.Http.UnitTests", "test\Nito.UniformResourceIdentifiers.Http.UnitTests\Nito.UniformResourceIdentifiers.Http.UnitTests.csproj", "{7DE1107C-4ED5-49B1-B505-3DC89D81547A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nito.UniformResourceIdentifiers.IPAddress", "src\Nito.UniformResourceIdentifiers.IPAddress\Nito.UniformResourceIdentifiers.IPAddress.csproj", "{30F08CC6-A2BE-4EE3-A562-BDBF1644A757}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

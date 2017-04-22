@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Utilities for using URIs with IPAddress.</Description>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>alpha-01</VersionSuffix>
+    <Authors>Stephen Cleary</Authors>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Nito.UniformResourceIdentifiers.IPAddress</AssemblyName>
+    <PackageId>Nito.UniformResourceIdentifiers.IPAddress</PackageId>
+    <PackageTags>uri;url;ipaddress</PackageTags>
+    <PackageProjectUrl>https://github.com/StephenCleary/UniformResourceIdentifiers</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/StephenCleary/UniformResourceIdentifiers/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/StephenCleary/UniformResourceIdentifiers.git</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugSymbols>True</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nito.UniformResourceIdentifiers.Core\Nito.UniformResourceIdentifiers.Core.csproj" />
+  </ItemGroup>
+
+</Project>
