@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
-    <AssemblyName>Nito.UniformResourceIdentifiers.Core.UnitTests</AssemblyName>
-    <PackageId>Nito.UniformResourceIdentifiers.Core.UnitTests</PackageId>
+    <AssemblyName>Http.UnitTests</AssemblyName>
+    <PackageId>Nito.UniformResourceIdentifiers.Http.UnitTests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
   </PropertyGroup>
@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Nito.UniformResourceIdentifiers.Core\Nito.UniformResourceIdentifiers.Core.csproj" />
+    <ProjectReference Include="..\..\src\Nito.UniformResourceIdentifiers.Http\Nito.UniformResourceIdentifiers.Http.csproj" />
   </ItemGroup>
 
   <ItemGroup>
