@@ -8,7 +8,11 @@ branches:
   only:
     - master
 build_script:
-- ps: ./Build.ps1
+- ps: >-
+    ./Build.ps1
+
+    nuget pack nuspec/Nito.UniformResourceIdentifiers.nuspec
+
 test_script:
 - ps: ./Coverage.ps1
 artifacts:
