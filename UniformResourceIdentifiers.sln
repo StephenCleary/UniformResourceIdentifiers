@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		appveyor.yml = appveyor.yml
 		Build.ps1 = Build.ps1
 		Coverage.ps1 = Coverage.ps1
+		nuspec\Nito.UniformResourceIdentifiers.nuspec = nuspec\Nito.UniformResourceIdentifiers.nuspec
 		README.md = README.md
 		Version.ps1 = Version.ps1
 	EndProjectSection
