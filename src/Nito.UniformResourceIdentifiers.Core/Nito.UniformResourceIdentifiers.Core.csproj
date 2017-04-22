@@ -16,6 +16,7 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/StephenCleary/UniformResourceIdentifiers/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/StephenCleary/UniformResourceIdentifiers.git</RepositoryUrl>
+    <RootNamespace>Nito.UniformResourceIdentifiers</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
