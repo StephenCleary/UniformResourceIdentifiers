@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Nito.UniformResourceIdentifiers</id>
-    <version>1.0.0-alpha-01</version>
+    <version>1.0.0-pre-01</version>
     <authors>Stephen Cleary</authors>
     <owners>Stephen Cleary</owners>
     <licenseUrl>https://raw.githubusercontent.com/StephenCleary/UniformResourceIdentifiers/master/LICENSE</licenseUrl>
@@ -11,9 +11,9 @@
     <description>Standard-compliant URI encoders and parsers</description>
     <tags>uri url uriref http https</tags>
     <dependencies>
-      <dependency id="Nito.UniformResourceIdentifiers.Core" version="1.0.0-alpha-01" />
-      <dependency id="Nito.UniformResourceIdentifiers.Http" version="1.0.0-alpha-01" />
-      <dependency id="Nito.UniformResourceIdentifiers.IPAddress" version="1.0.0-alpha-01" />
+      <dependency id="Nito.UniformResourceIdentifiers.Core" version="1.0.0-pre-01" />
+      <dependency id="Nito.UniformResourceIdentifiers.Http" version="1.0.0-pre-01" />
+      <dependency id="Nito.UniformResourceIdentifiers.IPAddress" version="1.0.0-pre-01" />
     </dependencies>
   </metadata>
 </package>
