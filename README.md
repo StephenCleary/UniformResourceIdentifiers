@@ -2,6 +2,11 @@
 
 Because apparently this is hard, or something.
 
+[![AppVeyor](https://img.shields.io/appveyor/ci/StephenCleary/UniformResourceIdentifiers.svg?style=plastic)](https://ci.appveyor.com/project/StephenCleary/UniformResourceIdentifiers) [![Coveralls](https://img.shields.io/coveralls/StephenCleary/UniformResourceIdentifiers.svg?style=plastic)](https://coveralls.io/r/StephenCleary/UniformResourceIdentifiers)
+[![NuGet Pre Release](https://img.shields.io/nuget/vpre/Nito.UniformResourceIdentifiers.svg?style=plastic)](https://www.nuget.org/packages/Nito.UniformResourceIdentifiers/)
+
+[API Docs](http://dotnetapis.com/pkg/Nito.UniformResourceIdentifiers)
+
 # Standards
 
 These libraries provide standard-compliant URI encoders and parsers.
