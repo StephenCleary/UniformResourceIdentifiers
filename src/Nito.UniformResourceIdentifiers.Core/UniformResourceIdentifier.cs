@@ -64,7 +64,8 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="builderFactory">A factory for the builder.</param>
         /// <param name="build">Calls the <c>Build</c> method of the builder.</param>
         protected static DelegateFactory<TUri> CreateFactory<TBuilder, TUri>(Func<TBuilder> builderFactory, Func<TBuilder, TUri> build)
-            where TBuilder : UniformResourceIdentifierBuilderBase<TBuilder>
+            where TBuilder : IBuilderWithUserInfo<TBuilder>, IBuilderWithHost<TBuilder>, IBuilderWithPort<TBuilder>, IBuilderWithPath<TBuilder>,
+                IBuilderWithQuery<TBuilder>, IBuilderWithFragment<TBuilder>
         {
             return (userInfo, host, port, pathSegments, query, fragment) =>
                 build(builderFactory().WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegments).WithQuery(query).WithFragment(fragment));

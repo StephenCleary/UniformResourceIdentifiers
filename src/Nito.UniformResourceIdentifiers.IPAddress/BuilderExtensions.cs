@@ -11,7 +11,7 @@ namespace Nito.UniformResourceIdentifiers
     /// <summary>
     /// Provides utility methods for URIs to work with <see cref="IPAddress"/> instances.
     /// </summary>
-    public static class BuilderExtensions
+    public static class IpAddressBuilderExtensions
     {
         /// <summary>
         /// Applies the host portion of the authority to this builder, overwriting any existing host.
@@ -19,8 +19,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <typeparam name="T">The type of the builder.</typeparam>
         /// <param name="builder">The builder.</param>
         /// <param name="host">The host IP address.</param>
-        public static T WithHost<T>(this UniformResourceIdentifierBuilderBase<T> builder, IPAddress host)
-            where T : UniformResourceIdentifierBuilderBase<T>
+        public static T WithHost<T>(this IBuilderWithHost<T> builder, IPAddress host)
         {
             if (host.AddressFamily == AddressFamily.InterNetwork)
                 return builder.WithHost(host.ToString());

@@ -3,15 +3,132 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-// ReSharper disable VirtualMemberNeverOverridden.Global
-
 namespace Nito.UniformResourceIdentifiers.Helpers
 {
     /// <summary>
-    /// A builder base type for <see cref="UniformResourceIdentifierReference"/>-derived types.
+    /// A builder that allows specifying user info.
     /// </summary>
-    public abstract class UniformResourceIdentifierBuilderBase<T>
-        where T : UniformResourceIdentifierBuilderBase<T>
+    /// <typeparam name="T">The type of the builder.</typeparam>
+    public interface IBuilderWithUserInfo<out T>
+    {
+        /// <summary>
+        /// Applies the user information portion of the authority to this builder, overwriting any existing user information. Note that user information is deprecated for most schemes, since it is inherently insecure.
+        /// </summary>
+        /// <param name="userInfo">The user information. May be <c>null</c> or the empty string.</param>
+        T WithUserInfo(string userInfo);
+    }
+
+    /// <summary>
+    /// A builder that allows specifying a host.
+    /// </summary>
+    /// <typeparam name="T">The type of the builder.</typeparam>
+    public interface IBuilderWithHost<out T>
+    {
+        /// <summary>
+        /// Applies the host portion of the authority to this builder, overwriting any existing host.
+        /// </summary>
+        /// <param name="host">The host. May be <c>null</c> or the empty string.</param>
+        T WithHost(string host);
+    }
+
+    /// <summary>
+    /// A builder that allows specifying a port.
+    /// </summary>
+    /// <typeparam name="T">The type of the builder.</typeparam>
+    public interface IBuilderWithPort<out T>
+    {
+        /// <summary>
+        /// Applies the port portion of the authority to this builder, overwriting any existing port.
+        /// </summary>
+        /// <param name="port">The port. May be <c>null</c> or the empty string.</param>
+        T WithPort(string port);
+    }
+
+    /// <summary>
+    /// A builder that allows specifying path segments.
+    /// </summary>
+    /// <typeparam name="T">The type of the builder.</typeparam>
+    public interface IBuilderWithPath<out T>
+    {
+        /// <summary>
+        /// Applies the path to this builder, overwriting any existing path. This method does not automatically prefix a forward slash to the resulting path.
+        /// </summary>
+        /// <param name="pathSegments">The path segments.</param>
+        T WithPrefixlessPathSegments(IEnumerable<string> pathSegments);
+    }
+
+    /// <summary>
+    /// A builder that allows specifying a query string.
+    /// </summary>
+    /// <typeparam name="T">The type of the builder.</typeparam>
+    public interface IBuilderWithQuery<out T>
+    {
+        /// <summary>
+        /// Applies the query string to this builder, overwriting any existing query.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        T WithQuery(string query);
+    }
+
+    /// <summary>
+    /// A builder that allows specifying a fragment string.
+    /// </summary>
+    /// <typeparam name="T">The type of the builder.</typeparam>
+    public interface IBuilderWithFragment<out T>
+    {
+        /// <summary>
+        /// Applies the fragment string to this builder, overwriting any existing fragment.
+        /// </summary>
+        /// <param name="fragment">The fragment.</param>
+        T WithFragment(string fragment);
+    }
+
+    /// <summary>
+    /// Extension methods for builders.
+    /// </summary>
+    public static class BuilderExtensions
+    {
+        /// <summary>
+        /// Applies the port portion of the authority to this builder, overwriting any existing port.
+        /// </summary>
+        /// <param name="this">The builder.</param>
+        /// <param name="port">The port.</param>
+        public static T WithPort<T>(this IBuilderWithPort<T> @this, uint port) => @this.WithPort(port.ToString(CultureInfo.InvariantCulture));
+
+        /// <summary>
+        /// Applies the path to this builder, overwriting any existing path. This method does not automatically prefix a forward slash to the resulting path.
+        /// </summary>
+        /// <param name="this">The builder.</param>
+        /// <param name="segments">The path segments.</param>
+        public static T WithPrefixlessPathSegments<T>(this IBuilderWithPath<T> @this, params string[] segments) =>
+            @this.WithPrefixlessPathSegments(segments);
+
+        /// <summary>
+        /// Applies the path to this builder, overwriting any existing path. This method automatically prefixes a forward slash to the resulting path.
+        /// </summary>
+        /// <param name="this">The builder.</param>
+        /// <param name="segments">The path segments.</param>
+        public static T WithPathSegments<T>(this IBuilderWithPath<T> @this, IEnumerable<string> segments)
+        {
+            if (segments == null)
+                throw new ArgumentNullException(nameof(segments));
+            return @this.WithPrefixlessPathSegments(Enumerable.Repeat("", 1).Concat(segments));
+        }
+
+        /// <summary>
+        /// Applies the path to this builder, overwriting any existing path. This method automatically prefixes a forward slash to the resulting path.
+        /// </summary>
+        /// <param name="this">The builder.</param>
+        /// <param name="segments">The path segments.</param>
+        public static T WithPathSegments<T>(this IBuilderWithPath<T> @this, params string[] segments) => @this.WithPathSegments((IEnumerable<string>)segments);
+    }
+
+    /// <summary>
+    /// A builder base type for common <see cref="UniformResourceIdentifierReference"/>-derived types.
+    /// </summary>
+    public abstract class CommonUniformResourceIdentifierBuilderBase<T>: IBuilderWithUserInfo<T>, IBuilderWithHost<T>, IBuilderWithPort<T>,
+        IBuilderWithPath<T>, IBuilderWithQuery<T>, IBuilderWithFragment<T>
+        where T : CommonUniformResourceIdentifierBuilderBase<T>
     {
         /// <summary>
         /// The user information portion of the authority. For most schemes, this is a deprecated component. May be <c>null</c> or the empty string.

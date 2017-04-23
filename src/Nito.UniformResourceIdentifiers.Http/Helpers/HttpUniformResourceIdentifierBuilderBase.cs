@@ -6,7 +6,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
     /// <summary>
     /// A URI builder base type for HTTP and HTTPS URIs.
     /// </summary>
-    public abstract class HttpUniformResourceIdentifierBuilderBase<T> : UniformResourceIdentifierBuilderBase<T>
+    public abstract class HttpUniformResourceIdentifierBuilderBase<T> : CommonUniformResourceIdentifierBuilderBase<T>
         where T : HttpUniformResourceIdentifierBuilderBase<T>
     {
         /// <summary>

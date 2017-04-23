@@ -9,7 +9,7 @@ namespace Nito.UniformResourceIdentifiers
     /// <summary>
     /// Builder for relative references.
     /// </summary>
-    public sealed class RelativeReferenceBuilder : UniformResourceIdentifierBuilderBase<RelativeReferenceBuilder>
+    public sealed class RelativeReferenceBuilder : CommonUniformResourceIdentifierBuilderBase<RelativeReferenceBuilder>
     {
         /// <summary>
         /// Constructs an empty builder.

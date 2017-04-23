@@ -6,7 +6,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
     /// <summary>
     /// A URI builder for URIs with unknown schemes.
     /// </summary>
-    public sealed class UnknownUniformResourceIdentifierBuilder : UniformResourceIdentifierBuilderBase<UnknownUniformResourceIdentifierBuilder>
+    public sealed class UnknownUniformResourceIdentifierBuilder : CommonUniformResourceIdentifierBuilderBase<UnknownUniformResourceIdentifierBuilder>
     {
         /// <summary>
         /// Constructs an empty builder.
