@@ -52,7 +52,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 _factories.TryGetValue(scheme, out factory);
             }
             if (factory == null)
-                return new UnknownUniformResourceIdentifierBuilder().WithScheme(scheme).WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegments).WithQuery(query).WithFragment(fragment).Build();
+                return ((ICommonBuilder<UnknownUniformResourceIdentifierBuilder>) new UnknownUniformResourceIdentifierBuilder().WithScheme(scheme)).WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegments).WithQuery(query).WithFragment(fragment).Build();
             else
                 return factory(userInfo, host, port, pathSegments, query, fragment);
         }

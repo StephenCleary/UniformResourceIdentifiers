@@ -326,7 +326,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// </summary>
         /// <param name="builder">The builder to modify.</param>
         /// <param name="uri">The URI reference to deconstruct.</param>
-        private static string ApplyUriReference<T>(T builder, string uri)
+        public static string ApplyUriReference<T>(T builder, string uri)
             where T : ICommonBuilder<T>
         {
             Parser.ParseUriReference(uri, out string scheme, out string userInfo, out string host, out string port, out IReadOnlyList<string> pathSegements,
