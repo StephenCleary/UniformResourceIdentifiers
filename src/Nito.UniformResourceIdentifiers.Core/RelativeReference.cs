@@ -4,8 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Nito.UniformResourceIdentifiers.Components;
 using Nito.UniformResourceIdentifiers.Helpers;
-// ReSharper disable VirtualMemberNeverOverridden.Global
 
 namespace Nito.UniformResourceIdentifiers
 {
@@ -13,10 +13,15 @@ namespace Nito.UniformResourceIdentifiers
     /// An immutable relative reference.
     /// </summary>
     /// <remarks>
-    /// <para>The <see cref="UniformResourceIdentifierReference.Scheme"/> property is always <c>null</c>.</para>
+    /// <para>The <see cref="IUniformResourceIdentifierReference.Scheme"/> property is always <c>null</c>.</para>
     /// </remarks>
-    public sealed class RelativeReference : UniformResourceIdentifierReference
+    public sealed class RelativeReference : IUniformResourceIdentifierReference
     {
+        private readonly NormalizedHost _host;
+        private readonly NormalizedPort _port;
+        private readonly NormalizedPathSegments _pathSegments;
+        private readonly string _userInfo;
+
         /// <summary>
         /// Constructs a new relative reference.
         /// </summary>
@@ -27,8 +32,13 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="query">The query. This may be <c>null</c> to indicate no query, or the empty string to indicate an empty query.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
         public RelativeReference(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
-            : base(null, userInfo, host, port, NormalizePath(userInfo, host, port, pathSegments), query, fragment)
         {
+            _userInfo = userInfo;
+            _host = new NormalizedHost(host);
+            _port = new NormalizedPort(port);
+            _pathSegments = new NormalizedPathSegments(NormalizePath(userInfo, host, port, pathSegments), userInfo, host, port);
+            Query = query;
+            Fragment = fragment;
         }
 
         private static IEnumerable<string> NormalizePath(string userInfo, string host, string port, IEnumerable<string> pathSegments)
@@ -53,16 +63,70 @@ namespace Nito.UniformResourceIdentifiers
             }
         }
 
+        string IUniformResourceIdentifierReference.Scheme => null;
+
+        string IUniformResourceIdentifierReference.UserInfo => _userInfo;
+
+        /// <summary>
+        /// Gets the host portion of the authority of this URI, e.g., "www.example.com". This can be <c>null</c> if there is no host, or an empty string if the host is empty.
+        /// </summary>
+        public string Host => _host.Value;
+
+        /// <summary>
+        /// Gets the port portion of the authority of this URI, e.g., "8080". This can be <c>null</c> if there is no port, or an empty string if the port is empty. Any string returned from this property is a numeric string.
+        /// </summary>
+        public string Port => _port.Value;
+
+        /// <summary>
+        /// Returns <c>true</c> if the authority is defined. Note that it is possible (though unusual) for the authority to be defined as the empty string.
+        /// </summary>
+        public bool AuthorityIsDefined => _userInfo != null || Host != null || Port != null;
+
+        /// <summary>
+        /// Gets the path segments of the URI, e.g., { "", "folder", "subfolder", "file.jpg" }. This can never be <c>null</c>, but it can be empty. Note that for some schemes, it is common for the first path segment to be the empty string to generate an initial forward-slash.
+        /// </summary>
+        public IReadOnlyList<string> PathSegments => _pathSegments.Value;
+
+        /// <summary>
+        /// Returns <c>true</c> if the path is empty.
+        /// </summary>
+        public bool PathIsEmpty => Util.PathIsEmpty(PathSegments);
+
+        /// <summary>
+        /// Returns <c>true</c> if the path is absolute (i.e., starts with a forward-slash).
+        /// </summary>
+        public bool PathIsAbsolute => Util.PathIsAbsolute(PathSegments);
+
+        /// <summary>
+        /// Gets the query of the URI, e.g., "q=test&amp;page=4". This can be <c>null</c> if there is no query, or an empty string if the query is empty.
+        /// </summary>
+        public string Query { get; }
+
+        /// <summary>
+        /// Gets the fragment of the URI, e.g., "anchor-1". This can be <c>null</c> if there is no fragment, or an empty string if the fragment is empty.
+        /// </summary>
+        public string Fragment { get; }
+
+        /// <summary>
+        /// Gets the URI as a complete string, e.g., "http://username:password@www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
+        /// </summary>
+        public string Uri => Util.ToString(null, _userInfo, Host, Port, PathSegments, Query, Fragment);
+
+        /// <summary>
+        /// Gets the URI as a complete string without the deprecated <see cref="IUniformResourceIdentifierReference.UserInfo"/> portion, e.g., "http://www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
+        /// </summary>
+        public override string ToString() => Util.ToString(null, null, Host, Port, PathSegments, Query, Fragment);
+
         /// <summary>
         /// Converts to a relative <see cref="Uri"/>.
         /// </summary>
-        public override Uri ToUri() => new Uri(Uri, UriKind.Relative);
+        public Uri ToUri() => new Uri(Uri, UriKind.Relative);
 
         /// <summary>
         /// Parses a relative URI.
         /// </summary>
         /// <param name="relativeUri">The relative URI to parse.</param>
-        public new static RelativeReference Parse(string relativeUri)
+        public static RelativeReference Parse(string relativeUri)
         {
             return new RelativeReferenceBuilder(relativeUri).Build();
         }

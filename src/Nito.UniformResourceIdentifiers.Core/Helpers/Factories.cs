@@ -11,7 +11,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
     /// </summary>
     public static class Factories
     {
-        private delegate UniformResourceIdentifierReference FactoryDelegate(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment);
+        private delegate IUniformResourceIdentifierReference FactoryDelegate(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment);
         private static readonly Dictionary<string, FactoryDelegate> _factories = new Dictionary<string, FactoryDelegate>();
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="pathSegments">The path segments.</param>
         /// <param name="query">The query string.</param>
         /// <param name="fragment">The fragment string.</param>
-        public static UniformResourceIdentifierReference Create(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
+        public static IUniformResourceIdentifierReference Create(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
         {
             if (scheme == null)
                 return new RelativeReference(userInfo, host, port, pathSegments, query, fragment);

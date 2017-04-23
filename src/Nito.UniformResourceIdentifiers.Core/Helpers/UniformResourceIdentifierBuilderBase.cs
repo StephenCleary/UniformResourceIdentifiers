@@ -150,7 +150,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// Deconstructs a URI reference into this builder.
         /// </summary>
         /// <param name="uri">The URI reference to deconstruct.</param>
-        protected virtual void ApplyUriReference(UniformResourceIdentifierReference uri)
+        protected virtual void ApplyUriReference(IUniformResourceIdentifierReference uri)
         {
             WithUserInfo(uri.UserInfo).WithHost(uri.Host).WithPort(uri.Port).WithPrefixlessPathSegments(uri.PathSegments).WithQuery(uri.Query).WithFragment(uri.Fragment);
         }

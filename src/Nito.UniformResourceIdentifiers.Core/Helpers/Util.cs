@@ -406,7 +406,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             IEnumerable<string> pathSegments;
             if (relativeUri.AuthorityIsDefined)
             {
-                userInfo = relativeUri.UserInfo;
+                userInfo = ((IUniformResourceIdentifierReference) relativeUri).UserInfo;
                 host = relativeUri.Host;
                 port = relativeUri.Port;
                 pathSegments = relativeUri.PathSegments;
@@ -449,7 +449,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="baseUri">The base URI.</param>
         /// <param name="referenceUri">The reference URI.</param>
         /// <param name="factory">The factory method used to create a new URI.</param>
-        public static UniformResourceIdentifier Resolve<T>(T baseUri, UniformResourceIdentifierReference referenceUri, DelegateFactory<T> factory)
+        public static UniformResourceIdentifier Resolve<T>(T baseUri, IUniformResourceIdentifierReference referenceUri, DelegateFactory<T> factory)
             where T : UniformResourceIdentifier
         {
             // See 5.2.2, except we always do strict resolution.
@@ -511,6 +511,53 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                     throw new InvalidOperationException($"More than one '=' in query expression {query}");
                 }
             }
+        }
+
+        /// <summary>
+        /// Formats the URI components as a complete string. Components are assumed to be already validated.
+        /// </summary>
+        /// <param name="scheme">May be <c>null</c>.</param>
+        /// <param name="userInfo">May be <c>null</c>.</param>
+        /// <param name="host">May be <c>null</c>.</param>
+        /// <param name="port">May be <c>null</c>.</param>
+        /// <param name="pathSegments">May not be <c>null</c>.</param>
+        /// <param name="query">May be <c>null</c>.</param>
+        /// <param name="fragment">May be <c>null</c>.</param>
+        public static string ToString(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
+        {
+            // See 5.3, except Authority is split up into (UserInfo, Host, Port).
+            var sb = new StringBuilder();
+            if (scheme != null)
+            {
+                sb.Append(scheme);
+                sb.Append(':');
+            }
+            if (userInfo != null || host != null || port != null)
+                sb.Append("//");
+            if (userInfo != null)
+            {
+                sb.Append(Util.PercentEncode(userInfo, Util.UserInfoCharIsSafe));
+                sb.Append('@');
+            }
+            if (host != null)
+                sb.Append(Util.HostIsIpAddress(host) ? host : Util.PercentEncode(host, Util.HostRegNameCharIsSafe));
+            if (port != null)
+            {
+                sb.Append(':');
+                sb.Append(port);
+            }
+            sb.Append(string.Join("/", pathSegments.Select(x => Util.PercentEncode(x, Util.PathSegmentCharIsSafe))));
+            if (query != null)
+            {
+                sb.Append('?');
+                sb.Append(Util.PercentEncode(query, Util.QueryCharIsSafe));
+            }
+            if (fragment != null)
+            {
+                sb.Append('#');
+                sb.Append(Util.PercentEncode(fragment, Util.FragmentCharIsSafe));
+            }
+            return sb.ToString();
         }
     }
 }

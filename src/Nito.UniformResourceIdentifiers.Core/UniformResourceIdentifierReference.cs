@@ -11,7 +11,7 @@ namespace Nito.UniformResourceIdentifiers
     /// <summary>
     /// An immutable URI reference (either a URI or a relative reference). If the URI reference is not a relative reference, then it is also normalized as much as possible.
     /// </summary>
-    public abstract class UniformResourceIdentifierReference
+    public abstract class UniformResourceIdentifierReference : IUniformResourceIdentifierReference
     {
         /// <summary>
         /// Constructs a new URI reference. This constructor may only be called by derived type constructors!
@@ -167,7 +167,7 @@ namespace Nito.UniformResourceIdentifiers
         /// Parses a URI reference. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="uriReference">The URI reference to parse.</param>
-        public static UniformResourceIdentifierReference Parse(string uriReference)
+        public static IUniformResourceIdentifierReference Parse(string uriReference)
         {
             string scheme, userInfo, host, port, query, fragment;
             IReadOnlyList<string> pathSegments;
