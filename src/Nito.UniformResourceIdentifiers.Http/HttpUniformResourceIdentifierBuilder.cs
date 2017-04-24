@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Nito.UniformResourceIdentifiers.BuilderComponents;
+using Nito.UniformResourceIdentifiers.Builder;
+using Nito.UniformResourceIdentifiers.Builder.Components;
 using Nito.UniformResourceIdentifiers.Helpers;
 
 namespace Nito.UniformResourceIdentifiers
@@ -26,7 +27,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public HttpUniformResourceIdentifierBuilder(HttpUniformResourceIdentifier uri)
         {
-            BuilderUtils.ApplyUriReference(this, uri);
+            BuilderUtil.ApplyUriReference(this, uri);
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public HttpUniformResourceIdentifierBuilder(string uri)
         {
-            BuilderUtils.ApplyUriReference(this, uri, HttpUniformResourceIdentifier.HttpScheme);
+            BuilderUtil.ApplyUriReference(this, uri, HttpUniformResourceIdentifier.HttpScheme);
         }
 
         HttpUniformResourceIdentifierBuilder IBuilderWithUserInfo<HttpUniformResourceIdentifierBuilder>.WithUserInfo(string userInfo)

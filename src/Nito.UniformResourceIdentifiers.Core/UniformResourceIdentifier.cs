@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Nito.Comparers;
 using Nito.Comparers.Util;
+using Nito.UniformResourceIdentifiers.Builder;
 using Nito.UniformResourceIdentifiers.Helpers;
 using static Nito.UniformResourceIdentifiers.Helpers.Util;
 // ReSharper disable VirtualMemberNeverOverridden.Global

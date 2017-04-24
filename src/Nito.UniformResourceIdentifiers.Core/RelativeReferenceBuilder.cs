@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Nito.UniformResourceIdentifiers.BuilderComponents;
+using Nito.UniformResourceIdentifiers.Builder;
+using Nito.UniformResourceIdentifiers.Builder.Components;
 using Nito.UniformResourceIdentifiers.Helpers;
 
 namespace Nito.UniformResourceIdentifiers
@@ -26,7 +27,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="relativeReference">The relative reference used to set the builder's initial values.</param>
         public RelativeReferenceBuilder(RelativeReference relativeReference)
         {
-            BuilderUtils.ApplyUriReference(this, relativeReference);
+            BuilderUtil.ApplyUriReference(this, relativeReference);
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="relativeReference">The relative reference used to set the builder's initial values.</param>
         public RelativeReferenceBuilder(string relativeReference)
         {
-            BuilderUtils.ApplyUriReference(this, relativeReference, null);
+            BuilderUtil.ApplyUriReference(this, relativeReference, null);
         }
 
         /// <summary>

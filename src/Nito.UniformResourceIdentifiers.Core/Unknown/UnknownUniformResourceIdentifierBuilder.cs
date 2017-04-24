@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Nito.UniformResourceIdentifiers.BuilderComponents;
+using Nito.UniformResourceIdentifiers.Builder;
+using Nito.UniformResourceIdentifiers.Builder.Components;
 using Nito.UniformResourceIdentifiers.Helpers;
 
 namespace Nito.UniformResourceIdentifiers.Unknown
@@ -24,7 +25,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public UnknownUniformResourceIdentifierBuilder(UnknownUniformResourceIdentifier uri)
         {
-            BuilderUtils.ApplyUriReference(this, uri);
+            BuilderUtil.ApplyUriReference(this, uri);
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public UnknownUniformResourceIdentifierBuilder(string uri)
         {
-            WithScheme(BuilderUtils.ApplyUriReference(this, uri));
+            WithScheme(BuilderUtil.ApplyUriReference(this, uri));
         }
 
         /// <summary>

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Nito.UniformResourceIdentifiers.BuilderComponents
+namespace Nito.UniformResourceIdentifiers.Builder.Components
 {
     /// <summary>
     /// Holds the path segments for a builder.
