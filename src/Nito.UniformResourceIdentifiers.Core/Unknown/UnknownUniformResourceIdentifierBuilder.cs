@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nito.UniformResourceIdentifiers.BuilderComponents;
 using Nito.UniformResourceIdentifiers.Helpers;
 
 namespace Nito.UniformResourceIdentifiers.Unknown
@@ -10,7 +11,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
     public sealed class UnknownUniformResourceIdentifierBuilder : ICommonBuilder<UnknownUniformResourceIdentifierBuilder>
     {
         private string _scheme, _userInfo, _host, _port, _query, _fragment;
-        private readonly List<string> _pathSegments = new List<string>();
+        private readonly PathSegments _pathSegments = new PathSegments();
 
         /// <summary>
         /// Constructs an empty builder.
@@ -48,7 +49,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// <summary>
         /// Builds the unknown URI instance.
         /// </summary>
-        public UnknownUniformResourceIdentifier Build() => new UnknownUniformResourceIdentifier(_scheme, _userInfo, _host, _port, _pathSegments, _query, _fragment);
+        public UnknownUniformResourceIdentifier Build() => new UnknownUniformResourceIdentifier(_scheme, _userInfo, _host, _port, _pathSegments.Value, _query, _fragment);
 
         UnknownUniformResourceIdentifierBuilder IBuilderWithUserInfo<UnknownUniformResourceIdentifierBuilder>.WithUserInfo(string userInfo)
         {
@@ -82,10 +83,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// <param name="pathSegments">The path segments.</param>
         public UnknownUniformResourceIdentifierBuilder WithPrefixlessPathSegments(IEnumerable<string> pathSegments)
         {
-            if (pathSegments == null)
-                throw new ArgumentNullException(nameof(pathSegments));
-            _pathSegments.Clear();
-            _pathSegments.AddRange(pathSegments);
+            _pathSegments.Set(pathSegments);
             return this;
         }
 
