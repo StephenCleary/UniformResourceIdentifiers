@@ -9,7 +9,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
     /// </summary>
     public sealed class UnknownUniformResourceIdentifier : UniformResourceIdentifier
     {
-        private readonly Util.DelegateFactory<UnknownUniformResourceIdentifier> Factory;
+        private readonly Util.DelegateFactory<UnknownUniformResourceIdentifier> _factory;
 
         /// <summary>
         /// Constructs a new URI instance.
@@ -24,20 +24,20 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         public UnknownUniformResourceIdentifier(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
             : base(scheme, userInfo, host, port, pathSegments, query, fragment)
         {
-            Factory = CreateFactory(() => new UnknownUniformResourceIdentifierBuilder().WithScheme(Scheme), x => x.Build());
+            _factory = CreateFactory(() => new UnknownUniformResourceIdentifierBuilder().WithScheme(Scheme), x => x.Build());
         }
 
         /// <summary>
         /// Resolves a relative URI against this URI.
         /// </summary>
         /// <param name="relativeUri">The relative URI to resolve.</param>
-        public new UnknownUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
+        public new UnknownUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, _factory);
 
         /// <summary>
         /// Resolves a reference URI against this URI.
         /// </summary>
         /// <param name="referenceUri">The reference URI to resolve.</param>
-        public override UniformResourceIdentifier Resolve(UniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
+        public override UniformResourceIdentifier Resolve(UniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, _factory);
 
         /// <summary>
         /// Parses a URI.
