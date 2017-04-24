@@ -7,24 +7,6 @@ using Nito.UniformResourceIdentifiers.Helpers;
 namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
-    /// Provides utility methods for working with <see cref="IUniformResourceIdentifierReference"/> instances.
-    /// </summary>
-    public static class UniformResourceIdentifierReferenceEx
-    {
-        /// <summary>
-        /// Parses a URI reference. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
-        /// </summary>
-        /// <param name="uriReference">The URI reference to parse.</param>
-        public static IUniformResourceIdentifierReference Parse(string uriReference)
-        {
-            string scheme, userInfo, host, port, query, fragment;
-            IReadOnlyList<string> pathSegments;
-            Parser.ParseUriReference(uriReference, out scheme, out userInfo, out host, out port, out pathSegments, out query, out fragment);
-            return Factories.Create(scheme, userInfo, host, port, pathSegments, query, fragment);
-        }
-    }
-
-    /// <summary>
     /// An immutable URI reference (either a URI or a relative reference). If the URI reference is not a relative reference, then it is also normalized as much as possible.
     /// </summary>
     public interface IUniformResourceIdentifierReference
