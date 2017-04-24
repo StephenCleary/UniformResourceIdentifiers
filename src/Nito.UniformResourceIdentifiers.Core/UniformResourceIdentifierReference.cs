@@ -17,9 +17,8 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uriReference">The URI reference to parse.</param>
         public static IUniformResourceIdentifierReference Parse(string uriReference)
         {
-            string scheme, userInfo, host, port, query, fragment;
-            IReadOnlyList<string> pathSegments;
-            Parser.ParseUriReference(uriReference, out scheme, out userInfo, out host, out port, out pathSegments, out query, out fragment);
+            Parser.ParseUriReference(uriReference, out string scheme, out string userInfo, out string host, out string port,
+                out IReadOnlyList<string> pathSegments, out string query, out string fragment);
             return Factories.Create(scheme, userInfo, host, port, pathSegments, query, fragment);
         }
     }
