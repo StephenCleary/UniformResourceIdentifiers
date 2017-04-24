@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Nito.UniformResourceIdentifiers.BuilderComponents;
 using Nito.UniformResourceIdentifiers.Helpers;
 
 namespace Nito.UniformResourceIdentifiers
@@ -9,8 +10,11 @@ namespace Nito.UniformResourceIdentifiers
     /// <summary>
     /// A URI builder for HTTP URIs.
     /// </summary>
-    public sealed class HttpUniformResourceIdentifierBuilder : HttpUniformResourceIdentifierBuilderBase<HttpUniformResourceIdentifierBuilder>
+    public sealed class HttpUniformResourceIdentifierBuilder : ICommonBuilder<HttpUniformResourceIdentifierBuilder>
     {
+        private string _host, _port, _query, _fragment;
+        private readonly PathSegments _pathSegments = new PathSegments();
+
         /// <summary>
         /// Constructs an empty builder.
         /// </summary>
@@ -22,7 +26,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public HttpUniformResourceIdentifierBuilder(HttpUniformResourceIdentifier uri)
         {
-            ApplyUriReference(uri);
+            BuilderUtils.ApplyUriReference(this, uri);
         }
 
         /// <summary>
@@ -31,12 +35,54 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public HttpUniformResourceIdentifierBuilder(string uri)
         {
-            ApplyUriReference(uri, HttpUniformResourceIdentifier.HttpScheme);
+            BuilderUtils.ApplyUriReference(this, uri, HttpUniformResourceIdentifier.HttpScheme);
+        }
+
+        HttpUniformResourceIdentifierBuilder IBuilderWithUserInfo<HttpUniformResourceIdentifierBuilder>.WithUserInfo(string userInfo)
+        {
+            if (userInfo != null)
+                throw new InvalidOperationException("HTTP/HTTPS URIs can no longer have UserInfo portions, as of RFC7230.");
+            return this;
+        }
+
+        /// <inheritdoc />
+        public HttpUniformResourceIdentifierBuilder WithHost(string host)
+        {
+            _host = host;
+            return this;
+        }
+
+        /// <inheritdoc />
+        public HttpUniformResourceIdentifierBuilder WithPort(string port)
+        {
+            _port = port;
+            return this;
+        }
+
+        /// <inheritdoc />
+        public HttpUniformResourceIdentifierBuilder WithPrefixlessPathSegments(IEnumerable<string> pathSegments)
+        {
+            _pathSegments.Set(pathSegments);
+            return this;
+        }
+
+        /// <inheritdoc />
+        public HttpUniformResourceIdentifierBuilder WithQuery(string query)
+        {
+            _query = query;
+            return this;
+        }
+
+        /// <inheritdoc />
+        public HttpUniformResourceIdentifierBuilder WithFragment(string fragment)
+        {
+            _fragment = fragment;
+            return this;
         }
 
         /// <summary>
         /// Builds the HTTP URI instance.
         /// </summary>
-        public HttpUniformResourceIdentifier Build() => new HttpUniformResourceIdentifier(Host, Port, PathSegments, Query, Fragment);
+        public HttpUniformResourceIdentifier Build() => new HttpUniformResourceIdentifier(_host, _port, _pathSegments.Value, _query, _fragment);
     }
 }
