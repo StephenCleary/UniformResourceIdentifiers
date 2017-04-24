@@ -37,7 +37,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// Resolves a reference URI against this URI.
         /// </summary>
         /// <param name="referenceUri">The reference URI to resolve.</param>
-        public override UniformResourceIdentifier Resolve(UniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, _factory);
+        public override UniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, _factory);
 
         /// <summary>
         /// Parses a URI.

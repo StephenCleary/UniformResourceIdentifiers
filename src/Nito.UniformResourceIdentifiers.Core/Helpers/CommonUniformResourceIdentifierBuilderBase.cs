@@ -132,7 +132,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
     }
 
     /// <summary>
-    /// A builder base type for common <see cref="UniformResourceIdentifierReference"/>-derived types.
+    /// A builder base type for common <see cref="IUniformResourceIdentifierReference"/>-derived types.
     /// </summary>
     public abstract class CommonUniformResourceIdentifierBuilderBase<T>: ICommonBuilder<T>
         where T : CommonUniformResourceIdentifierBuilderBase<T>

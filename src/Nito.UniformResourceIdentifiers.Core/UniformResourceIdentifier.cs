@@ -12,7 +12,7 @@ namespace Nito.UniformResourceIdentifiers
     /// An immutable, normalized URI.
     /// </summary>
     /// <remarks>
-    /// <para>The <see cref="UniformResourceIdentifierReference.Scheme"/> property is always valid and never <c>null</c>.</para>
+    /// <para>The <see cref="IUniformResourceIdentifierReference.Scheme"/> property is always valid and never <c>null</c>.</para>
     /// </remarks>
     public abstract class UniformResourceIdentifier : UniformResourceIdentifierReference, IEquatable<UniformResourceIdentifier>, IComparable, IComparable<UniformResourceIdentifier>
     {
@@ -44,7 +44,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
         /// <remarks>
         /// <para>All URIs are normalized. If your scheme has scheme-specific normalization rules (see 6.2.3), they should be applied at the end of your constructor.</para>
-        /// <para>Since <see cref="UniformResourceIdentifierReference.Scheme"/> and <see cref="UniformResourceIdentifierReference.Host"/> are always stored lowercased, and all fields are stored in their decoded form, all URI instances are case normalized (see 6.2.2.1).</para>
+        /// <para>Since <see cref="IUniformResourceIdentifierReference.Scheme"/> and <see cref="IUniformResourceIdentifierReference.Host"/> are always stored lowercased, and all fields are stored in their decoded form, all URI instances are case normalized (see 6.2.2.1).</para>
         /// <para>Since unreserved characters are percent-unencoded during parsing, all URI instances are also percent-encoding normalized (see 6.2.2.2).</para>
         /// <para>Since path segments are normalized when creating URIs, all URI instances are also path segment normalized (see 6.2.2.3).</para>
         /// </remarks>
@@ -76,7 +76,7 @@ namespace Nito.UniformResourceIdentifiers
         protected virtual object SchemeSpecificComparerProxy { get; }
 
         /// <summary>
-        /// A numeric string comparer, capable of comparing numeric strings of any length. This comparer assumes its operands only consist of the digits 0-9 and have leading zeroes removed (this is true of the <see cref="UniformResourceIdentifierReference.Port"/> values.
+        /// A numeric string comparer, capable of comparing numeric strings of any length. This comparer assumes its operands only consist of the digits 0-9 and have leading zeroes removed (this is true of the <see cref="IUniformResourceIdentifierReference.Port"/> values.
         /// </summary>
         protected static IFullComparer<string> NumericStringComparer { get; } = ComparerBuilder.For<string>()
             .OrderBy(x => x.Length)
@@ -122,7 +122,7 @@ namespace Nito.UniformResourceIdentifiers
         /// Resolves a reference URI against this URI. If this base URI's scheme is not registered and <paramref name="referenceUri"/> is a <see cref="RelativeReference"/>, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="referenceUri">The reference URI to resolve.</param>
-        public virtual UniformResourceIdentifier Resolve(UniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri,
+        public virtual UniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri,
             (info, host, port, segments, query, fragment) => (UniformResourceIdentifier)Factories.Create(Scheme, info, host, port, segments, query, fragment));
 
         /// <summary>
