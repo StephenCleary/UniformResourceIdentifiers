@@ -22,7 +22,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="scheme">The scheme. This must be a valid scheme, as defined by <see cref="Util.IsValidScheme"/>.</param>
         /// <param name="factory">The factory method for URIs following this scheme. This method must perform any scheme-specific validation.</param>
         public static void RegisterSchemeFactory<T>(string scheme, Util.DelegateFactory<T> factory)
-            where T : UniformResourceIdentifier
+            where T : IUniformResourceIdentifier
         {
             if (scheme == null || !Util.IsValidScheme(scheme))
                 throw new ArgumentException("Invalid scheme " + scheme, nameof(scheme));

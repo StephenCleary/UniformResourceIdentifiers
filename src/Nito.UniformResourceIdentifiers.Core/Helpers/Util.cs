@@ -399,7 +399,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="relativeUri">The relative URI.</param>
         /// <param name="factory">The factory method used to create a new URI.</param>
         public static T Resolve<T>(T baseUri, RelativeReference relativeUri, DelegateFactory<T> factory)
-            where T : UniformResourceIdentifier
+            where T : IUniformResourceIdentifier
         {
             // See 5.2.2, except that referenceUri will always have a null Scheme.
             string userInfo, host, port, query;
@@ -449,14 +449,14 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="baseUri">The base URI.</param>
         /// <param name="referenceUri">The reference URI.</param>
         /// <param name="factory">The factory method used to create a new URI.</param>
-        public static UniformResourceIdentifier Resolve<T>(T baseUri, IUniformResourceIdentifierReference referenceUri, DelegateFactory<T> factory)
-            where T : UniformResourceIdentifier
+        public static IUniformResourceIdentifier Resolve<T>(T baseUri, IUniformResourceIdentifierReference referenceUri, DelegateFactory<T> factory)
+            where T : IUniformResourceIdentifier
         {
             // See 5.2.2, except we always do strict resolution.
             var relativeReference = referenceUri as RelativeReference;
             if (relativeReference != null)
                 return Resolve(baseUri, relativeReference, factory);
-            return (UniformResourceIdentifier) referenceUri;
+            return (IUniformResourceIdentifier) referenceUri;
         }
 
         private static readonly Func<byte, bool> FormUrlIsSafe =

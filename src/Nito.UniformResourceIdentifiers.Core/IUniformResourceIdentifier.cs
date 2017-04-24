@@ -9,6 +9,5 @@ namespace Nito.UniformResourceIdentifiers
     /// </summary>
     public interface IUniformResourceIdentifier : IUniformResourceIdentifierReference
     {
-
     }
 }

@@ -6,7 +6,6 @@ using Nito.Comparers.Util;
 using Nito.UniformResourceIdentifiers.Builder;
 using Nito.UniformResourceIdentifiers.Helpers;
 using static Nito.UniformResourceIdentifiers.Helpers.Util;
-// ReSharper disable VirtualMemberNeverOverridden.Global
 
 namespace Nito.UniformResourceIdentifiers
 {
@@ -219,8 +218,8 @@ namespace Nito.UniformResourceIdentifiers
         /// Resolves a reference URI against this URI. If this base URI's scheme is not registered and <paramref name="referenceUri"/> is a <see cref="RelativeReference"/>, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="referenceUri">The reference URI to resolve.</param>
-        public virtual UniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri,
-            (info, host, port, segments, query, fragment) => (UniformResourceIdentifier)Factories.Create(Scheme, info, host, port, segments, query, fragment));
+        public virtual IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri,
+            (info, host, port, segments, query, fragment) => (IUniformResourceIdentifier)Factories.Create(Scheme, info, host, port, segments, query, fragment));
 
         /// <summary>
         /// Parses a URI. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
