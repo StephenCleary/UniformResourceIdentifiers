@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nito.Comparers;
 using Nito.Comparers.Util;
 using Nito.UniformResourceIdentifiers.Helpers;
@@ -14,7 +15,7 @@ namespace Nito.UniformResourceIdentifiers
     /// <remarks>
     /// <para>The <see cref="IUniformResourceIdentifierReference.Scheme"/> property is always valid and never <c>null</c>.</para>
     /// </remarks>
-    public abstract class UniformResourceIdentifier : UniformResourceIdentifierReference, IEquatable<UniformResourceIdentifier>, IComparable, IComparable<UniformResourceIdentifier>
+    public abstract class UniformResourceIdentifier : IUniformResourceIdentifier, IEquatable<UniformResourceIdentifier>, IComparable, IComparable<UniformResourceIdentifier>
     {
         /// <summary>
         /// Gets the default comparer for this type.
@@ -49,11 +50,45 @@ namespace Nito.UniformResourceIdentifiers
         /// <para>Since path segments are normalized when creating URIs, all URI instances are also path segment normalized (see 6.2.2.3).</para>
         /// </remarks>
         protected UniformResourceIdentifier(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
-            : base(scheme, userInfo, host, port, RemoveDotSegments(pathSegments), query, fragment)
         {
             if (scheme == null)
                 throw new ArgumentNullException(nameof(scheme));
+            if (pathSegments == null)
+                throw new ArgumentNullException(nameof(pathSegments));
+            if (!IsValidScheme(scheme))
+                throw new ArgumentException("Invalid scheme " + scheme, nameof(scheme));
+            if (port != null && !IsValidPort(port))
+                throw new ArgumentException("Invalid port " + port, nameof(port));
+            var segments = pathSegments.ToList();
+            if (segments.Any(x => x == null))
+                throw new ArgumentException("Path contains null segments", nameof(pathSegments));
+            if (userInfo != null || host != null || port != null)
+            {
+                if (!string.IsNullOrEmpty(segments.FirstOrDefault()))
+                    throw new ArgumentException("URI with authority must have an absolute path", nameof(pathSegments));
+            }
+
+            Scheme = scheme?.ToLowerInvariant();
+            UserInfo = userInfo;
+            Host = host?.ToLowerInvariant();
+            Port = NormalizePort(port);
+            PathSegments = segments;
+            Query = query;
+            Fragment = fragment;
+
             SchemeSpecificComparerProxy = new GenericComparerProxy(this);
+        }
+
+        /// <summary>
+        /// Removes leading zeroes from the port string, but leaves one if the port is 0.
+        /// </summary>
+        /// <param name="port">The port string.</param>
+        private static string NormalizePort(string port)
+        {
+            if (string.IsNullOrEmpty(port))
+                return port;
+            var result = port.TrimStart('0');
+            return result == "" ? "0" : result;
         }
 
         /// <summary>
@@ -93,6 +128,66 @@ namespace Nito.UniformResourceIdentifiers
             .ThenBy(x => x.Query, StringComparer.Ordinal)
             .ThenBy(x => x.Fragment, StringComparer.Ordinal);
 
+        /// <summary>
+        /// Gets the scheme of this URI, e.g., "http". This can be <c>null</c> if there is no scheme. If not <c>null</c>, then this is always a valid scheme; it can never be the empty string.
+        /// </summary>
+        public virtual string Scheme { get; }
+
+        /// <summary>
+        /// Gets the user info portion of the authority of this URI, e.g., "username:password". This can be <c>null</c> if there is no user info, or an empty string if the user info is empty.
+        /// </summary>
+        public virtual string UserInfo { get; }
+
+        /// <summary>
+        /// Gets the host portion of the authority of this URI, e.g., "www.example.com". This can be <c>null</c> if there is no host, or an empty string if the host is empty.
+        /// </summary>
+        public virtual string Host { get; }
+
+        /// <summary>
+        /// Gets the port portion of the authority of this URI, e.g., "8080". This can be <c>null</c> if there is no port, or an empty string if the port is empty. Any string returned from this property is a numeric string.
+        /// </summary>
+        public virtual string Port { get; }
+
+        /// <summary>
+        /// Returns <c>true</c> if the authority is defined. Note that it is possible (though unusual) for the authority to be defined as the empty string.
+        /// </summary>
+        public bool AuthorityIsDefined => UserInfo != null || Host != null || Port != null;
+
+        /// <summary>
+        /// Gets the path segments of the URI, e.g., { "", "folder", "subfolder", "file.jpg" }. This can never be <c>null</c>, but it can be empty. Note that for some schemes, it is common for the first path segment to be the empty string to generate an initial forward-slash.
+        /// </summary>
+        public virtual IReadOnlyList<string> PathSegments { get; }
+
+        /// <summary>
+        /// Returns <c>true</c> if the path is empty.
+        /// </summary>
+        public bool PathIsEmpty => Util.PathIsEmpty(PathSegments);
+
+        /// <summary>
+        /// Returns <c>true</c> if the path is absolute (i.e., starts with a forward-slash).
+        /// </summary>
+        public bool PathIsAbsolute => Util.PathIsAbsolute(PathSegments);
+
+        /// <summary>
+        /// Gets the query of the URI, e.g., "q=test&amp;page=4". This can be <c>null</c> if there is no query, or an empty string if the query is empty.
+        /// </summary>
+        public virtual string Query { get; }
+
+        /// <summary>
+        /// Gets the fragment of the URI, e.g., "anchor-1". This can be <c>null</c> if there is no fragment, or an empty string if the fragment is empty.
+        /// </summary>
+        public virtual string Fragment { get; }
+
+        /// <summary>
+        /// Gets the URI as a complete string, e.g., "http://username:password@www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
+        /// </summary>
+        public string Uri => Util.ToString(Scheme, UserInfo, Host, Port, PathSegments, Query, Fragment);
+
+        /// <summary>
+        /// Gets the URI as a complete string without the deprecated <see cref="UserInfo"/> portion, e.g., "http://www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
+        /// </summary>
+        public override string ToString() => Util.ToString(Scheme, null, Host, Port, PathSegments, Query, Fragment);
+
         /// <inheritdoc />
         public override int GetHashCode() => ComparableImplementations.ImplementGetHashCode(DefaultComparer, this);
 
@@ -109,7 +204,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Converts to an absolute <see cref="Uri"/>.
         /// </summary>
-        public override Uri ToUri() => new Uri(Uri, UriKind.Absolute);
+        public virtual Uri ToUri() => new Uri(Uri, UriKind.Absolute);
 
         /// <summary>
         /// Resolves a relative URI against this URI. If this base URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
@@ -129,7 +224,7 @@ namespace Nito.UniformResourceIdentifiers
         /// Parses a URI. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="uri">The URI to parse.</param>
-        public new static UniformResourceIdentifier Parse(string uri)
+        public static UniformResourceIdentifier Parse(string uri)
         {
             var result = UniformResourceIdentifierReference.Parse(uri) as UniformResourceIdentifier;
             if (result == null)

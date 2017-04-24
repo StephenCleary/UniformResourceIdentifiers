@@ -114,49 +114,12 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Gets the URI as a complete string, e.g., "http://username:password@www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
         /// </summary>
-        public string Uri => ToString(Scheme, UserInfo, Host, Port, PathSegments, Query, Fragment);
+        public string Uri => Util.ToString(Scheme, UserInfo, Host, Port, PathSegments, Query, Fragment);
 
         /// <summary>
         /// Gets the URI as a complete string without the deprecated <see cref="UserInfo"/> portion, e.g., "http://www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
         /// </summary>
-        public override string ToString() => ToString(Scheme, null, Host, Port, PathSegments, Query, Fragment);
-
-        private static string ToString(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
-        {
-            // See 5.3, except Authority is split up into (UserInfo, Host, Port).
-            var sb = new StringBuilder();
-            if (scheme != null)
-            {
-                sb.Append(scheme);
-                sb.Append(':');
-            }
-            if (userInfo != null || host != null || port != null)
-                sb.Append("//");
-            if (userInfo != null)
-            {
-                sb.Append(PercentEncode(userInfo, UserInfoCharIsSafe));
-                sb.Append('@');
-            }
-            if (host != null)
-                sb.Append(HostIsIpAddress(host) ? host : PercentEncode(host, HostRegNameCharIsSafe));
-            if (port != null)
-            {
-                sb.Append(':');
-                sb.Append(port);
-            }
-            sb.Append(string.Join("/", pathSegments.Select(x => PercentEncode(x, PathSegmentCharIsSafe))));
-            if (query != null)
-            {
-                sb.Append('?');
-                sb.Append(PercentEncode(query, QueryCharIsSafe));
-            }
-            if (fragment != null)
-            {
-                sb.Append('#');
-                sb.Append(PercentEncode(fragment, FragmentCharIsSafe));
-            }
-            return sb.ToString();
-        }
+        public override string ToString() => Util.ToString(Scheme, null, Host, Port, PathSegments, Query, Fragment);
 
         /// <summary>
         /// Converts to a <see cref="Uri"/>.
