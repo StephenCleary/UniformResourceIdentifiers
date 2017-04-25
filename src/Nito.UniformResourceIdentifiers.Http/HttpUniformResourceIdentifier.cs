@@ -92,9 +92,6 @@ namespace Nito.UniformResourceIdentifiers
         public IReadOnlyList<string> PathSegments => _pathSegments.Value;
 
         /// <inheritdoc />
-        public bool PathIsEmpty => Util.PathIsEmpty(PathSegments);
-
-        /// <inheritdoc />
         public string Query { get; }
 
         /// <inheritdoc />

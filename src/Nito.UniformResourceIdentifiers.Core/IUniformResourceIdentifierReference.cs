@@ -31,11 +31,6 @@ namespace Nito.UniformResourceIdentifiers
         IReadOnlyList<string> PathSegments { get; }
 
         /// <summary>
-        /// Returns <c>true</c> if the path is empty.
-        /// </summary>
-        bool PathIsEmpty { get; } // => Util.PathIsEmpty(PathSegments); - todo: remove from interface
-
-        /// <summary>
         /// Gets the query of the URI, e.g., "q=test&amp;page=4". This can be <c>null</c> if there is no query, or an empty string if the query is empty.
         /// </summary>
         string Query { get; }

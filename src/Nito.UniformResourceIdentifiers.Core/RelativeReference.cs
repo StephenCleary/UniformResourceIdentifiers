@@ -78,11 +78,6 @@ namespace Nito.UniformResourceIdentifiers
         public IReadOnlyList<string> PathSegments => _pathSegments.Value;
 
         /// <summary>
-        /// Returns <c>true</c> if the path is empty.
-        /// </summary>
-        public bool PathIsEmpty => Util.PathIsEmpty(PathSegments);
-
-        /// <summary>
         /// Returns <c>true</c> if the path is absolute (i.e., starts with a forward-slash).
         /// </summary>
         public bool PathIsAbsolute => Util.PathIsAbsolute(PathSegments);

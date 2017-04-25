@@ -397,6 +397,11 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         public static bool AuthorityIsDefined(this IUniformResourceIdentifierReference @this) => @this.UserInfo != null || @this.Host != null || @this.Port != null;
 
         /// <summary>
+        /// Returns <c>true</c> if the path is empty.
+        /// </summary>
+        public static bool PathIsEmpty(this IUniformResourceIdentifierReference @this) => PathIsEmpty(@this.PathSegments);
+
+        /// <summary>
         /// Resolves a relative URI against a base URI.
         /// </summary>
         /// <typeparam name="T">The type of the base URI; also the type of the result.</typeparam>
@@ -419,7 +424,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             }
             else
             {
-                if (relativeUri.PathIsEmpty)
+                if (relativeUri.PathIsEmpty())
                 {
                     pathSegments = baseUri.PathSegments;
                     query = relativeUri.Query ?? baseUri.Query;
@@ -433,7 +438,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                     else
                     {
                         // See 5.2.3
-                        if (baseUri.AuthorityIsDefined() && baseUri.PathIsEmpty)
+                        if (baseUri.AuthorityIsDefined() && baseUri.PathIsEmpty())
                             pathSegments = Enumerable.Repeat("", 1).Concat(relativeUri.PathSegments);
                         else
                             pathSegments = baseUri.PathSegments.Take(baseUri.PathSegments.Count - 1).Concat(relativeUri.PathSegments);
