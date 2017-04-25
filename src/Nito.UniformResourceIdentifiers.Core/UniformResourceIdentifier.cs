@@ -10,27 +10,53 @@ using static Nito.UniformResourceIdentifiers.Helpers.Util;
 namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
+    /// URI utils.
+    /// </summary>
+    public static class UniformResourceIdentifierEx
+    {
+        /// <summary>
+        /// A numeric string comparer, capable of comparing numeric strings of any length. This comparer assumes its operands only consist of the digits 0-9 and have leading zeroes removed (this is true of the <see cref="IUniformResourceIdentifierReference.Port"/> values.
+        /// </summary>
+        public static IFullComparer<string> NumericStringComparer { get; } = ComparerBuilder.For<string>()
+            .OrderBy(x => x.Length)
+            .ThenBy(x => x, StringComparer.Ordinal);
+
+        /// <summary>
+        /// The generic URI comparer, which is used to compare URIs if their schemes match and the scheme does not implement <see cref="IUniformResourceIdentifierWithCustomComparison"/>.
+        /// </summary>
+        private static IFullComparer<IUniformResourceIdentifier> GenericComparer { get; } = ComparerBuilder.For<IUniformResourceIdentifier>()
+            .OrderBy(x => x.Host, StringComparer.Ordinal)
+            .ThenBy(x => x.Port, NumericStringComparer)
+            .ThenBy(x => x.UserInfo, StringComparer.Ordinal)
+            .ThenBy(x => x.PathSegments, ComparerBuilder.For<string>().OrderBy(x => x, StringComparer.Ordinal).Sequence())
+            .ThenBy(x => x.Query, StringComparer.Ordinal)
+            .ThenBy(x => x.Fragment, StringComparer.Ordinal);
+
+        /// <summary>
+        /// Allows comparing any URIs.
+        /// </summary>
+        /// <remarks>
+        /// <para>URIs are compared by (lowercase) scheme (ordinally).</para>
+        /// <para>If two URIs have the same scheme, then they are compared by their SchemeSpecificComparerProxy properties.</para>
+        /// <para>Unless overridden by a scheme, the SchemeSpecificComparerProxy is a GenericComparerProxy instance that defines its comparison as follows: (lowercase) Host (ordinally), Port (numerically), UserInfo (ordinally), Path Segments (lexicographically ordinally), Query (ordinally), and Fragment (ordinally).</para>
+        /// </remarks>
+        public static IFullComparer<IUniformResourceIdentifier> Comparer { get; } = ComparerBuilder.For<IUniformResourceIdentifier>()
+            .OrderBy(x => x.Scheme, StringComparer.Ordinal)
+            .ThenBy(x => (x as IUniformResourceIdentifierWithCustomComparison)?.SchemeSpecificComparerProxy)
+            .ThenBy(x => (x as IUniformResourceIdentifierWithCustomComparison)?.SchemeSpecificComparerProxy != null ? null : x, GenericComparer);
+    }
+
+    /// <summary>
     /// An immutable, normalized URI.
     /// </summary>
     /// <remarks>
     /// <para>The <see cref="IUniformResourceIdentifierReference.Scheme"/> property is always valid and never <c>null</c>.</para>
     /// </remarks>
-    public abstract class UniformResourceIdentifier : IUniformResourceIdentifier, IEquatable<UniformResourceIdentifier>, IComparable, IComparable<UniformResourceIdentifier>
+    public abstract class UniformResourceIdentifier : ComparableBase<UniformResourceIdentifier>, IUniformResourceIdentifier
     {
-        /// <summary>
-        /// Gets the default comparer for this type.
-        /// </summary>
-        public static IFullComparer<UniformResourceIdentifier> DefaultComparer { get; }
-
         static UniformResourceIdentifier()
         {
-            // URIs are compared by (lowercase) scheme (ordinally).
-            // If two URIs have the same scheme, then they are compared by their SchemeSpecificComparerProxy properties.
-            // Unless overridden by a scheme, the SchemeSpecificComparerProxy is a GenericComparerProxy instance that defines its comparison as follows:
-            //   (lowercase) Host (ordinally), Port (numerically), UserInfo (ordinally), Path Segments (lexicographically ordinally), Query (ordinally), and Fragment (ordinally).
-            // This generic scheme comparison is also exposed to URI scheme-specific implementations as GenericComparer.
-            DefaultComparer = ComparerBuilder.For<UniformResourceIdentifier>()
-                .OrderBy(x => x.Scheme, StringComparer.Ordinal).ThenBy(x => x.SchemeSpecificComparerProxy);
+            DefaultComparer = UniformResourceIdentifierEx.Comparer;
         }
 
         /// <summary>
@@ -76,8 +102,6 @@ namespace Nito.UniformResourceIdentifiers
             PathSegments = segments;
             Query = query;
             Fragment = fragment;
-
-            SchemeSpecificComparerProxy = new GenericComparerProxy(this);
         }
 
         /// <summary>
@@ -105,29 +129,6 @@ namespace Nito.UniformResourceIdentifiers
             return (userInfo, host, port, pathSegments, query, fragment) =>
                 build(builderFactory().WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegments).WithQuery(query).WithFragment(fragment));
         }
-
-        /// <summary>
-        /// Gets or sets a proxy object used for comparison. By default, this is set to an object that uses <see cref="GenericComparer"/> to compare URIs.
-        /// </summary>
-        protected virtual object SchemeSpecificComparerProxy { get; }
-
-        /// <summary>
-        /// A numeric string comparer, capable of comparing numeric strings of any length. This comparer assumes its operands only consist of the digits 0-9 and have leading zeroes removed (this is true of the <see cref="IUniformResourceIdentifierReference.Port"/> values.
-        /// </summary>
-        protected static IFullComparer<string> NumericStringComparer { get; } = ComparerBuilder.For<string>()
-            .OrderBy(x => x.Length)
-            .ThenBy(x => x, StringComparer.Ordinal);
-
-        /// <summary>
-        /// The generic URI comparer, which is used to compare URIs if their schemes match and the scheme does not override <see cref="SchemeSpecificComparerProxy"/>.
-        /// </summary>
-        protected static IFullComparer<UniformResourceIdentifier> GenericComparer { get; } = ComparerBuilder.For<UniformResourceIdentifier>()
-            .OrderBy(x => x.Host, StringComparer.Ordinal)
-            .ThenBy(x => x.Port, NumericStringComparer)
-            .ThenBy(x => x.UserInfo, StringComparer.Ordinal)
-            .ThenBy(x => x.PathSegments, ComparerBuilder.For<string>().OrderBy(x => x, StringComparer.Ordinal).Sequence())
-            .ThenBy(x => x.Query, StringComparer.Ordinal)
-            .ThenBy(x => x.Fragment, StringComparer.Ordinal);
 
         /// <summary>
         /// Gets the scheme of this URI, e.g., "http". This can be <c>null</c> if there is no scheme. If not <c>null</c>, then this is always a valid scheme; it can never be the empty string.
@@ -190,17 +191,10 @@ namespace Nito.UniformResourceIdentifiers
         public override string ToString() => Util.ToString(Scheme, null, Host, Port, PathSegments, Query, Fragment);
 
         /// <inheritdoc />
-        public override int GetHashCode() => ComparableImplementations.ImplementGetHashCode(DefaultComparer, this);
+        public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => ComparableImplementations.ImplementEquals(DefaultComparer, (object)this, obj);
-
-        /// <inheritdoc />
-        public bool Equals(UniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
-
-        int IComparable.CompareTo(object obj) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, obj);
-        /// <inheritdoc />
-        public int CompareTo(UniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
+        public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
 
         /// <summary>
         /// Converts to an absolute <see cref="Uri"/>.
@@ -231,21 +225,6 @@ namespace Nito.UniformResourceIdentifiers
             if (result == null)
                 throw new InvalidOperationException($"URI reference is not a URI: {uri}");
             return result;
-        }
-
-        private sealed class GenericComparerProxy : ComparableBase<GenericComparerProxy>
-        {
-            private readonly UniformResourceIdentifier _uri;
-
-            public GenericComparerProxy(UniformResourceIdentifier uri)
-            {
-                _uri = uri;
-            }
-
-            static GenericComparerProxy()
-            {
-                DefaultComparer = ComparerBuilder.For<GenericComparerProxy>().OrderBy(x => x._uri, GenericComparer);
-            }
         }
     }
 }
