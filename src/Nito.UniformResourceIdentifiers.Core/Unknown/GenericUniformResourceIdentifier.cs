@@ -11,9 +11,9 @@ namespace Nito.UniformResourceIdentifiers.Unknown
     /// <summary>
     /// A URI with an unrecognized scheme. This URI is normalized as an arbitrary URI, but will not be fully normalized with respect to its scheme.
     /// </summary>
-    public sealed class UnknownUniformResourceIdentifier : ComparableBase<UnknownUniformResourceIdentifier>, IUniformResourceIdentifier
+    public sealed class GenericUniformResourceIdentifier : ComparableBase<GenericUniformResourceIdentifier>, IUniformResourceIdentifier
     {
-        private readonly Util.DelegateFactory<UnknownUniformResourceIdentifier> _factory;
+        private readonly Util.DelegateFactory<GenericUniformResourceIdentifier> _factory;
         private readonly NormalizedHost _host;
         private readonly NormalizedPathSegments _pathSegments;
         private readonly NormalizedPort _port;
@@ -28,7 +28,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// <param name="pathSegments">The path segments. Dot segments are normalized. May not be <c>null</c>, neither may any element be <c>null</c>.</param>
         /// <param name="query">The query. This may be <c>null</c> to indicate no query, or the empty string to indicate an empty query.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
-        public UnknownUniformResourceIdentifier(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
+        public GenericUniformResourceIdentifier(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
         {
             if (scheme == null)
                 throw new ArgumentNullException(nameof(scheme));
@@ -45,17 +45,17 @@ namespace Nito.UniformResourceIdentifiers.Unknown
             _factory = CreateFactory(scheme);
         }
 
-        private static Util.DelegateFactory<UnknownUniformResourceIdentifier> CreateFactory(string scheme)
+        private static Util.DelegateFactory<GenericUniformResourceIdentifier> CreateFactory(string scheme)
         {
             return (userInfo, host, port, pathSegments, query, fragment) =>
-                BuilderUtil.ApplyUriReference(new UnknownUniformResourceIdentifierBuilder().WithScheme(scheme), userInfo, host, port, pathSegments, query, fragment).Build();
+                BuilderUtil.ApplyUriReference(new GenericUniformResourceIdentifierBuilder().WithScheme(scheme), userInfo, host, port, pathSegments, query, fragment).Build();
         }
 
         /// <summary>
         /// Resolves a relative URI against this URI.
         /// </summary>
         /// <param name="relativeUri">The relative URI to resolve.</param>
-        public UnknownUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, _factory);
+        public GenericUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, _factory);
 
         /// <inheritdoc />
         public IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, _factory);
@@ -64,7 +64,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// Parses a URI.
         /// </summary>
         /// <param name="uri">The URI to parse.</param>
-        public static UnknownUniformResourceIdentifier Parse(string uri) => new UnknownUniformResourceIdentifierBuilder(uri).Build();
+        public static GenericUniformResourceIdentifier Parse(string uri) => new GenericUniformResourceIdentifierBuilder(uri).Build();
 
         /// <inheritdoc />
         public string Scheme { get; }

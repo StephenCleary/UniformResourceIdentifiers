@@ -46,7 +46,7 @@ namespace Nito.UniformResourceIdentifiers
             .ThenBy(x => (x as IUniformResourceIdentifierWithCustomComparison)?.SchemeSpecificComparerProxy != null ? null : x, GenericComparer);
 
         /// <summary>
-        /// Parses a URI. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
+        /// Parses a URI. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.GenericUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="uri">The URI to parse.</param>
         public static IUniformResourceIdentifier Parse(string uri)
@@ -211,21 +211,21 @@ namespace Nito.UniformResourceIdentifiers
         public virtual Uri ToUri() => new Uri(Uri, UriKind.Absolute);
 
         /// <summary>
-        /// Resolves a relative URI against this URI. If this base URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
+        /// Resolves a relative URI against this URI. If this base URI's scheme is not registered, then this will return an instance of <see cref="Unknown.GenericUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="relativeUri">The relative URI to resolve.</param>
         public virtual IUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri,
             (info, host, port, segments, query, fragment) => (IUniformResourceIdentifier)Factories.Create(Scheme, info, host, port, segments, query, fragment));
 
         /// <summary>
-        /// Resolves a reference URI against this URI. If this base URI's scheme is not registered and <paramref name="referenceUri"/> is a <see cref="RelativeReference"/>, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
+        /// Resolves a reference URI against this URI. If this base URI's scheme is not registered and <paramref name="referenceUri"/> is a <see cref="RelativeReference"/>, then this will return an instance of <see cref="Unknown.GenericUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="referenceUri">The reference URI to resolve.</param>
         public virtual IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri,
             (info, host, port, segments, query, fragment) => (IUniformResourceIdentifier)Factories.Create(Scheme, info, host, port, segments, query, fragment));
 
         /// <summary>
-        /// Parses a URI. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
+        /// Parses a URI. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.GenericUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="uri">The URI to parse.</param>
         public static UniformResourceIdentifier Parse(string uri)

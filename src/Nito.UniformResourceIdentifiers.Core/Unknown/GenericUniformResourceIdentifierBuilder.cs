@@ -9,7 +9,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
     /// <summary>
     /// A URI builder for URIs with unknown schemes.
     /// </summary>
-    public sealed class UnknownUniformResourceIdentifierBuilder : ICommonBuilder<UnknownUniformResourceIdentifierBuilder>
+    public sealed class GenericUniformResourceIdentifierBuilder : ICommonBuilder<GenericUniformResourceIdentifierBuilder>
     {
         private string _scheme, _userInfo, _host, _port, _query, _fragment;
         private readonly PathSegments _pathSegments = new PathSegments();
@@ -17,13 +17,13 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// <summary>
         /// Constructs an empty builder.
         /// </summary>
-        public UnknownUniformResourceIdentifierBuilder() { }
+        public GenericUniformResourceIdentifierBuilder() { }
 
         /// <summary>
         /// Constructs a builder from an existing URI.
         /// </summary>
         /// <param name="uri">The URI used to set the builder's initial values.</param>
-        public UnknownUniformResourceIdentifierBuilder(UnknownUniformResourceIdentifier uri)
+        public GenericUniformResourceIdentifierBuilder(GenericUniformResourceIdentifier uri)
         {
             BuilderUtil.ApplyUriReference(this, uri);
         }
@@ -32,7 +32,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// Parses a URI string and constructs a builder.
         /// </summary>
         /// <param name="uri">The URI used to set the builder's initial values.</param>
-        public UnknownUniformResourceIdentifierBuilder(string uri)
+        public GenericUniformResourceIdentifierBuilder(string uri)
         {
             WithScheme(BuilderUtil.ApplyUriReference(this, uri));
         }
@@ -41,7 +41,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// Applies the scheme to this builder, overwriting any existing scheme.
         /// </summary>
         /// <param name="scheme">The scheme.</param>
-        public UnknownUniformResourceIdentifierBuilder WithScheme(string scheme)
+        public GenericUniformResourceIdentifierBuilder WithScheme(string scheme)
         {
             _scheme = scheme;
             return this;
@@ -50,9 +50,9 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// <summary>
         /// Builds the unknown URI instance.
         /// </summary>
-        public UnknownUniformResourceIdentifier Build() => new UnknownUniformResourceIdentifier(_scheme, _userInfo, _host, _port, _pathSegments.Value, _query, _fragment);
+        public GenericUniformResourceIdentifier Build() => new GenericUniformResourceIdentifier(_scheme, _userInfo, _host, _port, _pathSegments.Value, _query, _fragment);
 
-        UnknownUniformResourceIdentifierBuilder IBuilderWithUserInfo<UnknownUniformResourceIdentifierBuilder>.WithUserInfo(string userInfo)
+        GenericUniformResourceIdentifierBuilder IBuilderWithUserInfo<GenericUniformResourceIdentifierBuilder>.WithUserInfo(string userInfo)
         {
             _userInfo = userInfo;
             return this;
@@ -62,7 +62,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// Applies the host portion of the authority to this builder, overwriting any existing host.
         /// </summary>
         /// <param name="host">The host. May be <c>null</c> or the empty string.</param>
-        public UnknownUniformResourceIdentifierBuilder WithHost(string host)
+        public GenericUniformResourceIdentifierBuilder WithHost(string host)
         {
             _host = host;
             return this;
@@ -72,7 +72,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// Applies the port portion of the authority to this builder, overwriting any existing port.
         /// </summary>
         /// <param name="port">The port. May be <c>null</c> or the empty string.</param>
-        public UnknownUniformResourceIdentifierBuilder WithPort(string port)
+        public GenericUniformResourceIdentifierBuilder WithPort(string port)
         {
             _port = port;
             return this;
@@ -82,7 +82,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// Applies the path to this builder, overwriting any existing path. This method does not automatically prefix a forward slash to the resulting path.
         /// </summary>
         /// <param name="pathSegments">The path segments.</param>
-        public UnknownUniformResourceIdentifierBuilder WithPrefixlessPathSegments(IEnumerable<string> pathSegments)
+        public GenericUniformResourceIdentifierBuilder WithPrefixlessPathSegments(IEnumerable<string> pathSegments)
         {
             _pathSegments.Set(pathSegments);
             return this;
@@ -92,7 +92,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// Applies the query string to this builder, overwriting any existing query.
         /// </summary>
         /// <param name="query">The query.</param>
-        public UnknownUniformResourceIdentifierBuilder WithQuery(string query)
+        public GenericUniformResourceIdentifierBuilder WithQuery(string query)
         {
             _query = query;
             return this;
@@ -102,7 +102,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// Applies the fragment string to this builder, overwriting any existing fragment.
         /// </summary>
         /// <param name="fragment">The fragment.</param>
-        public UnknownUniformResourceIdentifierBuilder WithFragment(string fragment)
+        public GenericUniformResourceIdentifierBuilder WithFragment(string fragment)
         {
             _fragment = fragment;
             return this;

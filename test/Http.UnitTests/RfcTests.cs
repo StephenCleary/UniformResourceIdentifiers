@@ -23,7 +23,7 @@ namespace Nito.UniformResourceIdentifiers.Http.UnitTests
         public void ReferenceResolutionNormalExamples_SpecifyingScheme()
         {
             // See 5.4.1, first example only
-            var referenceUri = (UnknownUniformResourceIdentifier)Factories.Create("g", null, null, null, new [] { "h" }, null, null);
+            var referenceUri = (GenericUniformResourceIdentifier)Factories.Create("g", null, null, null, new [] { "h" }, null, null);
             Assert.Equal("g:h", referenceUri.Uri);
 
             var result = BaseUri.Resolve(referenceUri);

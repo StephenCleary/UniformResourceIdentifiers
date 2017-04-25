@@ -34,7 +34,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         }
 
         /// <summary>
-        /// Creates a URI or relative URI from its components. If the scheme is not registered, returns an instance of <see cref="UnknownUniformResourceIdentifier"/>.
+        /// Creates a URI or relative URI from its components. If the scheme is not registered, returns an instance of <see cref="GenericUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="scheme">The scheme. This may be <c>null</c>. If this is not <c>null</c>, then it must be a valid scheme.</param>
         /// <param name="userInfo">The user information.</param>
@@ -53,7 +53,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 _factories.TryGetValue(scheme, out factory);
             }
             if (factory == null)
-                return BuilderUtil.ApplyUriReference(new UnknownUniformResourceIdentifierBuilder().WithScheme(scheme), userInfo, host, port, pathSegments, query, fragment).Build();
+                return BuilderUtil.ApplyUriReference(new GenericUniformResourceIdentifierBuilder().WithScheme(scheme), userInfo, host, port, pathSegments, query, fragment).Build();
             else
                 return factory(userInfo, host, port, pathSegments, query, fragment);
         }
