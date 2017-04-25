@@ -392,6 +392,11 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         public delegate T DelegateFactory<out T>(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment);
 
         /// <summary>
+        /// Returns <c>true</c> if the authority is defined. Note that it is possible (though unusual) for the authority to be defined as the empty string.
+        /// </summary>
+        public static bool AuthorityIsDefined(this IUniformResourceIdentifierReference @this) => @this.UserInfo != null || @this.Host != null || @this.Port != null;
+
+        /// <summary>
         /// Resolves a relative URI against a base URI.
         /// </summary>
         /// <typeparam name="T">The type of the base URI; also the type of the result.</typeparam>
@@ -404,7 +409,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             // See 5.2.2, except that referenceUri will always have a null Scheme.
             string userInfo, host, port, query;
             IEnumerable<string> pathSegments;
-            if (relativeUri.AuthorityIsDefined)
+            if (relativeUri.AuthorityIsDefined())
             {
                 userInfo = ((IUniformResourceIdentifierReference) relativeUri).UserInfo;
                 host = relativeUri.Host;
@@ -428,7 +433,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                     else
                     {
                         // See 5.2.3
-                        if (baseUri.AuthorityIsDefined && baseUri.PathIsEmpty)
+                        if (baseUri.AuthorityIsDefined() && baseUri.PathIsEmpty)
                             pathSegments = Enumerable.Repeat("", 1).Concat(relativeUri.PathSegments);
                         else
                             pathSegments = baseUri.PathSegments.Take(baseUri.PathSegments.Count - 1).Concat(relativeUri.PathSegments);

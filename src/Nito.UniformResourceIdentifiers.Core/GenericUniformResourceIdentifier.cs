@@ -78,9 +78,6 @@ namespace Nito.UniformResourceIdentifiers
         public string Port => _port.Value;
 
         /// <inheritdoc />
-        public bool AuthorityIsDefined => UserInfo != null || Host != null || Port != null;
-
-        /// <inheritdoc />
         public IReadOnlyList<string> PathSegments => _pathSegments.Value;
 
         /// <inheritdoc />

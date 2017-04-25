@@ -26,11 +26,6 @@ namespace Nito.UniformResourceIdentifiers
         string Port { get; }
 
         /// <summary>
-        /// Returns <c>true</c> if the authority is defined. Note that it is possible (though unusual) for the authority to be defined as the empty string.
-        /// </summary>
-        bool AuthorityIsDefined { get; } // => UserInfo != null || Host != null || Port != null; - todo: remove from interface
-
-        /// <summary>
         /// Gets the path segments of the URI, e.g., { "", "folder", "subfolder", "file.jpg" }. This can never be <c>null</c>, but it can be empty. Note that for some schemes, it is common for the first path segment to be the empty string to generate an initial forward-slash.
         /// </summary>
         IReadOnlyList<string> PathSegments { get; }
