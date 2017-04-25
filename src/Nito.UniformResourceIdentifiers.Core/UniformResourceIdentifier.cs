@@ -202,8 +202,8 @@ namespace Nito.UniformResourceIdentifiers
         /// Resolves a relative URI against this URI. If this base URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="relativeUri">The relative URI to resolve.</param>
-        public virtual UniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri,
-            (info, host, port, segments, query, fragment) => (UniformResourceIdentifier)Factories.Create(Scheme, info, host, port, segments, query, fragment));
+        public virtual IUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri,
+            (info, host, port, segments, query, fragment) => (IUniformResourceIdentifier)Factories.Create(Scheme, info, host, port, segments, query, fragment));
 
         /// <summary>
         /// Resolves a reference URI against this URI. If this base URI's scheme is not registered and <paramref name="referenceUri"/> is a <see cref="RelativeReference"/>, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
