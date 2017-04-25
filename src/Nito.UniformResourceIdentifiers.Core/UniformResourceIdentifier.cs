@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nito.Comparers;
+using Nito.UniformResourceIdentifiers.Implementation;
 
 namespace Nito.UniformResourceIdentifiers
 {
@@ -11,18 +12,11 @@ namespace Nito.UniformResourceIdentifiers
     public static class UniformResourceIdentifier
     {
         /// <summary>
-        /// A numeric string comparer, capable of comparing numeric strings of any length. This comparer assumes its operands only consist of the digits 0-9 and have leading zeroes removed (this is true of the <see cref="IUniformResourceIdentifierReference.Port"/> values.
-        /// </summary>
-        public static IFullComparer<string> NumericStringComparer { get; } = ComparerBuilder.For<string>()
-            .OrderBy(x => x.Length)
-            .ThenBy(x => x, StringComparer.Ordinal);
-
-        /// <summary>
         /// The generic URI comparer, which is used to compare URIs if their schemes match and the scheme does not implement <see cref="IUniformResourceIdentifierWithCustomComparison"/>.
         /// </summary>
         private static IFullComparer<IUniformResourceIdentifier> GenericComparer { get; } = ComparerBuilder.For<IUniformResourceIdentifier>()
             .OrderBy(x => x.Host, StringComparer.Ordinal)
-            .ThenBy(x => x.Port, NumericStringComparer)
+            .ThenBy(x => x.Port, Util.NumericStringComparer)
             .ThenBy(x => x.UserInfo, StringComparer.Ordinal)
             .ThenBy(x => x.PathSegments, ComparerBuilder.For<string>().OrderBy(x => x, StringComparer.Ordinal).Sequence())
             .ThenBy(x => x.Query, StringComparer.Ordinal)

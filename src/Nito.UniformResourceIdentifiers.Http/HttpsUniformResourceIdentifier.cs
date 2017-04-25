@@ -29,6 +29,11 @@ namespace Nito.UniformResourceIdentifiers
             BuilderUtil.ApplyUriReference(new HttpsUniformResourceIdentifierBuilder(), userInfo, host, port, pathSegments, query, fragment).Build();
 
         /// <summary>
+        /// Registers this scheme with the factories.
+        /// </summary>
+        public static void Register() => Factories.RegisterSchemeFactory(HttpsScheme, Factory);
+
+        /// <summary>
         /// Constructs a new URI instance.
         /// </summary>
         /// <param name="host">The host name portion of the authority, if any. This is converted to lowercase. This may be <c>null</c> to indicate no host name, or the empty string to indicate an empty host name.</param>
@@ -44,31 +49,6 @@ namespace Nito.UniformResourceIdentifiers
             Query = query;
             Fragment = fragment;
         }
-
-        /// <summary>
-        /// Registers this scheme with the factories.
-        /// </summary>
-        public static void Register() => Factories.RegisterSchemeFactory(HttpsScheme, Factory);
-
-        /// <summary>
-        /// Resolves a relative URI against this URI.
-        /// </summary>
-        /// <param name="relativeUri">The relative URI to resolve.</param>
-        public HttpsUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
-
-        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Resolve(relativeUri);
-
-        /// <summary>
-        /// Resolves a reference URI against this URI.
-        /// </summary>
-        /// <param name="referenceUri">The reference URI to resolve.</param>
-        public IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
-
-        /// <summary>
-        /// Parses an HTTPS URI.
-        /// </summary>
-        /// <param name="uri">The HTTPS URI to parse.</param>
-        public static HttpsUniformResourceIdentifier Parse(string uri) => new HttpsUniformResourceIdentifierBuilder(uri).Build();
 
         string IUniformResourceIdentifier.Scheme => HttpsScheme;
 
@@ -90,12 +70,32 @@ namespace Nito.UniformResourceIdentifiers
         public string Fragment { get; }
 
         /// <inheritdoc />
-        public override string ToString() => this.UriString();
-
-        /// <inheritdoc />
         public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
 
         /// <inheritdoc />
         public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
+
+        /// <inheritdoc />
+        public override string ToString() => this.UriString();
+
+        /// <summary>
+        /// Resolves a relative URI against this URI.
+        /// </summary>
+        /// <param name="relativeUri">The relative URI to resolve.</param>
+        public HttpsUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
+
+        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Resolve(relativeUri);
+
+        /// <summary>
+        /// Resolves a reference URI against this URI.
+        /// </summary>
+        /// <param name="referenceUri">The reference URI to resolve.</param>
+        public IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
+
+        /// <summary>
+        /// Parses an HTTPS URI.
+        /// </summary>
+        /// <param name="uri">The HTTPS URI to parse.</param>
+        public static HttpsUniformResourceIdentifier Parse(string uri) => new HttpsUniformResourceIdentifierBuilder(uri).Build();
     }
 }

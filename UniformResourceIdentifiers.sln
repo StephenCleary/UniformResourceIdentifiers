@@ -27,6 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.UnitTests", "test\Core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Http.UnitTests", "test\Http.UnitTests\Http.UnitTests.csproj", "{719C9957-1E60-419E-894A-87DA529659D8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{B94BCAD7-3B02-4506-B79C-EC875ACA89B4}"
+	ProjectSection(SolutionItems) = preProject
+		define-new-uri-type.md = define-new-uri-type.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

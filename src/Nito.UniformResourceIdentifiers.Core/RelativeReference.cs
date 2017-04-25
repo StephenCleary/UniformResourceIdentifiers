@@ -62,19 +62,13 @@ namespace Nito.UniformResourceIdentifiers
 
         string IUniformResourceIdentifierReference.UserInfo => _userInfo;
 
-        /// <summary>
-        /// Gets the host portion of the authority of this URI, e.g., "www.example.com". This can be <c>null</c> if there is no host, or an empty string if the host is empty.
-        /// </summary>
+        /// <inheritdoc />
         public string Host => _host.Value;
 
-        /// <summary>
-        /// Gets the port portion of the authority of this URI, e.g., "8080". This can be <c>null</c> if there is no port, or an empty string if the port is empty. Any string returned from this property is a numeric string.
-        /// </summary>
+        /// <inheritdoc />
         public string Port => _port.Value;
 
-        /// <summary>
-        /// Gets the path segments of the URI, e.g., { "", "folder", "subfolder", "file.jpg" }. This can never be <c>null</c>, but it can be empty. Note that for some schemes, it is common for the first path segment to be the empty string to generate an initial forward-slash.
-        /// </summary>
+        /// <inheritdoc />
         public IReadOnlyList<string> PathSegments => _pathSegments.Value;
 
         /// <summary>
@@ -82,24 +76,16 @@ namespace Nito.UniformResourceIdentifiers
         /// </summary>
         public bool PathIsAbsolute => Util.PathIsAbsolute(PathSegments);
 
-        /// <summary>
-        /// Gets the query of the URI, e.g., "q=test&amp;page=4". This can be <c>null</c> if there is no query, or an empty string if the query is empty.
-        /// </summary>
+        /// <inheritdoc />
         public string Query { get; }
 
-        /// <summary>
-        /// Gets the fragment of the URI, e.g., "anchor-1". This can be <c>null</c> if there is no fragment, or an empty string if the fragment is empty.
-        /// </summary>
+        /// <inheritdoc />
         public string Fragment { get; }
 
-        /// <summary>
-        /// Gets the URI as a complete string, e.g., "http://username:password@www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
-        /// </summary>
+        /// <inheritdoc />
         public string ToUriString() => Util.ToString(null, _userInfo, Host, Port, PathSegments, Query, Fragment);
 
-        /// <summary>
-        /// Gets the URI as a complete string without the deprecated <see cref="IUniformResourceIdentifierReference.UserInfo"/> portion, e.g., "http://www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
-        /// </summary>
+        /// <inheritdoc />
         public override string ToString() => Util.ToString(null, null, Host, Port, PathSegments, Query, Fragment);
 
         /// <summary>

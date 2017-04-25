@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Nito.Comparers;
 
 namespace Nito.UniformResourceIdentifiers.Implementation
 {
@@ -564,5 +565,13 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             }
             return sb.ToString();
         }
+
+        /// <summary>
+        /// A numeric string comparer, capable of comparing numeric strings of any length. This comparer assumes its operands only consist of the digits 0-9 and have leading zeroes removed (this is true of the <see cref="IUniformResourceIdentifierReference.Port"/> values.
+        /// </summary>
+        public static IFullComparer<string> NumericStringComparer { get; } = ComparerBuilder.For<string>()
+            .OrderBy(x => x.Length)
+            .ThenBy(x => x, StringComparer.Ordinal);
+
     }
 }

@@ -12,10 +12,10 @@ namespace Nito.UniformResourceIdentifiers
     /// </summary>
     public sealed class GenericUniformResourceIdentifier : ComparableBase<GenericUniformResourceIdentifier>, IUniformResourceIdentifier
     {
-        private readonly Util.DelegateFactory<GenericUniformResourceIdentifier> _factory;
         private readonly NormalizedHost _host;
         private readonly NormalizedPathSegments _pathSegments;
         private readonly NormalizedPort _port;
+        private readonly Util.DelegateFactory<GenericUniformResourceIdentifier> _factory;
 
         /// <summary>
         /// Constructs a new URI instance.
@@ -50,21 +50,6 @@ namespace Nito.UniformResourceIdentifiers
                 BuilderUtil.ApplyUriReference(new GenericUniformResourceIdentifierBuilder().WithScheme(scheme), userInfo, host, port, pathSegments, query, fragment).Build();
         }
 
-        /// <summary>
-        /// Resolves a relative URI against this URI.
-        /// </summary>
-        /// <param name="relativeUri">The relative URI to resolve.</param>
-        public GenericUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, _factory);
-
-        /// <inheritdoc />
-        public IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, _factory);
-
-        /// <summary>
-        /// Parses a URI.
-        /// </summary>
-        /// <param name="uri">The URI to parse.</param>
-        public static GenericUniformResourceIdentifier Parse(string uri) => new GenericUniformResourceIdentifierBuilder(uri).Build();
-
         /// <inheritdoc />
         public string Scheme { get; }
 
@@ -87,14 +72,29 @@ namespace Nito.UniformResourceIdentifiers
         public string Fragment { get; }
 
         /// <inheritdoc />
-        public override string ToString() => Util.ToString(Scheme, null, Host, Port, PathSegments, Query, Fragment);
-
-        /// <inheritdoc />
         public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
 
         /// <inheritdoc />
         public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
 
+        /// <inheritdoc />
+        public override string ToString() => Util.ToString(Scheme, null, Host, Port, PathSegments, Query, Fragment);
+
+        /// <summary>
+        /// Resolves a relative URI against this URI.
+        /// </summary>
+        /// <param name="relativeUri">The relative URI to resolve.</param>
+        public GenericUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, _factory);
+
         IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Resolve(relativeUri);
+
+        /// <inheritdoc />
+        public IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, _factory);
+
+        /// <summary>
+        /// Parses a URI.
+        /// </summary>
+        /// <param name="uri">The URI to parse.</param>
+        public static GenericUniformResourceIdentifier Parse(string uri) => new GenericUniformResourceIdentifierBuilder(uri).Build();
     }
 }

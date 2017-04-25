@@ -46,65 +46,50 @@ namespace Nito.UniformResourceIdentifiers
             return this;
         }
 
-        /// <summary>
-        /// Builds the unknown URI instance.
-        /// </summary>
-        public GenericUniformResourceIdentifier Build() => new GenericUniformResourceIdentifier(_scheme, _userInfo, _host, _port, _pathSegments.Value, _query, _fragment);
-
         GenericUniformResourceIdentifierBuilder IBuilderWithUserInfo<GenericUniformResourceIdentifierBuilder>.WithUserInfo(string userInfo)
         {
             _userInfo = userInfo;
             return this;
         }
 
-        /// <summary>
-        /// Applies the host portion of the authority to this builder, overwriting any existing host.
-        /// </summary>
-        /// <param name="host">The host. May be <c>null</c> or the empty string.</param>
+        /// <inheritdoc />
         public GenericUniformResourceIdentifierBuilder WithHost(string host)
         {
             _host = host;
             return this;
         }
 
-        /// <summary>
-        /// Applies the port portion of the authority to this builder, overwriting any existing port.
-        /// </summary>
-        /// <param name="port">The port. May be <c>null</c> or the empty string.</param>
+        /// <inheritdoc />
         public GenericUniformResourceIdentifierBuilder WithPort(string port)
         {
             _port = port;
             return this;
         }
 
-        /// <summary>
-        /// Applies the path to this builder, overwriting any existing path. This method does not automatically prefix a forward slash to the resulting path.
-        /// </summary>
-        /// <param name="pathSegments">The path segments.</param>
+        /// <inheritdoc />
         public GenericUniformResourceIdentifierBuilder WithPrefixlessPathSegments(IEnumerable<string> pathSegments)
         {
             _pathSegments.Set(pathSegments);
             return this;
         }
 
-        /// <summary>
-        /// Applies the query string to this builder, overwriting any existing query.
-        /// </summary>
-        /// <param name="query">The query.</param>
+        /// <inheritdoc />
         public GenericUniformResourceIdentifierBuilder WithQuery(string query)
         {
             _query = query;
             return this;
         }
 
-        /// <summary>
-        /// Applies the fragment string to this builder, overwriting any existing fragment.
-        /// </summary>
-        /// <param name="fragment">The fragment.</param>
+        /// <inheritdoc />
         public GenericUniformResourceIdentifierBuilder WithFragment(string fragment)
         {
             _fragment = fragment;
             return this;
         }
+
+        /// <summary>
+        /// Builds the unknown URI instance.
+        /// </summary>
+        public GenericUniformResourceIdentifier Build() => new GenericUniformResourceIdentifier(_scheme, _userInfo, _host, _port, _pathSegments.Value, _query, _fragment);
     }
 }
