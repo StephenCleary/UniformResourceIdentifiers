@@ -95,9 +95,6 @@ namespace Nito.UniformResourceIdentifiers
         public bool PathIsEmpty => Util.PathIsEmpty(PathSegments);
 
         /// <inheritdoc />
-        public bool PathIsAbsolute => true;
-
-        /// <inheritdoc />
         public string Query { get; }
 
         /// <inheritdoc />
