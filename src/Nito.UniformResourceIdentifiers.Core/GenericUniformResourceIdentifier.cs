@@ -6,7 +6,7 @@ using Nito.UniformResourceIdentifiers.Builder;
 using Nito.UniformResourceIdentifiers.Components;
 using Nito.UniformResourceIdentifiers.Helpers;
 
-namespace Nito.UniformResourceIdentifiers.Unknown
+namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
     /// A URI with an unrecognized scheme. This URI is normalized as an arbitrary URI, but will not be fully normalized with respect to its scheme.

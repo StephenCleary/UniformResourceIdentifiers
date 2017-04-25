@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Nito.UniformResourceIdentifiers.Builder;
-using Nito.UniformResourceIdentifiers.Unknown;
 
 namespace Nito.UniformResourceIdentifiers.Helpers
 {

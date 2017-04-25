@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Nito.UniformResourceIdentifiers.Builder;
 using Nito.UniformResourceIdentifiers.Builder.Components;
-using Nito.UniformResourceIdentifiers.Helpers;
 
-namespace Nito.UniformResourceIdentifiers.Unknown
+namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
     /// A URI builder for URIs with unknown schemes.

@@ -12,7 +12,7 @@ namespace Nito.UniformResourceIdentifiers
     public static class UniformResourceIdentifierReference
     {
         /// <summary>
-        /// Parses a URI reference. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.GenericUniformResourceIdentifier"/>.
+        /// Parses a URI reference. If the URI's scheme is not registered, then this will return an instance of <see cref="GenericUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="uriReference">The URI reference to parse.</param>
         public static IUniformResourceIdentifierReference Parse(string uriReference)
