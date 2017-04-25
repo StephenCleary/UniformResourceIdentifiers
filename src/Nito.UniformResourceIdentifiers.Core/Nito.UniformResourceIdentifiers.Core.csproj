@@ -27,8 +27,4 @@
     <PackageReference Include="Nito.Comparers" Version="5.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Unknown\" />
-  </ItemGroup>
-
 </Project>
