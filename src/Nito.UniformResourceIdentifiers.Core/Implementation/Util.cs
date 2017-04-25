@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Nito.UniformResourceIdentifiers.Helpers
+namespace Nito.UniformResourceIdentifiers.Implementation
 {
     /// <summary>
     /// Utility constants and methods useful for constructing URI parsers and builders conforming to RFC3986 (https://tools.ietf.org/html/rfc3986).

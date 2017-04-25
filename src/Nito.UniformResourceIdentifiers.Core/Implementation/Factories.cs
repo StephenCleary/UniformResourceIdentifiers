@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Nito.UniformResourceIdentifiers.Builder;
 
-namespace Nito.UniformResourceIdentifiers.Helpers
+namespace Nito.UniformResourceIdentifiers.Implementation
 {
     /// <summary>
     /// A factory registry for URI schemes.

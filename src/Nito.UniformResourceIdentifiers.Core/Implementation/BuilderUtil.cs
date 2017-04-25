@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Nito.UniformResourceIdentifiers.Helpers;
+using Nito.UniformResourceIdentifiers.Implementation.Builder;
 
-namespace Nito.UniformResourceIdentifiers.Builder
+namespace Nito.UniformResourceIdentifiers.Implementation
 {
     /// <summary>
     /// Utility methods for builders.

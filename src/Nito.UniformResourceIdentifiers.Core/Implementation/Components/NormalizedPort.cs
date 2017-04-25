@@ -1,7 +1,6 @@
 using System;
-using Nito.UniformResourceIdentifiers.Helpers;
 
-namespace Nito.UniformResourceIdentifiers.Components
+namespace Nito.UniformResourceIdentifiers.Implementation.Components
 {
     /// <summary>
     /// Container for a normalized port value.

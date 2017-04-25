@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Nito.UniformResourceIdentifiers.Builder;
-using Nito.UniformResourceIdentifiers.Builder.Components;
-using Nito.UniformResourceIdentifiers.Helpers;
+using Nito.UniformResourceIdentifiers.Implementation;
+using Nito.UniformResourceIdentifiers.Implementation.Builder;
+using Nito.UniformResourceIdentifiers.Implementation.Builder.Components;
 
 namespace Nito.UniformResourceIdentifiers
 {

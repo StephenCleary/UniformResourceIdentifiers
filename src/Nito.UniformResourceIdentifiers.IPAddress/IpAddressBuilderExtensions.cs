@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using Nito.UniformResourceIdentifiers.Builder;
+using Nito.UniformResourceIdentifiers.Implementation.Builder;
 
 namespace Nito.UniformResourceIdentifiers
 {

@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using Nito.Comparers;
 using Nito.Comparers.Util;
-using Nito.UniformResourceIdentifiers.Builder;
-using Nito.UniformResourceIdentifiers.Components;
-using Nito.UniformResourceIdentifiers.Helpers;
+using Nito.UniformResourceIdentifiers.Implementation;
+using Nito.UniformResourceIdentifiers.Implementation.Components;
 
 namespace Nito.UniformResourceIdentifiers
 {

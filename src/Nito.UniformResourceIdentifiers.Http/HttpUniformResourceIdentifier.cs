@@ -6,10 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Nito.Comparers;
 using Nito.Comparers.Util;
-using Nito.UniformResourceIdentifiers.Builder;
-using Nito.UniformResourceIdentifiers.Components;
-using Nito.UniformResourceIdentifiers.Helpers;
-using static Nito.UniformResourceIdentifiers.Helpers.Util;
+using Nito.UniformResourceIdentifiers.Implementation;
+using Nito.UniformResourceIdentifiers.Implementation.Components;
+using static Nito.UniformResourceIdentifiers.Implementation.Util;
 
 // 1) Define scheme as static readonly property (must pass Util.IsValidScheme, i.e., lowercase).
 // 2) Inherit "ComparableBase, IURI", using normalizing components.

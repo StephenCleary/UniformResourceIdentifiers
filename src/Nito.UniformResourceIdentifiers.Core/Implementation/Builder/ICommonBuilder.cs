@@ -1,4 +1,4 @@
-﻿namespace Nito.UniformResourceIdentifiers.Builder
+﻿namespace Nito.UniformResourceIdentifiers.Implementation.Builder
 {
     /// <summary>
     /// A builder with common options.

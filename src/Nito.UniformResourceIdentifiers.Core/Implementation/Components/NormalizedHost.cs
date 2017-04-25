@@ -1,4 +1,4 @@
-﻿namespace Nito.UniformResourceIdentifiers.Components
+﻿namespace Nito.UniformResourceIdentifiers.Implementation.Components
 {
     /// <summary>
     /// Container for a normalized host value.

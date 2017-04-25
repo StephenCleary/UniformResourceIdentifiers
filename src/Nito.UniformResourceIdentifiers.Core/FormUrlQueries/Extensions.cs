@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Nito.UniformResourceIdentifiers.Builder;
-using Nito.UniformResourceIdentifiers.Helpers;
+using Nito.UniformResourceIdentifiers.Implementation;
+using Nito.UniformResourceIdentifiers.Implementation.Builder;
 
 namespace Nito.UniformResourceIdentifiers.FormUrlQueries
 {

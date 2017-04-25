@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Nito.UniformResourceIdentifiers.Builder
+namespace Nito.UniformResourceIdentifiers.Implementation.Builder
 {
     /// <summary>
     /// A builder that allows specifying path segments.

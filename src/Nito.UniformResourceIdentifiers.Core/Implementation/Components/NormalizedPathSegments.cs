@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Nito.UniformResourceIdentifiers.Helpers;
 
-namespace Nito.UniformResourceIdentifiers.Components
+namespace Nito.UniformResourceIdentifiers.Implementation.Components
 {
     /// <summary>
     /// Container for a normalized path value.

@@ -1,4 +1,4 @@
-﻿namespace Nito.UniformResourceIdentifiers.Builder
+﻿namespace Nito.UniformResourceIdentifiers.Implementation.Builder
 {
     /// <summary>
     /// A builder that allows specifying user info.
