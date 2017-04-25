@@ -168,8 +168,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                     return true;
                 if (!H16Regex.IsMatch(pieces[i]))
                     return false;
-                ushort piece;
-                if (!ushort.TryParse(pieces[i], NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out piece))
+                if (!ushort.TryParse(pieces[i], NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out ushort piece))
                     return false;
                 octets[octetsOffset++] = (byte) (piece >> 8);
                 octets[octetsOffset++] = (byte) (piece & 0xFF);
@@ -188,8 +187,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             if (HostIPvFutureRegex.IsMatch(value))
                 return true;
             var octets = new byte[16];
-            var zoneId = "";
-            return TryParseIpV6Address(value.Substring(1, value.Length - 2), octets, out zoneId);
+            return TryParseIpV6Address(value.Substring(1, value.Length - 2), octets, out string zoneId);
         }
 
         /// <summary>
@@ -207,8 +205,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                 return false;
             for (var i = 0; i != 4; ++i)
             {
-                byte result;
-                if (!byte.TryParse(octetStrings[i], NumberStyles.None, CultureInfo.InvariantCulture, out result))
+                if (!byte.TryParse(octetStrings[i], NumberStyles.None, CultureInfo.InvariantCulture, out byte result))
                     return false;
                 if (result.ToString(CultureInfo.InvariantCulture) != octetStrings[i]) // Disallow 0-prefixed values.
                     return false;
@@ -276,8 +273,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                     if (i + 2 >= value.Length)
                         throw new InvalidOperationException($"Unterminated percent-encoding at index {i} in string \"{value}\".");
                     var hexString = value.Substring(i + 1, 2);
-                    byte encodedValue;
-                    if (!byte.TryParse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out encodedValue))
+                    if (!byte.TryParse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out byte encodedValue))
                         throw new InvalidOperationException($"Invalid percent-encoding at index {i} in string \"{value}\".");
                     sb.Append((char) encodedValue);
                     i += 2;
@@ -463,8 +459,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             where T : IUniformResourceIdentifier
         {
             // See 5.2.2, except we always do strict resolution.
-            var relativeReference = referenceUri as RelativeReference;
-            if (relativeReference != null)
+            if (referenceUri is RelativeReference relativeReference)
                 return Resolve(baseUri, relativeReference, factory);
             return (IUniformResourceIdentifier) referenceUri;
         }

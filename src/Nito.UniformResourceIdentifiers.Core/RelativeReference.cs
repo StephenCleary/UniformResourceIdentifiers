@@ -111,9 +111,6 @@ namespace Nito.UniformResourceIdentifiers
         /// Parses a relative URI.
         /// </summary>
         /// <param name="relativeUri">The relative URI to parse.</param>
-        public static RelativeReference Parse(string relativeUri)
-        {
-            return new RelativeReferenceBuilder(relativeUri).Build();
-        }
+        public static RelativeReference Parse(string relativeUri) => new RelativeReferenceBuilder(relativeUri).Build();
     }
 }
