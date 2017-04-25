@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Nito.UniformResourceIdentifiers.Helpers;
 
 namespace Nito.UniformResourceIdentifiers.Components
 {
@@ -13,7 +14,7 @@ namespace Nito.UniformResourceIdentifiers.Components
         /// <summary>
         /// Validates and noramlizes a path.
         /// </summary>
-        public NormalizedPathSegments(IEnumerable<string> pathSegments, string userInfo, string host, string port)
+        public NormalizedPathSegments(IEnumerable<string> pathSegments, string userInfo, string host, string port, bool dotNormalize = true)
         {
             if (pathSegments == null)
                 throw new ArgumentNullException(nameof(pathSegments));
@@ -25,7 +26,7 @@ namespace Nito.UniformResourceIdentifiers.Components
                 if (!string.IsNullOrEmpty(segments.FirstOrDefault()))
                     throw new ArgumentException("URI with authority must have an absolute path", nameof(pathSegments));
             }
-            Value = segments;
+            Value = dotNormalize ? Util.RemoveDotSegments(segments) : segments;
         }
 
         /// <summary>

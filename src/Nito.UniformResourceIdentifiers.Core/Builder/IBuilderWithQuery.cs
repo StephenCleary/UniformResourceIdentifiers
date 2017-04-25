@@ -9,7 +9,7 @@
         /// <summary>
         /// Applies the query string to this builder, overwriting any existing query.
         /// </summary>
-        /// <param name="query">The query.</param>
+        /// <param name="query">The query. May be <c>null</c> or the empty string.</param>
         T WithQuery(string query);
     }
 }

@@ -11,7 +11,7 @@ namespace Nito.UniformResourceIdentifiers.Builder
         /// <summary>
         /// Applies the path to this builder, overwriting any existing path. This method does not automatically prefix a forward slash to the resulting path.
         /// </summary>
-        /// <param name="pathSegments">The path segments.</param>
+        /// <param name="pathSegments">The path segments. May not be <c>null</c>.</param>
         T WithPrefixlessPathSegments(IEnumerable<string> pathSegments);
     }
 }

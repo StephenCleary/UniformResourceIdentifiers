@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nito.Comparers;
+using Nito.Comparers.Util;
+using Nito.UniformResourceIdentifiers.Builder;
+using Nito.UniformResourceIdentifiers.Components;
 using Nito.UniformResourceIdentifiers.Helpers;
 
 namespace Nito.UniformResourceIdentifiers.Unknown
@@ -7,9 +11,12 @@ namespace Nito.UniformResourceIdentifiers.Unknown
     /// <summary>
     /// A URI with an unrecognized scheme. This URI is normalized as an arbitrary URI, but will not be fully normalized with respect to its scheme.
     /// </summary>
-    public sealed class UnknownUniformResourceIdentifier : UniformResourceIdentifier
+    public sealed class UnknownUniformResourceIdentifier : ComparableBase<UnknownUniformResourceIdentifier>, IUniformResourceIdentifier
     {
         private readonly Util.DelegateFactory<UnknownUniformResourceIdentifier> _factory;
+        private readonly NormalizedHost _host;
+        private readonly NormalizedPathSegments _pathSegments;
+        private readonly NormalizedPort _port;
 
         /// <summary>
         /// Constructs a new URI instance.
@@ -22,30 +29,85 @@ namespace Nito.UniformResourceIdentifiers.Unknown
         /// <param name="query">The query. This may be <c>null</c> to indicate no query, or the empty string to indicate an empty query.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
         public UnknownUniformResourceIdentifier(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
-            : base(scheme, userInfo, host, port, pathSegments, query, fragment)
         {
-            _factory = CreateFactory(() => new UnknownUniformResourceIdentifierBuilder().WithScheme(Scheme), x => x.Build());
+            if (scheme == null)
+                throw new ArgumentNullException(nameof(scheme));
+            if (!Util.IsValidScheme(scheme))
+                throw new ArgumentException("Invalid scheme " + scheme, nameof(scheme));
+            Scheme = scheme.ToLowerInvariant();
+            UserInfo = userInfo;
+            _host = new NormalizedHost(host);
+            _port = new NormalizedPort(port);
+            _pathSegments = new NormalizedPathSegments(pathSegments, userInfo, host, port);
+            Query = query;
+            Fragment = fragment;
+
+            _factory = CreateFactory(scheme);
+        }
+
+        private static Util.DelegateFactory<UnknownUniformResourceIdentifier> CreateFactory(string scheme)
+        {
+            return (userInfo, host, port, pathSegments, query, fragment) =>
+                BuilderUtil.ApplyUriReference(new UnknownUniformResourceIdentifierBuilder().WithScheme(scheme), userInfo, host, port, pathSegments, query, fragment).Build();
         }
 
         /// <summary>
         /// Resolves a relative URI against this URI.
         /// </summary>
         /// <param name="relativeUri">The relative URI to resolve.</param>
-        public new UnknownUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, _factory);
+        public UnknownUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, _factory);
 
-        /// <summary>
-        /// Resolves a reference URI against this URI.
-        /// </summary>
-        /// <param name="referenceUri">The reference URI to resolve.</param>
-        public override IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, _factory);
+        /// <inheritdoc />
+        public IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, _factory);
 
         /// <summary>
         /// Parses a URI.
         /// </summary>
         /// <param name="uri">The URI to parse.</param>
-        public new static UnknownUniformResourceIdentifier Parse(string uri)
-        {
-            return new UnknownUniformResourceIdentifierBuilder(uri).Build();
-        }
+        public static UnknownUniformResourceIdentifier Parse(string uri) => new UnknownUniformResourceIdentifierBuilder(uri).Build();
+
+        /// <inheritdoc />
+        public string Scheme { get; }
+
+        /// <inheritdoc />
+        public string UserInfo { get; }
+
+        /// <inheritdoc />
+        public string Host => _host.Value;
+
+        /// <inheritdoc />
+        public string Port => _port.Value;
+
+        /// <inheritdoc />
+        public bool AuthorityIsDefined => UserInfo != null || Host != null || Port != null;
+
+        /// <inheritdoc />
+        public IReadOnlyList<string> PathSegments => _pathSegments.Value;
+
+        /// <inheritdoc />
+        public bool PathIsEmpty => Util.PathIsEmpty(PathSegments);
+
+        /// <inheritdoc />
+        public bool PathIsAbsolute => Util.PathIsAbsolute(PathSegments);
+
+        /// <inheritdoc />
+        public string Query { get; }
+
+        /// <inheritdoc />
+        public string Fragment { get; }
+
+        /// <inheritdoc />
+        public string Uri => Util.ToString(Scheme, UserInfo, Host, Port, PathSegments, Query, Fragment);
+
+        /// <inheritdoc />
+        public Uri ToUri() => new Uri(Uri, UriKind.Absolute);
+
+        /// <inheritdoc />
+        public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
+
+        /// <inheritdoc />
+        public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
+
+        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Resolve(relativeUri);
     }
 }
