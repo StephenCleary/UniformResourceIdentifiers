@@ -49,10 +49,5 @@ namespace Nito.UniformResourceIdentifiers
         /// Gets the URI as a complete string without the deprecated <see cref="UserInfo"/> portion, e.g., "http://www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
         /// </summary>
         string ToString(); // => Util.ToString(Scheme, null, Host, Port, PathSegments, Query, Fragment);
-
-        /// <summary>
-        /// Converts to a <see cref="Uri"/>.
-        /// </summary>
-        Uri ToUri();
     }
 }

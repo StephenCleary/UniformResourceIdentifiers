@@ -96,9 +96,6 @@ namespace Nito.UniformResourceIdentifiers
         public override string ToString() => Uri;
 
         /// <inheritdoc />
-        public Uri ToUri() => new Uri(Uri, UriKind.Absolute);
-
-        /// <inheritdoc />
         public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
 
         /// <inheritdoc />

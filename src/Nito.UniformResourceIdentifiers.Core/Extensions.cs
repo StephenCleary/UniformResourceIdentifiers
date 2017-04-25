@@ -7,9 +7,9 @@ using Nito.UniformResourceIdentifiers.Implementation.Builder;
 namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
-    /// Extension methods for builders.
+    /// Extension methods.
     /// </summary>
-    public static class BuilderExtensions
+    public static class Extensions
     {
         /// <summary>
         /// Applies the port portion of the authority to this builder, overwriting any existing port.
@@ -44,5 +44,20 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="this">The builder.</param>
         /// <param name="segments">The path segments.</param>
         public static T WithPathSegments<T>(this IBuilderWithPath<T> @this, params string[] segments) => @this.WithPathSegments((IEnumerable<string>)segments);
+
+        /// <summary>
+        /// Converts to a <see cref="Uri"/>.
+        /// </summary>
+        public static Uri ToUri(this IUniformResourceIdentifier @this) => new Uri(@this.Uri, UriKind.Absolute);
+
+        /// <summary>
+        /// Converts to a <see cref="Uri"/>.
+        /// </summary>
+        public static Uri ToUri(this IUniformResourceIdentifierReference @this)
+        {
+            if (@this is RelativeReference relativeUri)
+                return relativeUri.ToUri();
+            return ((IUniformResourceIdentifier) @this).ToUri();
+        }
     }
 }
