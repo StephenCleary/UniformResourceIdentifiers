@@ -33,7 +33,7 @@ namespace Nito.UniformResourceIdentifiers
             _userInfo = userInfo;
             _host = new NormalizedHost(host);
             _port = new NormalizedPort(port);
-            _pathSegments = new NormalizedPathSegments(NormalizePath(userInfo, host, port, pathSegments), userInfo, host, port, dotNormalize: false);
+            _pathSegments = new NormalizedPathSegments(NormalizePath(_userInfo, _host.Value, _port.Value, pathSegments), _userInfo, _host.Value, _port.Value, dotNormalize: false);
             Query = query;
             Fragment = fragment;
         }

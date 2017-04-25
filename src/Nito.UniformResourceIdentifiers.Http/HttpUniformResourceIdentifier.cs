@@ -111,7 +111,7 @@ namespace Nito.UniformResourceIdentifiers
         public string Uri => Util.ToString(HttpScheme, null, Host, Port, PathSegments, Query, Fragment);
 
         /// <inheritdoc />
-        public override string ToString() => Util.ToString(HttpScheme, null, Host, Port, PathSegments, Query, Fragment);
+        public override string ToString() => Uri;
 
         /// <inheritdoc />
         public Uri ToUri() => new Uri(Uri, UriKind.Absolute);

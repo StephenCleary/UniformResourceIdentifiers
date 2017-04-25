@@ -38,7 +38,7 @@ namespace Nito.UniformResourceIdentifiers.Unknown
             UserInfo = userInfo;
             _host = new NormalizedHost(host);
             _port = new NormalizedPort(port);
-            _pathSegments = new NormalizedPathSegments(pathSegments, userInfo, host, port);
+            _pathSegments = new NormalizedPathSegments(pathSegments, UserInfo, _host.Value, _port.Value);
             Query = query;
             Fragment = fragment;
 
