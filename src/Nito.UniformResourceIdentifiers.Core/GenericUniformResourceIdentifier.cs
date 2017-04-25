@@ -87,9 +87,6 @@ namespace Nito.UniformResourceIdentifiers
         public string Fragment { get; }
 
         /// <inheritdoc />
-        public string Uri => Util.ToString(Scheme, UserInfo, Host, Port, PathSegments, Query, Fragment);
-
-        /// <inheritdoc />
         public override string ToString() => Util.ToString(Scheme, null, Host, Port, PathSegments, Query, Fragment);
 
         /// <inheritdoc />

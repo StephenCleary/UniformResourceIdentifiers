@@ -48,7 +48,7 @@ namespace Core.UnitTests
         public void UriFormattingRfcExamples(string expectedUrl, string scheme, string userInfo, string host, string port, IEnumerable<string> path, string query, string fragment)
         {
             var uri = CreateUri(path, scheme: scheme, userInfo: userInfo, host: host, port: port, query: query, fragment: fragment);
-            Assert.Equal(expectedUrl, uri.Uri);
+            Assert.Equal(expectedUrl, uri.UriString());
         }
 
         [Theory]
@@ -59,7 +59,7 @@ namespace Core.UnitTests
         public void UriFormattingExamples(string expectedUrl, string scheme, string userInfo, string host, string port, IEnumerable<string> path, string query, string fragment)
         {
             var uri = CreateUri(path, scheme: scheme, userInfo: userInfo, host: host, port: port, query: query, fragment: fragment);
-            Assert.Equal(expectedUrl, uri.Uri);
+            Assert.Equal(expectedUrl, uri.UriString());
         }
 
         private static GenericUniformResourceIdentifier CreateUri(IEnumerable<string> pathSegments, string scheme = "scheme", string userInfo = "user", string host = "host", string port = "8080", string query = "query", string fragment = "fragment")

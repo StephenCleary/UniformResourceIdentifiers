@@ -95,7 +95,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Gets the URI as a complete string, e.g., "http://username:password@www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
         /// </summary>
-        public string Uri => Util.ToString(null, _userInfo, Host, Port, PathSegments, Query, Fragment);
+        public string ToUriString() => Util.ToString(null, _userInfo, Host, Port, PathSegments, Query, Fragment);
 
         /// <summary>
         /// Gets the URI as a complete string without the deprecated <see cref="IUniformResourceIdentifierReference.UserInfo"/> portion, e.g., "http://www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
@@ -105,7 +105,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Converts to a relative <see cref="Uri"/>.
         /// </summary>
-        public Uri ToUri() => new Uri(Uri, UriKind.Relative);
+        public Uri ToUri() => new Uri(ToUriString(), UriKind.Relative);
 
         /// <summary>
         /// Parses a relative URI.

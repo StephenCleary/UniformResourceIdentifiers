@@ -90,10 +90,7 @@ namespace Nito.UniformResourceIdentifiers
         public string Fragment { get; }
 
         /// <inheritdoc />
-        public string Uri => Util.ToString(HttpsScheme, null, Host, Port, PathSegments, Query, Fragment);
-
-        /// <inheritdoc />
-        public override string ToString() => Uri;
+        public override string ToString() => this.UriString();
 
         /// <inheritdoc />
         public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
