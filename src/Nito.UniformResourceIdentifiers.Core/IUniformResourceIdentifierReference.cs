@@ -12,11 +12,6 @@ namespace Nito.UniformResourceIdentifiers
     public interface IUniformResourceIdentifierReference
     {
         /// <summary>
-        /// Gets the scheme of this URI, e.g., "http". This can be <c>null</c> if there is no scheme. If not <c>null</c>, then this is always a valid scheme; it can never be the empty string.
-        /// </summary>
-        string Scheme { get; }
-
-        /// <summary>
         /// Gets the user info portion of the authority of this URI, e.g., "username:password". This can be <c>null</c> if there is no user info, or an empty string if the user info is empty.
         /// </summary>
         string UserInfo { get; }

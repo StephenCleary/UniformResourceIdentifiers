@@ -49,9 +49,6 @@ namespace Nito.UniformResourceIdentifiers
     /// <summary>
     /// An immutable, normalized URI.
     /// </summary>
-    /// <remarks>
-    /// <para>The <see cref="IUniformResourceIdentifierReference.Scheme"/> property is always valid and never <c>null</c>.</para>
-    /// </remarks>
     public abstract class UniformResourceIdentifier : ComparableBase<UniformResourceIdentifier>, IUniformResourceIdentifier
     {
         static UniformResourceIdentifier()
@@ -71,7 +68,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
         /// <remarks>
         /// <para>All URIs are normalized. If your scheme has scheme-specific normalization rules (see 6.2.3), they should be applied at the end of your constructor.</para>
-        /// <para>Since <see cref="IUniformResourceIdentifierReference.Scheme"/> and <see cref="IUniformResourceIdentifierReference.Host"/> are always stored lowercased, and all fields are stored in their decoded form, all URI instances are case normalized (see 6.2.2.1).</para>
+        /// <para>Since <see cref="IUniformResourceIdentifier.Scheme"/> and <see cref="IUniformResourceIdentifierReference.Host"/> are always stored lowercased, and all fields are stored in their decoded form, all URI instances are case normalized (see 6.2.2.1).</para>
         /// <para>Since unreserved characters are percent-unencoded during parsing, all URI instances are also percent-encoding normalized (see 6.2.2.2).</para>
         /// <para>Since path segments are normalized when creating URIs, all URI instances are also path segment normalized (see 6.2.2.3).</para>
         /// </remarks>

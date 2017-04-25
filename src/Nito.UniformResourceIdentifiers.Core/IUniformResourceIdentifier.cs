@@ -10,5 +10,9 @@ namespace Nito.UniformResourceIdentifiers
     public interface IUniformResourceIdentifier : IUniformResourceIdentifierReference,
         IEquatable<IUniformResourceIdentifier>, IComparable, IComparable<IUniformResourceIdentifier>
     {
+        /// <summary>
+        /// Gets the scheme of this URI, e.g., "http". This can be <c>null</c> if there is no scheme. If not <c>null</c>, then this is always a valid scheme; it can never be the empty string.
+        /// </summary>
+        string Scheme { get; }
     }
 }

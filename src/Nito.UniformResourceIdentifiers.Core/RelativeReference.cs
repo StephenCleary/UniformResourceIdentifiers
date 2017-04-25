@@ -12,9 +12,6 @@ namespace Nito.UniformResourceIdentifiers
     /// <summary>
     /// An immutable relative reference.
     /// </summary>
-    /// <remarks>
-    /// <para>The <see cref="IUniformResourceIdentifierReference.Scheme"/> property is always <c>null</c>.</para>
-    /// </remarks>
     public sealed class RelativeReference : IUniformResourceIdentifierReference
     {
         private readonly NormalizedHost _host;
@@ -62,8 +59,6 @@ namespace Nito.UniformResourceIdentifiers
                 yield return segment;
             }
         }
-
-        string IUniformResourceIdentifierReference.Scheme => null;
 
         string IUniformResourceIdentifierReference.UserInfo => _userInfo;
 
