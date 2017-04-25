@@ -45,14 +45,5 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="this">The builder.</param>
         /// <param name="segments">The path segments.</param>
         public static T WithPathSegments<T>(this IBuilderWithPath<T> @this, params string[] segments) => @this.WithPathSegments((IEnumerable<string>)segments);
-
-        /// <summary>
-        /// Applies the query string to this builder, overwriting any existing query.
-        /// </summary>
-        /// <param name="this">The builder.</param>
-        /// <param name="values">The query values to encode.</param>
-        public static T WithQueryValues<T>(this IBuilderWithQuery<T> @this, IEnumerable<KeyValuePair<string, string>> values) => @this.WithQuery(Util.FormUrlEncode(values));
-
-        // TODO: Fragment path segment support? Other query/fragment support?
     }
 }
