@@ -19,7 +19,7 @@ namespace Nito.UniformResourceIdentifiers.Components
         }
 
         /// <summary>
-        /// The noramlized port.
+        /// The normalized port.
         /// </summary>
         public string Value { get; }
 

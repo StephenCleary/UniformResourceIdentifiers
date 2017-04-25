@@ -30,7 +30,7 @@ namespace Nito.UniformResourceIdentifiers.Components
         }
 
         /// <summary>
-        /// The noramlized path.
+        /// The normalized path.
         /// </summary>
         public IReadOnlyList<string> Value { get; }
     }

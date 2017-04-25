@@ -29,7 +29,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Returns <c>true</c> if the authority is defined. Note that it is possible (though unusual) for the authority to be defined as the empty string.
         /// </summary>
-        bool AuthorityIsDefined { get; } // => UserInfo != null || Host != null || Port != null;
+        bool AuthorityIsDefined { get; } // => UserInfo != null || Host != null || Port != null; - todo: remove from interface
 
         /// <summary>
         /// Gets the path segments of the URI, e.g., { "", "folder", "subfolder", "file.jpg" }. This can never be <c>null</c>, but it can be empty. Note that for some schemes, it is common for the first path segment to be the empty string to generate an initial forward-slash.
@@ -39,12 +39,12 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Returns <c>true</c> if the path is empty.
         /// </summary>
-        bool PathIsEmpty { get; } // => Util.PathIsEmpty(PathSegments);
+        bool PathIsEmpty { get; } // => Util.PathIsEmpty(PathSegments); - todo: remove from interface
 
         /// <summary>
         /// Returns <c>true</c> if the path is absolute (i.e., starts with a forward-slash).
         /// </summary>
-        bool PathIsAbsolute { get; } // => Util.PathIsAbsolute(PathSegments);
+        bool PathIsAbsolute { get; } // => Util.PathIsAbsolute(PathSegments); - todo: remove from interface
 
         /// <summary>
         /// Gets the query of the URI, e.g., "q=test&amp;page=4". This can be <c>null</c> if there is no query, or an empty string if the query is empty.

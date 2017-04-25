@@ -14,7 +14,7 @@
         }
 
         /// <summary>
-        /// The noramlized host.
+        /// The normalized host.
         /// </summary>
         public string Value { get; }
     }
