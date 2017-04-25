@@ -44,6 +44,18 @@ namespace Nito.UniformResourceIdentifiers
             .OrderBy(x => x.Scheme, StringComparer.Ordinal)
             .ThenBy(x => (x as IUniformResourceIdentifierWithCustomComparison)?.SchemeSpecificComparerProxy)
             .ThenBy(x => (x as IUniformResourceIdentifierWithCustomComparison)?.SchemeSpecificComparerProxy != null ? null : x, GenericComparer);
+
+        /// <summary>
+        /// Parses a URI. If the URI's scheme is not registered, then this will return an instance of <see cref="Unknown.UnknownUniformResourceIdentifier"/>.
+        /// </summary>
+        /// <param name="uri">The URI to parse.</param>
+        public static IUniformResourceIdentifier Parse(string uri)
+        {
+            var result = UniformResourceIdentifierReference.Parse(uri) as IUniformResourceIdentifier;
+            if (result == null)
+                throw new InvalidOperationException($"URI reference is not a URI: {uri}");
+            return result;
+        }
     }
 
     /// <summary>
