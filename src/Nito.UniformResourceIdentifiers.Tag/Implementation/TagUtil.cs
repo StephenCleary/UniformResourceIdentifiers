@@ -10,20 +10,6 @@ namespace Nito.UniformResourceIdentifiers.Implementation
 {
     public static class TagUtil
     {
-        private static Regex EmailUserNameRegex { get; } = new Regex(@"^[-._A-Z0-9]+$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        private static Regex DnsComputerNameRegex { get; } = new Regex(@"^[A-Z0-9]([-A-Z0-9]*[A-Z0-9])?$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-
-        public static bool IsValidAuthorityName(string authorityName)
-        {
-            var split = authorityName.Split('@');
-            if (split.Length != 1 && split.Length != 2)
-                return false;
-            if (split.Length == 2 && !EmailUserNameRegex.IsMatch(split[0]))
-                return false;
-            var dnsComputerNames = split[split.Length == 1 ? 0 : 1].Split('.');
-            return dnsComputerNames.All(DnsComputerNameRegex.IsMatch);
-        }
-
         private static readonly Regex DateRegex = new Regex(@"^([0-9]{4})(?:-([0-9]{2})(?:-([0-9){2}))?)?$", RegexOptions.CultureInvariant);
 
         public static bool TryParseDate(string date, int offset, int length, out int year, out int? month, out int? day)
@@ -50,6 +36,24 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             return true;
         }
 
+        // RFC4151 (2.1) is too limited in the characters allowed for an email (as noted in the errata).
+        // However, the fix proposed by the errata (as of 2017-04-27) is too lenient (allowing invalid URI characters).
+        // RFC4151 (2.1) states "Future standards efforts may allow use of other authority names following syntax that is disjoint from this syntax. To allow
+        //   for such developments, software that processes tags MUST NOT reject them on the grounds that they are outside the syntax defined above."
+        // which is, of course, not possible in practice. One cannot parse a syntax that is undefined.
+        // RFC4151 (2.1) recommends limiting percent-encoding to the `specific`/`fragment` portions: "tags SHOULD NOT be minted with percent-encoded parts.
+        //   However, the tag syntax does allow percent-encoded characters in the "pchar" elements..."
+        // In this case, I believe the best option is to allow percent-encoding in the `authorityName` field, in spite of the SHOULD NOT recommendation.
+        // Since `authorityName` is (part of) a path segment (RFC3986 (3)), and since ":" is used as a delimiter after `taggingEntity`, this implementation uses:
+        //   authorityName = segment-nz-nc
+        // In other words, `authorityName` must be a non-zero-length segment without ":".
+        // This is identical to:
+        //   authorityName = 1*( pct-encoded / unreserved / sub-delims / "@" )
+        /// <summary>
+        /// A delegate for determining whether an authority name character is safe (does not require encoding).
+        /// </summary>
+        public static readonly Func<byte, bool> AuthorityNameCharIsSafe = x => Util.IsUnreserved(x) || Util.IsSubcomponentDelimiter(x) || x == '@';
+
         /// <summary>
         /// A delegate for determining whether a specific character is safe (does not require encoding).
         /// </summary>
@@ -63,7 +67,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             var sb = new StringBuilder();
             sb.Append(TagUniformResourceIdentifier.TagScheme);
             sb.Append(':');
-            sb.Append(authorityName);
+            sb.Append(Util.PercentEncode(authorityName, AuthorityNameCharIsSafe));
             sb.Append(',');
             sb.Append(year.ToString("D4", CultureInfo.InvariantCulture));
             if (month != null)

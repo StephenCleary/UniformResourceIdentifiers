@@ -45,8 +45,6 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="authorityName">The authority name. If not <c>null</c>, then this must be a valid authority name.</param>
         public TagUniformResourceIdentifierBuilder WithAuthorityName(string authorityName)
         {
-            if (authorityName != null && !TagUtil.IsValidAuthorityName(authorityName))
-                throw new ArgumentException("Invalid authority name " + authorityName, nameof(authorityName));
             _authorityName = authorityName;
             return this;
         }

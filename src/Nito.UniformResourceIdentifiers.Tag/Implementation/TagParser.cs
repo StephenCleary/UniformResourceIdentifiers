@@ -42,8 +42,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
 
             // Decode and verify each one.
 
-            if (!TagUtil.IsValidAuthorityName(authorityName))
-                throw new InvalidOperationException($"Invalid authority name \"{authorityName}\" in URI reference \"{uri}\".");
+            authorityName = Parser.PercentDecode(authorityName, TagUtil.AuthorityNameCharIsSafe, "authority name", uri);
             specific = Parser.PercentDecode(specific, TagUtil.SpecificCharIsSafe, "specific", uri);
             if (fragment != null)
                 fragment = Parser.PercentDecode(fragment, Util.FragmentCharIsSafe, "fragment", uri);

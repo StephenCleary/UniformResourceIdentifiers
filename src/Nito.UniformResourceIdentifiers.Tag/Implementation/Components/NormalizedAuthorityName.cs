@@ -16,8 +16,6 @@ namespace Nito.UniformResourceIdentifiers.Implementation.Components
                 throw new ArgumentNullException(nameof(authorityName));
             if (authorityName == "")
                 throw new ArgumentException("Authority name is required.", nameof(authorityName));
-            if (!TagUtil.IsValidAuthorityName(authorityName))
-                throw new ArgumentException("Invalid authority name " + authorityName, nameof(authorityName));
             Value = authorityName;
         }
 
