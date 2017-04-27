@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Nito.Comparers;
 using Nito.Comparers.Util;
 using Nito.UniformResourceIdentifiers.Implementation;
+using Nito.UniformResourceIdentifiers.Implementation.Components;
 
 namespace Nito.UniformResourceIdentifiers
 {
@@ -15,6 +16,8 @@ namespace Nito.UniformResourceIdentifiers
     /// </summary>
     public sealed class TagUniformResourceIdentifier : ComparableBase<TagUniformResourceIdentifier>, IUniformResourceIdentifierWithCustomComparison
     {
+        private readonly NormalizedAuthorityName _authorityName;
+        private readonly NormalizedDate _date;
         private readonly Lazy<GenericUniformResourceIdentifier> _uri;
         private readonly ComparerProxy _comparerProxy;
 
@@ -22,6 +25,14 @@ namespace Nito.UniformResourceIdentifiers
         /// The TAG scheme.
         /// </summary>
         public static string TagScheme { get; } = "tag";
+
+        private static readonly Util.DelegateFactory<TagUniformResourceIdentifier> Factory = (userInfo, host, port, pathSegments, query, fragment) =>
+            Parse(new GenericUniformResourceIdentifier(TagScheme, userInfo, host, port, pathSegments, query, fragment).UriString());
+
+        /// <summary>
+        /// Registers this scheme with the factories.
+        /// </summary>
+        public static void Register() => Factories.RegisterSchemeFactory(TagScheme, Factory);
 
         static TagUniformResourceIdentifier()
         {
@@ -37,17 +48,10 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="day"></param>
         /// <param name="specific">The specific identifier string. If this consists of path segments, then dot segments are normalized.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
-        public TagUniformResourceIdentifier(string authorityName, int? year, int? month, int? day, string specific, string fragment)
+        public TagUniformResourceIdentifier(string authorityName, int year, int? month, int? day, string specific, string fragment)
         {
-            if (year == null)
-                throw new InvalidOperationException(); // todo: message
-
-            // TODO: dot-normalization? Yes, according to URI spec.
-            // When parsing strings, may be best to parse into GURI, then take normalized string and parse *that*.
-            AuthorityName = authorityName;
-            DateYear = year.Value;
-            DateMonth = month;
-            DateDay = day;
+            _authorityName = new NormalizedAuthorityName(authorityName);
+            _date = new NormalizedDate(year, month, day);
             Specific = specific;
             Fragment = fragment;
 
@@ -55,11 +59,11 @@ namespace Nito.UniformResourceIdentifiers
             _comparerProxy = new ComparerProxy(this);
         }
 
-        public string Scheme => TagScheme;
-        public string AuthorityName { get; }
-        public int DateYear { get; }
-        public int? DateMonth { get; }
-        public int? DateDay { get; }
+        string IUniformResourceIdentifier.Scheme => TagScheme;
+        public string AuthorityName => _authorityName.Value;
+        public int DateYear => _date.Year;
+        public int? DateMonth => _date.Month;
+        public int? DateDay => _date.Day;
         public DateTimeOffset Date => new DateTimeOffset(DateYear, DateMonth ?? 1, DateDay ?? 1, 0, 0, 0, TimeSpan.Zero);
         public string Specific { get; }
         public string Fragment { get; }
@@ -78,11 +82,11 @@ namespace Nito.UniformResourceIdentifiers
 
         public string UriString() => TagUtil.ToString(AuthorityName, DateYear, DateMonth, DateDay, Specific, Fragment);
 
-        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => throw new NotImplementedException();
+        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
 
-        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(IUniformResourceIdentifierReference referenceUri) => throw new NotImplementedException();
+        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
 
-        public static TagUniformResourceIdentifier Parse(string uri) => throw new NotImplementedException();
+        public static TagUniformResourceIdentifier Parse(string uri) => new TagUniformResourceIdentifierBuilder(uri).Build();
 
         object IUniformResourceIdentifierWithCustomComparison.SchemeSpecificComparerProxy => _comparerProxy;
 

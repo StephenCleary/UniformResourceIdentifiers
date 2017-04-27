@@ -35,8 +35,8 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public TagUniformResourceIdentifierBuilder(string uri)
         {
-            throw new NotImplementedException();
-            //ApplyUriReference(uri, TagUniformResourceIdentifier.TagScheme);
+            TagParser.Parse(uri, out var authorityName, out var year, out var month, out var day, out var specific, out var fragment);
+            WithAuthorityName(authorityName).WithDateYear(year).WithDateMonth(month).WithDateDay(day).WithSpecific(specific).WithFragment(fragment);
         }
 
         /// <summary>
@@ -119,6 +119,11 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Builds the TAG URI instance.
         /// </summary>
-        public TagUniformResourceIdentifier Build() => new TagUniformResourceIdentifier(_authorityName, _year, _month, _day, _specific, _fragment);
+        public TagUniformResourceIdentifier Build()
+        {
+            if (_year == null)
+                throw new ArgumentException("Year is required.");
+            return new TagUniformResourceIdentifier(_authorityName, _year.Value, _month, _day, _specific, _fragment);
+        }
     }
 }
