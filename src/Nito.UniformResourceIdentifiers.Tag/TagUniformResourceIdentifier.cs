@@ -50,8 +50,9 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
         public TagUniformResourceIdentifier(string authorityName, int year, int? month, int? day, string specific, string fragment)
         {
-            // TODO: technically, we do need to run remove_dot_segments here... Could we treat 'specific' as a path???
-            // TODO: extend email authorityNames as per RFC errata?
+            // Technically, we do need to run remove_dot_segments here. Since `taggingEntity` cannot contain "/",
+            //  and since remove_dot_segments will preserve the first segment on non-absolute paths, we can treat `specific` as though it were our path segments.
+            specific = string.Join("/", Util.RemoveDotSegments(specific.Split('/')));
 
             _authorityName = new NormalizedAuthorityName(authorityName);
             _date = new NormalizedDate(year, month, day);
