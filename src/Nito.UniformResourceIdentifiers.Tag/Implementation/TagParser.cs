@@ -8,8 +8,6 @@ namespace Nito.UniformResourceIdentifiers.Implementation
 {
     public static class TagParser
     {
-        private static readonly Regex DateRegex = new Regex(@"^([0-9]{4})(?:-([0-9]{2})(?:-([0-9){2}))?)?$", RegexOptions.CultureInvariant);
-
         private static bool CoarseParse(string uri, out string authorityName, out int year, out int? month, out int? day, out string specific, out string fragment)
         {
             authorityName = specific = fragment = null;
@@ -24,23 +22,8 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             if (authorityNameEndIndex == -1)
                 return false;
             authorityName = uri.Substring(4, authorityNameEndIndex - 4);
-            var dateParts = DateRegex.Match(uri, authorityNameEndIndex + 1, entityEndIndex - (authorityNameEndIndex + 1));
-            if (!dateParts.Success)
+            if (!TagUtil.TryParseDate(uri, authorityNameEndIndex + 1, entityEndIndex - (authorityNameEndIndex + 1), out year, out month, out day))
                 return false;
-            if (!int.TryParse(dateParts.Groups[1].Value, NumberStyles.None, CultureInfo.InvariantCulture, out year))
-                return false;
-            if (dateParts.Groups[2].Value != "")
-            {
-                if (!int.TryParse(dateParts.Groups[2].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var value))
-                    return false;
-                month = value;
-            }
-            if (dateParts.Groups[3].Value != "")
-            {
-                if (!int.TryParse(dateParts.Groups[3].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var value))
-                    return false;
-                day = value;
-            }
             var fragmentDelimiterIndex = uri.IndexOf('#', entityEndIndex + 1);
             specific = fragmentDelimiterIndex == -1 ? uri.Substring(entityEndIndex + 1) : uri.Substring(entityEndIndex + 1, fragmentDelimiterIndex - (entityEndIndex + 1));
             if (fragmentDelimiterIndex != -1)

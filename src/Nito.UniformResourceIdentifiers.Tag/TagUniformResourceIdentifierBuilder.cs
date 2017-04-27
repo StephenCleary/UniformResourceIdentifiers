@@ -83,7 +83,7 @@ namespace Nito.UniformResourceIdentifiers
                 return this;
             }
 
-            if (!TagUtil.TryParseDate(date, out var year, out var month, out var day))
+            if (!TagUtil.TryParseDate(date, 0, date.Length, out var year, out var month, out var day))
                 throw new ArgumentException("Invalid date " + date, nameof(date));
             return WithDateYear(year).WithDateMonth(month).WithDateDay(day);
         }

@@ -24,9 +24,30 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             return dnsComputerNames.All(DnsComputerNameRegex.IsMatch);
         }
 
-        public static bool TryParseDate(string date, out int year, out int? month, out int? day)
+        private static readonly Regex DateRegex = new Regex(@"^([0-9]{4})(?:-([0-9]{2})(?:-([0-9){2}))?)?$", RegexOptions.CultureInvariant);
+
+        public static bool TryParseDate(string date, int offset, int length, out int year, out int? month, out int? day)
         {
-            throw new NotImplementedException();
+            year = 0;
+            month = day = null;
+            var dateParts = DateRegex.Match(date, offset, length);
+            if (!dateParts.Success)
+                return false;
+            if (!int.TryParse(dateParts.Groups[1].Value, NumberStyles.None, CultureInfo.InvariantCulture, out year))
+                return false;
+            if (dateParts.Groups[2].Value != "")
+            {
+                if (!int.TryParse(dateParts.Groups[2].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var value))
+                    return false;
+                month = value;
+            }
+            if (dateParts.Groups[3].Value != "")
+            {
+                if (!int.TryParse(dateParts.Groups[3].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var value))
+                    return false;
+                day = value;
+            }
+            return true;
         }
 
         /// <summary>
