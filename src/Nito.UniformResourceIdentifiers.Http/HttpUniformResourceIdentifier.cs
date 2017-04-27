@@ -34,6 +34,11 @@ namespace Nito.UniformResourceIdentifiers
         /// </summary>
         public static void Register() => Factories.RegisterSchemeFactory(HttpScheme, Factory);
 
+        static HttpUniformResourceIdentifier()
+        {
+            DefaultComparer = UniformResourceIdentifier.Comparer;
+        }
+
         /// <summary>
         /// Constructs a new URI instance.
         /// </summary>

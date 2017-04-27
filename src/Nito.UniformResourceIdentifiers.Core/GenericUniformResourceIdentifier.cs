@@ -17,6 +17,11 @@ namespace Nito.UniformResourceIdentifiers
         private readonly NormalizedPort _port;
         private readonly Util.DelegateFactory<GenericUniformResourceIdentifier> _factory;
 
+        static GenericUniformResourceIdentifier()
+        {
+            DefaultComparer = UniformResourceIdentifier.Comparer;
+        }
+
         /// <summary>
         /// Constructs a new URI instance.
         /// </summary>
