@@ -131,7 +131,14 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                 fragment = PercentDecode(fragment, Util.FragmentCharIsSafe, "fragment", uriReference);
         }
 
-        private static string PercentDecode(string value, Func<byte, bool> isSafe, string part, string uriReference)
+        /// <summary>
+        /// Validates and percent-decodes a given string.
+        /// </summary>
+        /// <param name="value">The string to decode.</param>
+        /// <param name="isSafe">A function defining which characters do not need percent-encoding.</param>
+        /// <param name="part">The name of the part of the URI. This is used for a detailed exception message.</param>
+        /// <param name="uriReference">The full URI being parsed. This is used for a detailed exception message.</param>
+        public static string PercentDecode(string value, Func<byte, bool> isSafe, string part, string uriReference)
         {
             try
             {
