@@ -17,7 +17,7 @@ namespace Nito.UniformResourceIdentifiers
     public sealed class HttpsUniformResourceIdentifier : ComparableBase<HttpsUniformResourceIdentifier>, IUniformResourceIdentifier
     {
         private NormalizedHttpHost _host;
-        private NormalizedHttpPort _port;
+        private NormalizedHttpsPort _port;
         private NormalizedHttpPathSegments _pathSegments;
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Nito.UniformResourceIdentifiers
         public HttpsUniformResourceIdentifier(string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
         {
             _host = new NormalizedHttpHost(host);
-            _port = new NormalizedHttpPort(port);
+            _port = new NormalizedHttpsPort(port);
             _pathSegments = new NormalizedHttpPathSegments(pathSegments, null, _host.Value, _port.Value);
             Query = query;
             Fragment = fragment;
