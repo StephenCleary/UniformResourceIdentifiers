@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Nito.UniformResourceIdentifiers.Unknown;
 
-namespace Nito.UniformResourceIdentifiers.Helpers
+namespace Nito.UniformResourceIdentifiers.Implementation
 {
     /// <summary>
     /// A factory registry for URI schemes.
     /// </summary>
     public static class Factories
     {
-        private delegate UniformResourceIdentifierReference FactoryDelegate(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment);
+        private delegate IUniformResourceIdentifierReference FactoryDelegate(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment);
         private static readonly Dictionary<string, FactoryDelegate> _factories = new Dictionary<string, FactoryDelegate>();
 
         /// <summary>
@@ -21,7 +18,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="scheme">The scheme. This must be a valid scheme, as defined by <see cref="Util.IsValidScheme"/>.</param>
         /// <param name="factory">The factory method for URIs following this scheme. This method must perform any scheme-specific validation.</param>
         public static void RegisterSchemeFactory<T>(string scheme, Util.DelegateFactory<T> factory)
-            where T : UniformResourceIdentifier
+            where T : IUniformResourceIdentifier
         {
             if (scheme == null || !Util.IsValidScheme(scheme))
                 throw new ArgumentException("Invalid scheme " + scheme, nameof(scheme));
@@ -33,7 +30,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         }
 
         /// <summary>
-        /// Creates a URI or relative URI from its components. If the scheme is not registered, returns an instance of <see cref="UnknownUniformResourceIdentifier"/>.
+        /// Creates a URI or relative URI from its components. If the scheme is not registered, returns an instance of <see cref="GenericUniformResourceIdentifier"/>.
         /// </summary>
         /// <param name="scheme">The scheme. This may be <c>null</c>. If this is not <c>null</c>, then it must be a valid scheme.</param>
         /// <param name="userInfo">The user information.</param>
@@ -42,7 +39,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="pathSegments">The path segments.</param>
         /// <param name="query">The query string.</param>
         /// <param name="fragment">The fragment string.</param>
-        public static UniformResourceIdentifierReference Create(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
+        public static IUniformResourceIdentifierReference Create(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
         {
             if (scheme == null)
                 return new RelativeReference(userInfo, host, port, pathSegments, query, fragment);
@@ -52,7 +49,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 _factories.TryGetValue(scheme, out factory);
             }
             if (factory == null)
-                return new UnknownUniformResourceIdentifierBuilder().WithScheme(scheme).WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegments).WithQuery(query).WithFragment(fragment).Build();
+                return BuilderUtil.ApplyUriReference(new GenericUniformResourceIdentifierBuilder().WithScheme(scheme), userInfo, host, port, pathSegments, query, fragment).Build();
             else
                 return factory(userInfo, host, port, pathSegments, query, fragment);
         }

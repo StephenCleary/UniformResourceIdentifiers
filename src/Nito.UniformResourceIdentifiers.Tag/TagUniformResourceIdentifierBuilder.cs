@@ -2,28 +2,19 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Nito.UniformResourceIdentifiers.Helpers;
+using Nito.UniformResourceIdentifiers.Implementation;
+using Nito.UniformResourceIdentifiers.Implementation.Builder;
 
 namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
     /// A URI builder for TAG URIs.
     /// </summary>
-    public sealed class TagUniformResourceIdentifierBuilder
+    public sealed class TagUniformResourceIdentifierBuilder: IBuilderWithFragment<TagUniformResourceIdentifierBuilder>
     {
-        private string AuthorityName { get; set; }
+        private string _authorityName, _specific, _fragment;
+        private int? _year, _month, _day;
         
-        private int? Year { get; set; }
-        private int? Month { get; set; }
-        private int? Day { get; set; }
-
-        private string Specific { get; set; }
-
-        /// <summary>
-        /// The fragment. May be <c>null</c> or the empty string.
-        /// </summary>
-        private string Fragment { get; set; }
-
         /// <summary>
         /// Constructs an empty builder.
         /// </summary>
@@ -35,8 +26,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public TagUniformResourceIdentifierBuilder(TagUniformResourceIdentifier uri)
         {
-            WithAuthorityName(uri)
-            ApplyUriReference(uri);
+            WithAuthorityName(uri.AuthorityName).WithDateYear(uri.DateYear).WithDateMonth(uri.DateMonth).WithDateDay(uri.DateDay).WithSpecific(uri.Specific).WithFragment(uri.Fragment);
         }
 
         /// <summary>
@@ -45,13 +35,9 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public TagUniformResourceIdentifierBuilder(string uri)
         {
-            ApplyUriReference(uri, TagUniformResourceIdentifier.TagScheme);
+            TagParser.Parse(uri, out var authorityName, out var year, out var month, out var day, out var specific, out var fragment);
+            WithAuthorityName(authorityName).WithDateYear(year).WithDateMonth(month).WithDateDay(day).WithSpecific(specific).WithFragment(fragment);
         }
-
-        /// <summary>
-        /// Builds the HTTPS URI instance.
-        /// </summary>
-        public TagUniformResourceIdentifierBuilder Build() => new TagUniformResourceIdentifier(AuthorityName, Year, Month, Day, Specific, Fragment);
 
         /// <summary>
         /// Applies the authority name to this builder, overwriting any existing authority name. The authority name must be a dns hostname or an email address.
@@ -59,9 +45,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="authorityName">The authority name. If not <c>null</c>, then this must be a valid authority name.</param>
         public TagUniformResourceIdentifierBuilder WithAuthorityName(string authorityName)
         {
-            if (authorityName != null && !TagUtil.IsValidAuthorityName(authorityName))
-                throw new ArgumentException("Invalid authority name " + authorityName, nameof(authorityName));
-            AuthorityName = authorityName;
+            _authorityName = authorityName;
             return this;
         }
 
@@ -69,7 +53,7 @@ namespace Nito.UniformResourceIdentifiers
         {
             if (year != null && year < 0 || year > 9999)
                 throw new ArgumentException("Invalid year " + year, nameof(year));
-            Year = year;
+            _year = year;
             return this;
         }
 
@@ -77,7 +61,7 @@ namespace Nito.UniformResourceIdentifiers
         {
             if (month != null && month < 0 || month > 99)
                 throw new ArgumentException("Invalid month " + month, nameof(month));
-            Month = month;
+            _month = month;
             return this;
         }
 
@@ -85,7 +69,7 @@ namespace Nito.UniformResourceIdentifiers
         {
             if (day != null && day < 0 || day > 99)
                 throw new ArgumentException("Invalid day " + day, nameof(day));
-            Day = day;
+            _day = day;
             return this;
         }
 
@@ -93,11 +77,11 @@ namespace Nito.UniformResourceIdentifiers
         {
             if (date == null)
             {
-                Year = Month = Day = null;
+                _year = _month = _day = null;
                 return this;
             }
 
-            if (!TagUtil.TryParseDate(date, out var year, out var month, out var day))
+            if (!TagUtil.TryParseDate(date, 0, date.Length, out var year, out var month, out var day))
                 throw new ArgumentException("Invalid date " + date, nameof(date));
             return WithDateYear(year).WithDateMonth(month).WithDateDay(day);
         }
@@ -106,7 +90,7 @@ namespace Nito.UniformResourceIdentifiers
         {
             if (date == null)
             {
-                Year = Month = Day = null;
+                _year = _month = _day = null;
                 return this;
             }
 
@@ -116,7 +100,7 @@ namespace Nito.UniformResourceIdentifiers
 
         public TagUniformResourceIdentifierBuilder WithSpecific(string specific)
         {
-            Specific = specific;
+            _specific = specific;
             return this;
         }
 
@@ -126,42 +110,18 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="fragment">The fragment.</param>
         public TagUniformResourceIdentifierBuilder WithFragment(string fragment)
         {
-            Fragment = fragment;
+            _fragment = fragment;
             return this;
         }
 
         /// <summary>
-        /// Deconstructs a URI reference into this builder.
+        /// Builds the TAG URI instance.
         /// </summary>
-        /// <param name="uri">The URI reference to deconstruct.</param>
-        protected virtual void ApplyUriReference(UniformResourceIdentifierReference uri)
+        public TagUniformResourceIdentifier Build()
         {
-            WithUserInfo(uri.UserInfo).WithHost(uri.Host).WithPort(uri.Port).WithPrefixlessPathSegments(uri.PathSegments).WithQuery(uri.Query).WithFragment(uri.Fragment);
-        }
-
-        /// <summary>
-        /// Parses and deconstructs a URI reference into this builder. Returns the scheme of the URI reference, if any.
-        /// </summary>
-        /// <param name="uri">The URI reference to deconstruct.</param>
-        protected virtual string ApplyUriReference(string uri)
-        {
-            string scheme, userInfo, host, port, query, fragment;
-            IReadOnlyList<string> pathSegements;
-            Parser.ParseUriReference(uri, out scheme, out userInfo, out host, out port, out pathSegements, out query, out fragment);
-            WithUserInfo(userInfo).WithHost(host).WithPort(port).WithPrefixlessPathSegments(pathSegements).WithQuery(query).WithFragment(fragment);
-            return scheme;
-        }
-
-        /// <summary>
-        /// Parses and deconstructs a URI reference into this builder, and verifies that the URI scheme matches what was expected.
-        /// </summary>
-        /// <param name="uri">The URI reference to deconstruct.</param>
-        /// <param name="expectedScheme">The expected URI scheme.</param>
-        protected virtual void ApplyUriReference(string uri, string expectedScheme)
-        {
-            var scheme = ApplyUriReference(uri);
-            if (scheme != expectedScheme)
-                throw new InvalidOperationException($"URI scheme \"{scheme}\" does not match expected scheme \"{expectedScheme ?? ""}\" in URI \"{uri}\".");
+            if (_year == null)
+                throw new ArgumentException("Year is required.");
+            return new TagUniformResourceIdentifier(_authorityName, _year.Value, _month, _day, _specific, _fragment);
         }
     }
 }

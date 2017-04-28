@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Nito.UniformResourceIdentifiers.Helpers;
-using Nito.UniformResourceIdentifiers.Unknown;
+using Nito.UniformResourceIdentifiers.Implementation;
 using Xunit;
 
 namespace Nito.UniformResourceIdentifiers.Http.UnitTests
@@ -16,18 +15,18 @@ namespace Nito.UniformResourceIdentifiers.Http.UnitTests
         public void ReferenceResolutionExamplesBaseUri()
         {
             // See 5.4
-            Assert.Equal("http://a/b/c/d;p?q", BaseUri.Uri);
+            Assert.Equal("http://a/b/c/d;p?q", BaseUri.UriString());
         }
 
         [Fact]
         public void ReferenceResolutionNormalExamples_SpecifyingScheme()
         {
             // See 5.4.1, first example only
-            var referenceUri = (UnknownUniformResourceIdentifier)Factories.Create("g", null, null, null, new [] { "h" }, null, null);
-            Assert.Equal("g:h", referenceUri.Uri);
+            var referenceUri = (GenericUniformResourceIdentifier)Factories.Create("g", null, null, null, new [] { "h" }, null, null);
+            Assert.Equal("g:h", referenceUri.UriString());
 
             var result = BaseUri.Resolve(referenceUri);
-            Assert.Equal("g:h", result.Uri);
+            Assert.Equal("g:h", result.UriString());
         }
 
         [Theory]
@@ -57,10 +56,10 @@ namespace Nito.UniformResourceIdentifiers.Http.UnitTests
         {
             // See 5.4.1
             var referenceUri = (RelativeReference)Factories.Create(null, null, host, null, path, query, fragment);
-            Assert.Equal(expectedReferenceUrl, referenceUri.Uri);
+            Assert.Equal(expectedReferenceUrl, referenceUri.UriString());
 
             var result = BaseUri.Resolve(referenceUri);
-            Assert.Equal(expectedUrl, result.Uri);
+            Assert.Equal(expectedUrl, result.UriString());
         }
 
         [Theory]
@@ -86,10 +85,10 @@ namespace Nito.UniformResourceIdentifiers.Http.UnitTests
         {
             // See 5.4.2
             var referenceUri = (RelativeReference)Factories.Create(null, null, host, null, path, query, fragment);
-            Assert.Equal(expectedReferenceUrl, referenceUri.Uri);
+            Assert.Equal(expectedReferenceUrl, referenceUri.UriString());
 
             var result = BaseUri.Resolve(referenceUri);
-            Assert.Equal(expectedUrl, result.Uri);
+            Assert.Equal(expectedUrl, result.UriString());
         }
     }
 }

@@ -4,8 +4,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Nito.Comparers;
 
-namespace Nito.UniformResourceIdentifiers.Helpers
+namespace Nito.UniformResourceIdentifiers.Implementation
 {
     /// <summary>
     /// Utility constants and methods useful for constructing URI parsers and builders conforming to RFC3986 (https://tools.ietf.org/html/rfc3986).
@@ -168,8 +169,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                     return true;
                 if (!H16Regex.IsMatch(pieces[i]))
                     return false;
-                ushort piece;
-                if (!ushort.TryParse(pieces[i], NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out piece))
+                if (!ushort.TryParse(pieces[i], NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out ushort piece))
                     return false;
                 octets[octetsOffset++] = (byte) (piece >> 8);
                 octets[octetsOffset++] = (byte) (piece & 0xFF);
@@ -188,8 +188,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             if (HostIPvFutureRegex.IsMatch(value))
                 return true;
             var octets = new byte[16];
-            var zoneId = "";
-            return TryParseIpV6Address(value.Substring(1, value.Length - 2), octets, out zoneId);
+            return TryParseIpV6Address(value.Substring(1, value.Length - 2), octets, out string zoneId);
         }
 
         /// <summary>
@@ -207,8 +206,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 return false;
             for (var i = 0; i != 4; ++i)
             {
-                byte result;
-                if (!byte.TryParse(octetStrings[i], NumberStyles.None, CultureInfo.InvariantCulture, out result))
+                if (!byte.TryParse(octetStrings[i], NumberStyles.None, CultureInfo.InvariantCulture, out byte result))
                     return false;
                 if (result.ToString(CultureInfo.InvariantCulture) != octetStrings[i]) // Disallow 0-prefixed values.
                     return false;
@@ -276,8 +274,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                     if (i + 2 >= value.Length)
                         throw new InvalidOperationException($"Unterminated percent-encoding at index {i} in string \"{value}\".");
                     var hexString = value.Substring(i + 1, 2);
-                    byte encodedValue;
-                    if (!byte.TryParse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out encodedValue))
+                    if (!byte.TryParse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out byte encodedValue))
                         throw new InvalidOperationException($"Invalid percent-encoding at index {i} in string \"{value}\".");
                     sb.Append((char) encodedValue);
                     i += 2;
@@ -392,6 +389,16 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         public delegate T DelegateFactory<out T>(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment);
 
         /// <summary>
+        /// Returns <c>true</c> if the authority is defined. Note that it is possible (though unusual) for the authority to be defined as the empty string.
+        /// </summary>
+        public static bool AuthorityIsDefined(this IUniformResourceIdentifierReference @this) => @this.UserInfo != null || @this.Host != null || @this.Port != null;
+
+        /// <summary>
+        /// Returns <c>true</c> if the path is empty.
+        /// </summary>
+        public static bool PathIsEmpty(this IUniformResourceIdentifierReference @this) => PathIsEmpty(@this.PathSegments);
+
+        /// <summary>
         /// Resolves a relative URI against a base URI.
         /// </summary>
         /// <typeparam name="T">The type of the base URI; also the type of the result.</typeparam>
@@ -399,14 +406,14 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="relativeUri">The relative URI.</param>
         /// <param name="factory">The factory method used to create a new URI.</param>
         public static T Resolve<T>(T baseUri, RelativeReference relativeUri, DelegateFactory<T> factory)
-            where T : UniformResourceIdentifier
+            where T : IUniformResourceIdentifier
         {
             // See 5.2.2, except that referenceUri will always have a null Scheme.
             string userInfo, host, port, query;
             IEnumerable<string> pathSegments;
-            if (relativeUri.AuthorityIsDefined)
+            if (relativeUri.AuthorityIsDefined())
             {
-                userInfo = relativeUri.UserInfo;
+                userInfo = ((IUniformResourceIdentifierReference) relativeUri).UserInfo;
                 host = relativeUri.Host;
                 port = relativeUri.Port;
                 pathSegments = relativeUri.PathSegments;
@@ -414,7 +421,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             }
             else
             {
-                if (relativeUri.PathIsEmpty)
+                if (relativeUri.PathIsEmpty())
                 {
                     pathSegments = baseUri.PathSegments;
                     query = relativeUri.Query ?? baseUri.Query;
@@ -428,7 +435,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                     else
                     {
                         // See 5.2.3
-                        if (baseUri.AuthorityIsDefined && baseUri.PathIsEmpty)
+                        if (baseUri.AuthorityIsDefined() && baseUri.PathIsEmpty())
                             pathSegments = Enumerable.Repeat("", 1).Concat(relativeUri.PathSegments);
                         else
                             pathSegments = baseUri.PathSegments.Take(baseUri.PathSegments.Count - 1).Concat(relativeUri.PathSegments);
@@ -449,14 +456,13 @@ namespace Nito.UniformResourceIdentifiers.Helpers
         /// <param name="baseUri">The base URI.</param>
         /// <param name="referenceUri">The reference URI.</param>
         /// <param name="factory">The factory method used to create a new URI.</param>
-        public static UniformResourceIdentifier Resolve<T>(T baseUri, UniformResourceIdentifierReference referenceUri, DelegateFactory<T> factory)
-            where T : UniformResourceIdentifier
+        public static IUniformResourceIdentifier Resolve<T>(T baseUri, IUniformResourceIdentifierReference referenceUri, DelegateFactory<T> factory)
+            where T : IUniformResourceIdentifier
         {
             // See 5.2.2, except we always do strict resolution.
-            var relativeReference = referenceUri as RelativeReference;
-            if (relativeReference != null)
+            if (referenceUri is RelativeReference relativeReference)
                 return Resolve(baseUri, relativeReference, factory);
-            return (UniformResourceIdentifier) referenceUri;
+            return (IUniformResourceIdentifier) referenceUri;
         }
 
         private static readonly Func<byte, bool> FormUrlIsSafe =
@@ -512,5 +518,60 @@ namespace Nito.UniformResourceIdentifiers.Helpers
                 }
             }
         }
+
+        /// <summary>
+        /// Formats the URI components as a complete string. Components are assumed to be already validated.
+        /// </summary>
+        /// <param name="scheme">May be <c>null</c>.</param>
+        /// <param name="userInfo">May be <c>null</c>.</param>
+        /// <param name="host">May be <c>null</c>.</param>
+        /// <param name="port">May be <c>null</c>.</param>
+        /// <param name="pathSegments">May not be <c>null</c>.</param>
+        /// <param name="query">May be <c>null</c>.</param>
+        /// <param name="fragment">May be <c>null</c>.</param>
+        public static string ToString(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
+        {
+            // See 5.3, except Authority is split up into (UserInfo, Host, Port).
+            var sb = new StringBuilder();
+            if (scheme != null)
+            {
+                sb.Append(scheme);
+                sb.Append(':');
+            }
+            if (userInfo != null || host != null || port != null)
+                sb.Append("//");
+            if (userInfo != null)
+            {
+                sb.Append(Util.PercentEncode(userInfo, Util.UserInfoCharIsSafe));
+                sb.Append('@');
+            }
+            if (host != null)
+                sb.Append(Util.HostIsIpAddress(host) ? host : Util.PercentEncode(host, Util.HostRegNameCharIsSafe));
+            if (port != null)
+            {
+                sb.Append(':');
+                sb.Append(port);
+            }
+            sb.Append(string.Join("/", pathSegments.Select(x => Util.PercentEncode(x, Util.PathSegmentCharIsSafe))));
+            if (query != null)
+            {
+                sb.Append('?');
+                sb.Append(Util.PercentEncode(query, Util.QueryCharIsSafe));
+            }
+            if (fragment != null)
+            {
+                sb.Append('#');
+                sb.Append(Util.PercentEncode(fragment, Util.FragmentCharIsSafe));
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// A numeric string comparer, capable of comparing numeric strings of any length. This comparer assumes its operands only consist of the digits 0-9 and have leading zeroes removed (this is true of the <see cref="IUniformResourceIdentifierReference.Port"/> values.
+        /// </summary>
+        public static IFullComparer<string> NumericStringComparer { get; } = ComparerBuilder.For<string>()
+            .OrderBy(x => x.Length)
+            .ThenBy(x => x, StringComparer.Ordinal);
+
     }
 }

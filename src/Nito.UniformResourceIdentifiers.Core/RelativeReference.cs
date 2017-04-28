@@ -4,19 +4,21 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nito.UniformResourceIdentifiers.Helpers;
-// ReSharper disable VirtualMemberNeverOverridden.Global
+using Nito.UniformResourceIdentifiers.Implementation;
+using Nito.UniformResourceIdentifiers.Implementation.Components;
 
 namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
     /// An immutable relative reference.
     /// </summary>
-    /// <remarks>
-    /// <para>The <see cref="UniformResourceIdentifierReference.Scheme"/> property is always <c>null</c>.</para>
-    /// </remarks>
-    public sealed class RelativeReference : UniformResourceIdentifierReference
+    public sealed class RelativeReference : IUniformResourceIdentifierReference
     {
+        private readonly NormalizedHost _host;
+        private readonly NormalizedPort _port;
+        private readonly NormalizedPathSegments _pathSegments;
+        private readonly string _userInfo;
+
         /// <summary>
         /// Constructs a new relative reference.
         /// </summary>
@@ -27,8 +29,13 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="query">The query. This may be <c>null</c> to indicate no query, or the empty string to indicate an empty query.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
         public RelativeReference(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
-            : base(null, userInfo, host, port, NormalizePath(userInfo, host, port, pathSegments), query, fragment)
         {
+            _userInfo = userInfo;
+            _host = new NormalizedHost(host);
+            _port = new NormalizedPort(port);
+            _pathSegments = new NormalizedPathSegments(NormalizePath(_userInfo, _host.Value, _port.Value, pathSegments), _userInfo, _host.Value, _port.Value, dotNormalize: false);
+            Query = query;
+            Fragment = fragment;
         }
 
         private static IEnumerable<string> NormalizePath(string userInfo, string host, string port, IEnumerable<string> pathSegments)
@@ -53,18 +60,43 @@ namespace Nito.UniformResourceIdentifiers
             }
         }
 
+        string IUniformResourceIdentifierReference.UserInfo => _userInfo;
+
+        /// <inheritdoc />
+        public string Host => _host.Value;
+
+        /// <inheritdoc />
+        public string Port => _port.Value;
+
+        /// <inheritdoc />
+        public IReadOnlyList<string> PathSegments => _pathSegments.Value;
+
+        /// <summary>
+        /// Returns <c>true</c> if the path is absolute (i.e., starts with a forward-slash).
+        /// </summary>
+        public bool PathIsAbsolute => Util.PathIsAbsolute(PathSegments);
+
+        /// <inheritdoc />
+        public string Query { get; }
+
+        /// <inheritdoc />
+        public string Fragment { get; }
+
+        /// <inheritdoc />
+        public string ToUriString() => Util.ToString(null, _userInfo, Host, Port, PathSegments, Query, Fragment);
+
+        /// <inheritdoc />
+        public override string ToString() => Util.ToString(null, null, Host, Port, PathSegments, Query, Fragment);
+
         /// <summary>
         /// Converts to a relative <see cref="Uri"/>.
         /// </summary>
-        public override Uri ToUri() => new Uri(Uri, UriKind.Relative);
+        public Uri ToUri() => new Uri(ToUriString(), UriKind.Relative);
 
         /// <summary>
         /// Parses a relative URI.
         /// </summary>
         /// <param name="relativeUri">The relative URI to parse.</param>
-        public new static RelativeReference Parse(string relativeUri)
-        {
-            return new RelativeReferenceBuilder(relativeUri).Build();
-        }
+        public static RelativeReference Parse(string relativeUri) => new RelativeReferenceBuilder(relativeUri).Build();
     }
 }

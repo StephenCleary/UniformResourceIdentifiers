@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using static Nito.UniformResourceIdentifiers.Helpers.Util;
+using static Nito.UniformResourceIdentifiers.Implementation.Util;
 
 namespace Core.UnitTests
 {

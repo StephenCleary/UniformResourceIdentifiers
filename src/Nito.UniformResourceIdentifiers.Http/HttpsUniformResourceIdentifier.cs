@@ -4,20 +4,39 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nito.UniformResourceIdentifiers.Helpers;
-using static Nito.UniformResourceIdentifiers.Helpers.Util;
+using Nito.Comparers;
+using Nito.Comparers.Util;
+using Nito.UniformResourceIdentifiers.Implementation;
+using Nito.UniformResourceIdentifiers.Implementation.Components;
 
 namespace Nito.UniformResourceIdentifiers
 {
     /// <summary>
     /// An HTTPS URI.
     /// </summary>
-    public sealed class HttpsUniformResourceIdentifier : HttpUniformResourceIdentifierBase
+    public sealed class HttpsUniformResourceIdentifier : ComparableBase<HttpsUniformResourceIdentifier>, IUniformResourceIdentifier
     {
+        private NormalizedHttpHost _host;
+        private NormalizedHttpsPort _port;
+        private NormalizedHttpPathSegments _pathSegments;
+
         /// <summary>
         /// The HTTPS scheme.
         /// </summary>
         public static string HttpsScheme { get; } = "https";
+
+        private static readonly Util.DelegateFactory<HttpsUniformResourceIdentifier> Factory = (userInfo, host, port, pathSegments, query, fragment) =>
+            BuilderUtil.ApplyUriReference(new HttpsUniformResourceIdentifierBuilder(), userInfo, host, port, pathSegments, query, fragment).Build();
+
+        /// <summary>
+        /// Registers this scheme with the factories.
+        /// </summary>
+        public static void Register() => Factories.RegisterSchemeFactory(HttpsScheme, Factory);
+        
+        static HttpsUniformResourceIdentifier()
+        {
+            DefaultComparer = UniformResourceIdentifier.Comparer;
+        }
 
         /// <summary>
         /// Constructs a new URI instance.
@@ -28,39 +47,60 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="query">The query. This may be <c>null</c> to indicate no query, or the empty string to indicate an empty query.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
         public HttpsUniformResourceIdentifier(string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
-            : base(HttpsScheme, host, port, pathSegments, query, fragment)
         {
+            _host = new NormalizedHttpHost(host);
+            _port = new NormalizedHttpsPort(port);
+            _pathSegments = new NormalizedHttpPathSegments(pathSegments, null, _host.Value, _port.Value);
+            Query = query;
+            Fragment = fragment;
         }
 
-        private static readonly DelegateFactory<HttpsUniformResourceIdentifier> Factory = CreateFactory(() => new HttpsUniformResourceIdentifierBuilder(), x => x.Build());
+        string IUniformResourceIdentifier.Scheme => HttpsScheme;
 
-        /// <summary>
-        /// Registers this scheme with the factories.
-        /// </summary>
-        public static void Register()
-        {
-            Factories.RegisterSchemeFactory(HttpsScheme, Factory);
-        }
+        string IUniformResourceIdentifierReference.UserInfo => null;
+
+        /// <inheritdoc />
+        public string Host => _host.Value;
+
+        /// <inheritdoc />
+        public string Port => _port.Value;
+
+        /// <inheritdoc />
+        public IReadOnlyList<string> PathSegments => _pathSegments.Value;
+
+        /// <inheritdoc />
+        public string Query { get; }
+
+        /// <inheritdoc />
+        public string Fragment { get; }
+
+        /// <inheritdoc />
+        public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
+
+        /// <inheritdoc />
+        public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
+
+        /// <inheritdoc />
+        public override string ToString() => this.UriString();
 
         /// <summary>
         /// Resolves a relative URI against this URI.
         /// </summary>
         /// <param name="relativeUri">The relative URI to resolve.</param>
-        public new HttpsUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
+        public HttpsUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
+
+        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Resolve(relativeUri);
 
         /// <summary>
         /// Resolves a reference URI against this URI.
         /// </summary>
         /// <param name="referenceUri">The reference URI to resolve.</param>
-        public override UniformResourceIdentifier Resolve(UniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
+        public IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
 
         /// <summary>
         /// Parses an HTTPS URI.
         /// </summary>
         /// <param name="uri">The HTTPS URI to parse.</param>
-        public new static HttpsUniformResourceIdentifier Parse(string uri)
-        {
-            return new HttpsUniformResourceIdentifierBuilder(uri).Build();
-        }
+        public static HttpsUniformResourceIdentifier Parse(string uri) => new HttpsUniformResourceIdentifierBuilder(uri).Build();
     }
 }

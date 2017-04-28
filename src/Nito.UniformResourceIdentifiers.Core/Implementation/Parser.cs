@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static Nito.UniformResourceIdentifiers.Helpers.Util;
 
-namespace Nito.UniformResourceIdentifiers.Helpers
+namespace Nito.UniformResourceIdentifiers.Implementation
 {
     /// <summary>
     /// Provides utility methods for parsing URIs.
@@ -107,7 +105,7 @@ namespace Nito.UniformResourceIdentifiers.Helpers
             pathSegments = null;
 
             // Unescape unreserved characters; this is always a safe operation, and only needs to be done once because "%%" is not a valid input anyway.
-            uriReference = DecodeUnreserved(uriReference);
+            uriReference = Util.DecodeUnreserved(uriReference);
 
             // Coarse-parse it into sections.
             string authority, path;
@@ -118,22 +116,29 @@ namespace Nito.UniformResourceIdentifiers.Helpers
 
             // Decode and verify each one.
 
-            if (scheme != null && !IsValidScheme(scheme))
+            if (scheme != null && !Util.IsValidScheme(scheme))
                 throw new InvalidOperationException($"Invalid scheme \"{scheme}\" in URI reference \"{uriReference}\".");
             if (userInfo != null)
-                userInfo = PercentDecode(userInfo, UserInfoCharIsSafe, "user info", uriReference);
+                userInfo = PercentDecode(userInfo, Util.UserInfoCharIsSafe, "user info", uriReference);
             if (host != null)
-                host = HostIsIpAddress(host) ? host : PercentDecode(host, HostRegNameCharIsSafe, "host", uriReference);
-            if (port != null && !IsValidPort(port))
+                host = Util.HostIsIpAddress(host) ? host : PercentDecode(host, Util.HostRegNameCharIsSafe, "host", uriReference);
+            if (port != null && !Util.IsValidPort(port))
                 throw new InvalidOperationException($"Invalid port \"{port}\" in URI reference \"{uriReference}\".");
-            pathSegments = path.Split('/').Select(x => PercentDecode(x, PathSegmentCharIsSafe, "path segment", uriReference)).ToList();
+            pathSegments = path.Split('/').Select(x => PercentDecode(x, Util.PathSegmentCharIsSafe, "path segment", uriReference)).ToList();
             if (query != null)
-                query = PercentDecode(query, QueryCharIsSafe, "query", uriReference);
+                query = PercentDecode(query, Util.QueryCharIsSafe, "query", uriReference);
             if (fragment != null)
-                fragment = PercentDecode(fragment, FragmentCharIsSafe, "fragment", uriReference);
+                fragment = PercentDecode(fragment, Util.FragmentCharIsSafe, "fragment", uriReference);
         }
 
-        private static string PercentDecode(string value, Func<byte, bool> isSafe, string part, string uriReference)
+        /// <summary>
+        /// Validates and percent-decodes a given string.
+        /// </summary>
+        /// <param name="value">The string to decode.</param>
+        /// <param name="isSafe">A function defining which characters do not need percent-encoding.</param>
+        /// <param name="part">The name of the part of the URI. This is used for a detailed exception message.</param>
+        /// <param name="uriReference">The full URI being parsed. This is used for a detailed exception message.</param>
+        public static string PercentDecode(string value, Func<byte, bool> isSafe, string part, string uriReference)
         {
             try
             {

@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Nito.Comparers" Version="5.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Nito.UniformResourceIdentifiers.Core\Nito.UniformResourceIdentifiers.Core.csproj" />
   </ItemGroup>
 
