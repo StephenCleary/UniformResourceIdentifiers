@@ -27,7 +27,7 @@ namespace Nito.UniformResourceIdentifiers
         public static string TagScheme { get; } = "tag";
 
         private static readonly Util.DelegateFactory<TagUniformResourceIdentifier> Factory = (userInfo, host, port, pathSegments, query, fragment) =>
-            Parse(new GenericUniformResourceIdentifier(TagScheme, userInfo, host, port, pathSegments, query, fragment).UriString());
+            Parse(Util.ToString(TagScheme, userInfo, host, port, pathSegments, query, fragment));
 
         /// <summary>
         /// Registers this scheme with the factories.
