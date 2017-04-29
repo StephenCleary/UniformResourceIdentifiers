@@ -18,7 +18,7 @@ namespace Nito.UniformResourceIdentifiers
     {
         private readonly NormalizedAuthorityName _authorityName;
         private readonly NormalizedDate _date;
-        private readonly Lazy<GenericUniformResourceIdentifier> _uri;
+        private readonly Lazy<UriParseResult> _uri;
         private readonly ComparerProxy _comparerProxy;
 
         /// <summary>
@@ -59,17 +59,45 @@ namespace Nito.UniformResourceIdentifiers
             Specific = specific;
             Fragment = fragment;
 
-            _uri = new Lazy<GenericUniformResourceIdentifier>(() => new GenericUniformResourceIdentifierBuilder(UriString()).Build());
+            _uri = new Lazy<UriParseResult>(() => Parser.ParseUriReference(UriString()));
             _comparerProxy = new ComparerProxy(this);
         }
 
         string IUniformResourceIdentifier.Scheme => TagScheme;
+
+        /// <summary>
+        /// Gets the authority name of this URI, e.g., "example.com". This is never <c>null</c> or the empty string.
+        /// </summary>
         public string AuthorityName => _authorityName.Value;
+
+        /// <summary>
+        /// Gets the year portion of the date of this URI, e.g., 2017.
+        /// </summary>
         public int DateYear => _date.Year;
+
+        /// <summary>
+        /// Gets the month portion of the date of this URI, e.g., 4. May be <c>null</c> if the month portion is unspecified.
+        /// </summary>
         public int? DateMonth => _date.Month;
+
+        /// <summary>
+        /// Gets the day portion of the date of this URI, e.g., 28. May be <c>null</c> if the day portion is unspecified.
+        /// </summary>
         public int? DateDay => _date.Day;
+
+        /// <summary>
+        /// Gets the date of this URI, e.g., 2017-04-28.
+        /// </summary>
         public DateTimeOffset Date => new DateTimeOffset(DateYear, DateMonth ?? 1, DateDay ?? 1, 0, 0, 0, TimeSpan.Zero);
+
+        /// <summary>
+        /// Gets the specific string of this URI, e.g., "my-identifier". May be the empty string.
+        /// </summary>
         public string Specific { get; }
+
+        /// <summary>
+        /// Gets the fragment of this URI, e.g., "anchor-1". May be <c>null</c> or the empty string.
+        /// </summary>
         public string Fragment { get; }
         string IUniformResourceIdentifierReference.UserInfo => _uri.Value.UserInfo;
         string IUniformResourceIdentifierReference.Host => _uri.Value.Host;
@@ -78,18 +106,28 @@ namespace Nito.UniformResourceIdentifiers
         string IUniformResourceIdentifierReference.Query => _uri.Value.Query;
         string IUniformResourceIdentifierReference.Fragment => _uri.Value.Fragment;
 
+        /// <inheritdoc />
         public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
 
+        /// <inheritdoc />
         public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
 
+        /// <inheritdoc />
         public override string ToString() => UriString();
 
+        /// <summary>
+        /// Gets the URI as a complete string, e.g., "tag:example.com,2017-04-28:my-identifier#anchor-1". This is never <c>null</c> or an empty string.
+        /// </summary>
         public string UriString() => TagUtil.ToString(AuthorityName, DateYear, DateMonth, DateDay, Specific, Fragment);
 
         IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
 
         IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
 
+        /// <summary>
+        /// Parses a URI.
+        /// </summary>
+        /// <param name="uri">The URI to parse.</param>
         public static TagUniformResourceIdentifier Parse(string uri) => new TagUniformResourceIdentifierBuilder(uri).Build();
 
         object IUniformResourceIdentifierWithCustomComparison.SchemeSpecificComparerProxy => _comparerProxy;

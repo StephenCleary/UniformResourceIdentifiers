@@ -49,6 +49,10 @@ namespace Nito.UniformResourceIdentifiers
             return this;
         }
 
+        /// <summary>
+        /// Applies the date year to this builder, overwriting any existing date year.
+        /// </summary>
+        /// <param name="year">The date year. If not <c>null</c>, then this must be a four-digit year.</param>
         public TagUniformResourceIdentifierBuilder WithDateYear(int? year)
         {
             if (year != null && year < 0 || year > 9999)
@@ -57,6 +61,10 @@ namespace Nito.UniformResourceIdentifiers
             return this;
         }
 
+        /// <summary>
+        /// Applies the date month to this builder, overwriting any existing date month.
+        /// </summary>
+        /// <param name="month">The date month. If not <c>null</c>, then this must be a two-digit month.</param>
         public TagUniformResourceIdentifierBuilder WithDateMonth(int? month)
         {
             if (month != null && month < 0 || month > 99)
@@ -65,6 +73,10 @@ namespace Nito.UniformResourceIdentifiers
             return this;
         }
 
+        /// <summary>
+        /// Applies the date day to this builder, overwriting any existing date day.
+        /// </summary>
+        /// <param name="day">The date day. If not <c>null</c>, then this must be a two-digit day.</param>
         public TagUniformResourceIdentifierBuilder WithDateDay(int? day)
         {
             if (day != null && day < 0 || day > 99)
@@ -73,6 +85,10 @@ namespace Nito.UniformResourceIdentifiers
             return this;
         }
 
+        /// <summary>
+        /// Applies the date to this builder, overwriting any existing date (year/month/day).
+        /// </summary>
+        /// <param name="date">The date. If not <c>null</c>, then this must be a string of the form YYYY, YYYY-MM, or YYYY-MM-DD.</param>
         public TagUniformResourceIdentifierBuilder WithDate(string date)
         {
             if (date == null)
@@ -86,6 +102,10 @@ namespace Nito.UniformResourceIdentifiers
             return WithDateYear(year).WithDateMonth(month).WithDateDay(day);
         }
 
+        /// <summary>
+        /// Applies the date to this builder, overwriting any existing date (year/month/day).
+        /// </summary>
+        /// <param name="date">The date.</param>
         public TagUniformResourceIdentifierBuilder WithDate(DateTimeOffset? date)
         {
             if (date == null)
@@ -98,6 +118,10 @@ namespace Nito.UniformResourceIdentifiers
             return WithDateYear(utcDate.Year).WithDateMonth(utcDate.Month).WithDateDay(utcDate.Day);
         }
 
+        /// <summary>
+        /// Applies the specific string to this builder, overwriting any existing specific string.
+        /// </summary>
+        /// <param name="specific">The specific string.</param>
         public TagUniformResourceIdentifierBuilder WithSpecific(string specific)
         {
             _specific = specific;
@@ -105,7 +129,7 @@ namespace Nito.UniformResourceIdentifiers
         }
 
         /// <summary>
-        /// Applies the fragment string to this builder, overwriting any existing fragment.
+        /// Applies the fragment to this builder, overwriting any existing fragment.
         /// </summary>
         /// <param name="fragment">The fragment.</param>
         public TagUniformResourceIdentifierBuilder WithFragment(string fragment)

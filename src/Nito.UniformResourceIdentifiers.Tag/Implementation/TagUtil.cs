@@ -8,10 +8,22 @@ using System.Text.RegularExpressions;
 
 namespace Nito.UniformResourceIdentifiers.Implementation
 {
+    /// <summary>
+    /// Utilities for implementing TAG URIs.
+    /// </summary>
     public static class TagUtil
     {
         private static readonly Regex DateRegex = new Regex(@"^([0-9]{4})(?:-([0-9]{2})(?:-([0-9){2}))?)?$", RegexOptions.CultureInvariant);
 
+        /// <summary>
+        /// Attempts to parse a date string.
+        /// </summary>
+        /// <param name="date">The string to parse.</param>
+        /// <param name="offset">The offset of <paramref name="date"/> to start parsing.</param>
+        /// <param name="length">The length of <paramref name="date"/> to end parsing.</param>
+        /// <param name="year">On return, contains the four-digit year.</param>
+        /// <param name="month">On return, contains the two-digit month. May be <c>null</c>.</param>
+        /// <param name="day">On return, contains the two-digit day. May be <c>null</c>.</param>
         public static bool TryParseDate(string date, int offset, int length, out int year, out int? month, out int? day)
         {
             year = 0;

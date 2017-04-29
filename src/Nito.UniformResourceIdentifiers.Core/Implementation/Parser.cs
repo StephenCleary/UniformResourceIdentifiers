@@ -132,6 +132,18 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         }
 
         /// <summary>
+        /// Breaks a URI reference into its components. Performs decoding and verification of them.
+        /// </summary>
+        /// <param name="uriReference">The string to parse.</param>
+        public static UriParseResult ParseUriReference(string uriReference)
+        {
+            var result = new UriParseResult();
+            ParseUriReference(uriReference, out result.Scheme, out result.UserInfo, out result.Host, out result.Port, out result.PathSegments,
+                out result.Query, out result.Fragment);
+            return result;
+        }
+
+        /// <summary>
         /// Validates and percent-decodes a given string.
         /// </summary>
         /// <param name="value">The string to decode.</param>
