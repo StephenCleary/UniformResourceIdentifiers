@@ -329,7 +329,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         {
             var sb = new StringBuilder(value);
             foreach (var kvp in EncodedUnreservedCharacters)
-                sb.Replace(kvp.Value, kvp.Key);
+                sb.Replace(kvp.Key, kvp.Value);
             return sb.ToString();
         }
 

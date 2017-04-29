@@ -20,7 +20,7 @@ namespace Tag.UnitTests
             var uriString = uri.UriString();
             Assert.Equal(expectedUrl, uriString);
 
-            var parsed = new TagUniformResourceIdentifierBuilder(uriString).Build();
+            var parsed = TagUniformResourceIdentifier.Parse(uriString);
             Assert.Equal(authorityName, parsed.AuthorityName);
             Assert.Equal(year, parsed.DateYear);
             Assert.Equal(month, parsed.DateMonth);
