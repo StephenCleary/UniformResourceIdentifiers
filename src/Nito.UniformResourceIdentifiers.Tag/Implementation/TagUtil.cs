@@ -13,7 +13,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
     /// </summary>
     public static class TagUtil
     {
-        private static readonly Regex DateRegex = new Regex(@"^([0-9]{4})(?:-([0-9]{2})(?:-([0-9){2}))?)?$", RegexOptions.CultureInvariant);
+        private static readonly Regex DateRegex = new Regex(@"^([0-9]{4})(?:-([0-9]{2})(?:-([0-9]{2}))?)?$", RegexOptions.CultureInvariant);
 
         /// <summary>
         /// Attempts to parse a date string.
@@ -92,6 +92,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                     sb.Append(day.Value.ToString("D2", CultureInfo.InvariantCulture));
                 }
             }
+            sb.Append(':');
             sb.Append(Util.PercentEncode(specific, SpecificCharIsSafe));
             if (fragment != null)
             {
