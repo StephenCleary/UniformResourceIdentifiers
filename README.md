@@ -19,7 +19,7 @@ The core library implements:
 
 Scheme-specific libraries implement:
 
-- [RFC7230](https://tools.ietf.org/html/rfc7230) - HTTP/HTTPS
-- [RFC4151](https://tools.ietf.org/html/rfc4151) - TAG
+- [RFC7230](https://tools.ietf.org/html/rfc7230) - `http:` and `https:`
+- [RFC4151](https://tools.ietf.org/html/rfc4151) - `tag:`
 
 Possible future considerations: [RFC6570](https://tools.ietf.org/html/rfc6570).
