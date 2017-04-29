@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Nito.UniformResourceIdentifiers.Tag\Nito.UniformResourceIdentifiers.Tag.csproj" />
+    <ProjectReference Include="..\..\src\Nito.UniformResourceIdentifiers.Tag\Nito.UniformResourceIdentifiers.Tag.csproj" />
   </ItemGroup>
 
 </Project>
