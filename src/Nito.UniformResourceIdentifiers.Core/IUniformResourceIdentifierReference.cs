@@ -41,8 +41,8 @@ namespace Nito.UniformResourceIdentifiers
         string Fragment { get; }
 
         /// <summary>
-        /// Gets the URI as a complete string without the deprecated <see cref="UserInfo"/> portion, e.g., "http://www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
+        /// Gets the URI as a complete string, e.g., "http://username:password@www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
         /// </summary>
-        string ToString(); // `=> Util.ToString(Scheme, null, Host, Port, PathSegments, Query, Fragment);`, or `=> this.UriString();` if the scheme never has UserInfo.
+        string ToString(); // => Util.ToString(Scheme, UserInfo, Host, Port, PathSegments, Query, Fragment);
     }
 }

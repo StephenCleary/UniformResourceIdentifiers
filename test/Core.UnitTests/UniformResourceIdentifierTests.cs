@@ -47,9 +47,9 @@ namespace Core.UnitTests
         public void RoundTripFormatting(string expectedUrl, string scheme, string userInfo, string host, string port, IEnumerable<string> path, string query, string fragment)
         {
             var uri = CreateUri(path, scheme: scheme, userInfo: userInfo, host: host, port: port, query: query, fragment: fragment);
-            Assert.Equal(expectedUrl, uri.UriString());
+            Assert.Equal(expectedUrl, uri.ToString());
 
-            var parsed = GenericUniformResourceIdentifier.Parse(uri.UriString());
+            var parsed = GenericUniformResourceIdentifier.Parse(uri.ToString());
             Assert.Equal(scheme, parsed.Scheme);
             Assert.Equal(userInfo, parsed.UserInfo);
             Assert.Equal(host, parsed.Host);

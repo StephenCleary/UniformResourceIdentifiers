@@ -59,7 +59,7 @@ namespace Nito.UniformResourceIdentifiers
             Specific = specific;
             Fragment = fragment;
 
-            _uri = new Lazy<UriParseResult>(() => Parser.ParseUriReference(UriString()));
+            _uri = new Lazy<UriParseResult>(() => Parser.ParseUriReference(ToString()));
             _comparerProxy = new ComparerProxy(this);
         }
 
@@ -113,12 +113,7 @@ namespace Nito.UniformResourceIdentifiers
         public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
 
         /// <inheritdoc />
-        public override string ToString() => UriString();
-
-        /// <summary>
-        /// Gets the URI as a complete string, e.g., "tag:example.com,2017-04-28:my-identifier#anchor-1". This is never <c>null</c> or an empty string.
-        /// </summary>
-        public string UriString() => TagUtil.ToString(AuthorityName, DateYear, DateMonth, DateDay, Specific, Fragment);
+        public override string ToString() => TagUtil.ToString(AuthorityName, DateYear, DateMonth, DateDay, Specific, Fragment);
 
         IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
 

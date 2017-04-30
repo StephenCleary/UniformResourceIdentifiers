@@ -29,7 +29,7 @@ namespace Core.UnitTests
         public void UriFormattingRfcExamples(string expectedUrl, string scheme, string userInfo, string host, string port, IEnumerable<string> path, string query, string fragment)
         {
             var uri = new GenericUniformResourceIdentifier(scheme, userInfo, host, port, path, query, fragment);
-            Assert.Equal(expectedUrl, uri.UriString());
+            Assert.Equal(expectedUrl, uri.ToString());
         }
 
         [Theory]
@@ -40,7 +40,7 @@ namespace Core.UnitTests
         public void UriFormattingExamples(string expectedUrl, string scheme, string userInfo, string host, string port, IEnumerable<string> path, string query, string fragment)
         {
             var uri = new GenericUniformResourceIdentifier(scheme, userInfo, host, port, path, query, fragment);
-            Assert.Equal(expectedUrl, uri.UriString());
+            Assert.Equal(expectedUrl, uri.ToString());
         }
 
         [Theory]

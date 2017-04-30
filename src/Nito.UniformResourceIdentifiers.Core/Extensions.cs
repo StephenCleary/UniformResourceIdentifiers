@@ -49,7 +49,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Converts to a <see cref="Uri"/>.
         /// </summary>
-        public static Uri ToUri(this IUniformResourceIdentifier @this) => new Uri(@this.UriString(), UriKind.Absolute);
+        public static Uri ToUri(this IUniformResourceIdentifier @this) => new Uri(@this.ToString(), UriKind.Absolute);
 
         /// <summary>
         /// Converts to a <see cref="Uri"/>.
@@ -59,21 +59,6 @@ namespace Nito.UniformResourceIdentifiers
             if (@this is RelativeReference relativeUri)
                 return relativeUri.ToUri();
             return ((IUniformResourceIdentifier) @this).ToUri();
-        }
-
-        /// <summary>
-        /// Gets the URI as a complete string, e.g., "http://username:password@www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
-        /// </summary>
-        public static string UriString(this IUniformResourceIdentifier @this) => Util.ToString(@this.Scheme, @this.UserInfo, @this.Host, @this.Port, @this.PathSegments, @this.Query, @this.Fragment);
-
-        /// <summary>
-        /// Gets the URI as a complete string, e.g., "http://username:password@www.example.com:8080/folder/subfolder/file.jpg?q=test&amp;page=4#anchor-1". This is never <c>null</c> or an empty string.
-        /// </summary>
-        public static string UriString(this IUniformResourceIdentifierReference @this)
-        {
-            if (@this is RelativeReference relativeUri)
-                return relativeUri.ToUriString();
-            return ((IUniformResourceIdentifier) @this).UriString();
         }
     }
 }

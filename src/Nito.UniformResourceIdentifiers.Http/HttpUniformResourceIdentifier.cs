@@ -82,7 +82,7 @@ namespace Nito.UniformResourceIdentifiers
         public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
 
         /// <inheritdoc />
-        public override string ToString() => this.UriString();
+        public override string ToString() => Util.ToString(HttpScheme, ((IUniformResourceIdentifierReference) this).UserInfo, Host, Port, PathSegments, Query, Fragment);
 
         /// <summary>
         /// Resolves a relative URI against this URI.

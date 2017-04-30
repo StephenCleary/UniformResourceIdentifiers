@@ -15,7 +15,7 @@ namespace Nito.UniformResourceIdentifiers.Http.UnitTests
         public void ReferenceResolutionExamplesBaseUri()
         {
             // See 5.4
-            Assert.Equal("http://a/b/c/d;p?q", BaseUri.UriString());
+            Assert.Equal("http://a/b/c/d;p?q", BaseUri.ToString());
         }
 
         [Fact]
@@ -23,10 +23,10 @@ namespace Nito.UniformResourceIdentifiers.Http.UnitTests
         {
             // See 5.4.1, first example only
             var referenceUri = (GenericUniformResourceIdentifier)Factories.Create("g", null, null, null, new [] { "h" }, null, null);
-            Assert.Equal("g:h", referenceUri.UriString());
+            Assert.Equal("g:h", referenceUri.ToString());
 
             var result = BaseUri.Resolve(referenceUri);
-            Assert.Equal("g:h", result.UriString());
+            Assert.Equal("g:h", result.ToString());
         }
 
         [Theory]
@@ -56,10 +56,10 @@ namespace Nito.UniformResourceIdentifiers.Http.UnitTests
         {
             // See 5.4.1
             var referenceUri = (RelativeReference)Factories.Create(null, null, host, null, path, query, fragment);
-            Assert.Equal(expectedReferenceUrl, referenceUri.UriString());
+            Assert.Equal(expectedReferenceUrl, referenceUri.ToString());
 
             var result = BaseUri.Resolve(referenceUri);
-            Assert.Equal(expectedUrl, result.UriString());
+            Assert.Equal(expectedUrl, result.ToString());
         }
 
         [Theory]
@@ -85,10 +85,10 @@ namespace Nito.UniformResourceIdentifiers.Http.UnitTests
         {
             // See 5.4.2
             var referenceUri = (RelativeReference)Factories.Create(null, null, host, null, path, query, fragment);
-            Assert.Equal(expectedReferenceUrl, referenceUri.UriString());
+            Assert.Equal(expectedReferenceUrl, referenceUri.ToString());
 
             var result = BaseUri.Resolve(referenceUri);
-            Assert.Equal(expectedUrl, result.UriString());
+            Assert.Equal(expectedUrl, result.ToString());
         }
     }
 }

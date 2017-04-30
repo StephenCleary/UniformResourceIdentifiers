@@ -18,7 +18,7 @@ namespace Tag.UnitTests
             var uri = new TagUniformResourceIdentifierBuilder()
                 .WithAuthorityName(authorityName).WithDateYear(year).WithDateMonth(month).WithDateDay(day).WithSpecific(specific)
                 .Build();
-            var uriString = uri.UriString();
+            var uriString = uri.ToString();
             Assert.Equal(expectedUrl, uriString);
 
             var parsed = TagUniformResourceIdentifier.Parse(uriString);
