@@ -24,7 +24,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public GenericUniformResourceIdentifierBuilder(GenericUniformResourceIdentifier uri)
         {
-            BuilderUtil.ApplyUriReference(this, uri);
+            BuilderUtil.ApplyUriReference(this, uri).WithScheme(uri.Scheme);
         }
 
         /// <summary>

@@ -15,8 +15,9 @@ namespace Tag.UnitTests
         public void Examples(string expectedUrl, string authorityName, int year, int? month, int? day, string specific)
         {
             // See 2.1
-            var uri = new TagUniformResourceIdentifierBuilder().WithAuthorityName(authorityName).WithDateYear(year).WithDateMonth(month).WithDateDay(day)
-                .WithSpecific(specific).Build();
+            var uri = new TagUniformResourceIdentifierBuilder()
+                .WithAuthorityName(authorityName).WithDateYear(year).WithDateMonth(month).WithDateDay(day).WithSpecific(specific)
+                .Build();
             var uriString = uri.UriString();
             Assert.Equal(expectedUrl, uriString);
 

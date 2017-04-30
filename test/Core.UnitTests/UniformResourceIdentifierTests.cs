@@ -11,7 +11,7 @@ namespace Core.UnitTests
 {
     public class UniformResourceIdentifierTests
     {
-        private static IEnumerable<string> DefaultPathSegments = Enumerable.Empty<string>();
+        private static readonly IEnumerable<string> DefaultPathSegments = Enumerable.Empty<string>();
 
         [Fact]
         public void Construct_NullScheme_Throws() => Assert.Throws<ArgumentNullException>(() => CreateUri(DefaultPathSegments, scheme: null));
@@ -32,34 +32,40 @@ namespace Core.UnitTests
         public void Construct_HostAndPathWithoutLeadingSlash_Throws() => Assert.Throws<ArgumentException>(() => CreateUri(new[] { "x" }));
 
         [Theory]
-        [InlineData("ftp://ftp.is.co.za/rfc/rfc1808.txt", "ftp", null, "ftp.is.co.za", null, new[] { "", "rfc", "rfc1808.txt" }, null, null)] // See 1.1.2
-        [InlineData("http://www.ietf.org/rfc/rfc2396.txt", "http", null, "www.ietf.org", null, new[] { "", "rfc", "rfc2396.txt" }, null, null)] // See 1.1.2
-        [InlineData("ldap://[2001:db8::7]/c=GB?objectClass?one", "ldap", null, "[2001:db8::7]", null, new[] { "", "c=GB" }, "objectClass?one", null)] // See 1.1.2
-        [InlineData("mailto:John.Doe@example.com", "mailto", null, null, null, new[] { "John.Doe@example.com" }, null, null)] // See 1.1.2
-        [InlineData("news:comp.infosystems.www.servers.unix", "news", null, null, null, new[] { "comp.infosystems.www.servers.unix" }, null, null)] // See 1.1.2
-        [InlineData("tel:+1-816-555-1212", "tel", null, null, null, new[] { "+1-816-555-1212" }, null, null)] // See 1.1.2
-        [InlineData("telnet://192.0.2.16:80/", "telnet", null, "192.0.2.16", "80", new[] { "", "" }, null, null)] // See 1.1.2
-        [InlineData("urn:oasis:names:specification:docbook:dtd:xml:4.1.2", "urn", null, null, null, new[] { "oasis:names:specification:docbook:dtd:xml:4.1.2" }, null, null)] // See 1.1.2
-        [InlineData("foo://example.com:8042/over/there?name=ferret#nose", "foo", null, "example.com", "8042", new[] { "", "over", "there" }, "name=ferret", "nose")] // See 3
-        [InlineData("urn:example:animal:ferret:nose", "urn", null, null, null, new[] { "example:animal:ferret:nose" }, null, null)] // See 3
-        [InlineData("mailto:fred@example.com", "mailto", null, null, null, new[] { "fred@example.com" }, null, null)] // See 3.3
-        [InlineData("foo://info.example.com?fred", "foo", null, "info.example.com", null, new string[] { }, "fred", null)] // See 3.3
-        [InlineData("foo://info.example.com?fred", "foo", null, "info.example.com", null, new[] { "" }, "fred", null)] // See 3.3
-        public void UriFormattingRfcExamples(string expectedUrl, string scheme, string userInfo, string host, string port, IEnumerable<string> path, string query, string fragment)
+        [InlineData("ftp://ftp.is.co.za/rfc/rfc1808.txt", "ftp", null, "ftp.is.co.za", null, new[] { "", "rfc", "rfc1808.txt" }, null, null)]
+        [InlineData("http://www.ietf.org/rfc/rfc2396.txt", "http", null, "www.ietf.org", null, new[] { "", "rfc", "rfc2396.txt" }, null, null)]
+        [InlineData("ldap://[2001:db8::7]/c=GB?objectClass?one", "ldap", null, "[2001:db8::7]", null, new[] { "", "c=GB" }, "objectClass?one", null)]
+        [InlineData("mailto:John.Doe@example.com", "mailto", null, null, null, new[] { "John.Doe@example.com" }, null, null)]
+        [InlineData("news:comp.infosystems.www.servers.unix", "news", null, null, null, new[] { "comp.infosystems.www.servers.unix" }, null, null)]
+        [InlineData("tel:+1-816-555-1212", "tel", null, null, null, new[] { "+1-816-555-1212" }, null, null)]
+        [InlineData("telnet://192.0.2.16:80/", "telnet", null, "192.0.2.16", "80", new[] { "", "" }, null, null)]
+        [InlineData("urn:oasis:names:specification:docbook:dtd:xml:4.1.2", "urn", null, null, null, new[] { "oasis:names:specification:docbook:dtd:xml:4.1.2" }, null, null)]
+        [InlineData("foo://example.com:8042/over/there?name=ferret#nose", "foo", null, "example.com", "8042", new[] { "", "over", "there" }, "name=ferret", "nose")]
+        [InlineData("urn:example:animal:ferret:nose", "urn", null, null, null, new[] { "example:animal:ferret:nose" }, null, null)]
+        [InlineData("mailto:fred@example.com", "mailto", null, null, null, new[] { "fred@example.com" }, null, null)]
+        [InlineData("foo://info.example.com?fred", "foo", null, "info.example.com", null, new[] { "" }, "fred", null)]
+        public void RoundTripFormatting(string expectedUrl, string scheme, string userInfo, string host, string port, IEnumerable<string> path, string query, string fragment)
         {
             var uri = CreateUri(path, scheme: scheme, userInfo: userInfo, host: host, port: port, query: query, fragment: fragment);
             Assert.Equal(expectedUrl, uri.UriString());
-        }
 
-        [Theory]
-        [InlineData("test3:", "test3", null, null, null, new string[] { }, null, null)] // Scheme only
-        [InlineData("scheme://host/b", "scheme", null, "host", null, new[] { "", "a", "..", "..", ".", "b" }, null, null)] // Paths are normalized
-        [InlineData("scheme:a/b", "scheme", null, null, null, new[] { "a", "..", "..", ".", "b" }, null, null)] // Paths normalized without host and without leading slash retain initial segment (unusual but legal)
-        [InlineData("scheme:/b", "scheme", null, null, null, new[] { "", "a", "..", "..", ".", "b" }, null, null)] // Paths normalized without host (unusual but legal)
-        public void UriFormattingExamples(string expectedUrl, string scheme, string userInfo, string host, string port, IEnumerable<string> path, string query, string fragment)
-        {
-            var uri = CreateUri(path, scheme: scheme, userInfo: userInfo, host: host, port: port, query: query, fragment: fragment);
-            Assert.Equal(expectedUrl, uri.UriString());
+            var parsed = GenericUniformResourceIdentifier.Parse(uri.UriString());
+            Assert.Equal(scheme, parsed.Scheme);
+            Assert.Equal(userInfo, parsed.UserInfo);
+            Assert.Equal(host, parsed.Host);
+            Assert.Equal(port, parsed.Port);
+            Assert.Equal(path, parsed.PathSegments);
+            Assert.Equal(query, parsed.Query);
+            Assert.Equal(fragment, parsed.Fragment);
+
+            var deconstructed = new GenericUniformResourceIdentifierBuilder(uri).Build();
+            Assert.Equal(scheme, deconstructed.Scheme);
+            Assert.Equal(userInfo, deconstructed.UserInfo);
+            Assert.Equal(host, deconstructed.Host);
+            Assert.Equal(port, deconstructed.Port);
+            Assert.Equal(path, deconstructed.PathSegments);
+            Assert.Equal(query, deconstructed.Query);
+            Assert.Equal(fragment, deconstructed.Fragment);
         }
 
         private static GenericUniformResourceIdentifier CreateUri(IEnumerable<string> pathSegments, string scheme = "scheme", string userInfo = "user", string host = "host", string port = "8080", string query = "query", string fragment = "fragment")
