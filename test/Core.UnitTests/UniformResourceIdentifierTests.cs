@@ -29,6 +29,9 @@ namespace Core.UnitTests
         public void Construct_NullPathSegments_Throws() => Assert.Throws<ArgumentNullException>(() => CreateUri(null));
 
         [Fact]
+        public void Construct_PathWithNullSegments_Throws() => Assert.Throws<ArgumentException>(() => CreateUri(new string[] { null }));
+
+        [Fact]
         public void Construct_HostAndPathWithoutLeadingSlash_Throws() => Assert.Throws<ArgumentException>(() => CreateUri(new[] { "x" }));
 
         [Fact]
