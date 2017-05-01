@@ -31,6 +31,10 @@ namespace Core.UnitTests
         [Fact]
         public void Construct_HostAndPathWithoutLeadingSlash_Throws() => Assert.Throws<ArgumentException>(() => CreateUri(new[] { "x" }));
 
+        [Fact]
+        public void ConstructBuilder_NullPathSegments_Throws() => Assert.Throws<ArgumentNullException>(
+            () => new GenericUniformResourceIdentifierBuilder().WithPrefixlessPathSegments(null));
+
         [Theory]
         [InlineData("ftp://ftp.is.co.za/rfc/rfc1808.txt", "ftp", null, "ftp.is.co.za", null, new[] { "", "rfc", "rfc1808.txt" }, null, null)]
         [InlineData("http://www.ietf.org/rfc/rfc2396.txt", "http", null, "www.ietf.org", null, new[] { "", "rfc", "rfc2396.txt" }, null, null)]

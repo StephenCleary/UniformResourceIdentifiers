@@ -51,5 +51,58 @@ namespace Core.UnitTests
             var result = Util.RemoveDotSegments(input);
             Assert.Equal(expected, result);
         }
+
+        [Theory]
+        [InlineData("example://a/b/c/%7Bfoo%7D", "eXAMPLE://a/./b/../b/%63/%7bfoo%7d")] // See 6.2.2
+        [InlineData("HTTP://www.EXAMPLE.com/", "http://www.example.com/")] // See 6.2.2.1
+        public void ComparisonExamples(string first, string second)
+        {
+            var uri1 = GenericUniformResourceIdentifier.Parse(first);
+            var uri2 = GenericUniformResourceIdentifier.Parse(second);
+
+            Assert.True(uri1.Equals(uri2));
+            Assert.Equal(0, uri1.CompareTo(uri2));
+        }
+
+        [Theory]
+        [InlineData("http://a/b/c/g", "g", null, new[] { "g" }, null, null)]
+        [InlineData("http://a/b/c/g", "./g", null, new[] { ".", "g" }, null, null)]
+        [InlineData("http://a/b/c/g/", "g/", null, new[] { "g", "" }, null, null)]
+        [InlineData("http://a/g", "/g", null, new[] { "", "g" }, null, null)]
+        [InlineData("http://g", "//g", "g", new[] { "" }, null, null)]
+        [InlineData("http://a/b/c/d;p?y", "?y", null, new[] { "" }, "y", null)]
+        [InlineData("http://a/b/c/g?y", "g?y", null, new[] { "g" }, "y", null)]
+        [InlineData("http://a/b/c/d;p?q#s", "#s", null, new[] { "" }, null, "s")]
+        [InlineData("http://a/b/c/g#s", "g#s", null, new[] { "g" }, null, "s")]
+        [InlineData("http://a/b/c/g?y#s", "g?y#s", null, new[] { "g" }, "y", "s")]
+        [InlineData("http://a/b/c/;x", ";x", null, new[] { ";x" }, null, null)]
+        [InlineData("http://a/b/c/g;x", "g;x", null, new[] { "g;x" }, null, null)]
+        [InlineData("http://a/b/c/g;x?y#s", "g;x?y#s", null, new[] { "g;x" }, "y", "s")]
+        [InlineData("http://a/b/c/d;p?q", "", null, new[] { "" }, null, null)]
+        [InlineData("http://a/b/c/", ".", null, new[] { "." }, null, null)]
+        [InlineData("http://a/b/c/", "./", null, new[] { ".", "" }, null, null)]
+        [InlineData("http://a/b/", "..", null, new[] { ".." }, null, null)]
+        [InlineData("http://a/b/", "../", null, new[] { "..", "" }, null, null)]
+        [InlineData("http://a/b/g", "../g", null, new[] { "..", "g" }, null, null)]
+        [InlineData("http://a/", "../..", null, new[] { "..", ".." }, null, null)]
+        [InlineData("http://a/", "../../", null, new[] { "..", "..", "" }, null, null)]
+        [InlineData("http://a/g", "../../g", null, new[] { "..", "..", "g" }, null, null)]
+        public void ReferenceResolutionNormalExamples(string expectedUrl, string expectedReferenceUrl, string host, IEnumerable<string> path, string query, string fragment)
+        {
+            // See 5.4.1
+            var referenceUri = new RelativeReferenceBuilder().WithHost(host).WithPrefixlessPathSegments(path).WithQuery(query).WithFragment(fragment).Build();
+            Assert.Equal(expectedReferenceUrl, referenceUri.ToString());
+
+            var baseUri = GenericUniformResourceIdentifier.Parse("http://a/b/c/d;p?q");
+            var result = baseUri.Resolve(referenceUri);
+            Assert.Equal(expectedUrl, result.ToString());
+
+            var abstractResult = ((IUniformResourceIdentifier) baseUri).Resolve(referenceUri);
+            Assert.IsType<GenericUniformResourceIdentifier>(abstractResult);
+            Assert.Equal(expectedUrl, abstractResult.ToString());
+
+            var abstractReferenceResult = baseUri.Resolve(UniformResourceIdentifierReference.Parse(expectedReferenceUrl));
+            Assert.Equal(expectedUrl, abstractReferenceResult.ToString());
+        }
     }
 }
