@@ -115,7 +115,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         public static bool TryParseIpV6Address(string value, byte[] octets, out string zoneId, int octetsOffset = 0)
         {
             if (octets.Length - 16 < octetsOffset)
-                throw new ArgumentException("Not enough remaining space in octets array.");
+                throw new FormatException("Not enough remaining space in octets array.");
             zoneId = null;
             var elisionSplit = value.Split(new[] { "::" }, StringSplitOptions.None);
             if (elisionSplit.Length == 1)
@@ -200,7 +200,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         public static bool TryParseIpV4Address(string value, byte[] octets, int octetsOffset = 0)
         {
             if (octets.Length - 4 < octetsOffset)
-                throw new ArgumentException("Not enough remaining space in octets array.");
+                throw new FormatException("Not enough remaining space in octets array.");
             var octetStrings = value.Split('.');
             if (octetStrings.Length != 4)
                 return false;
@@ -268,14 +268,14 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             {
                 var ch = value[i];
                 if (ch >= 256)
-                    throw new ArgumentException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
+                    throw new FormatException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
                 if (ch == '%')
                 {
                     if (i + 2 >= value.Length)
-                        throw new ArgumentException($"Unterminated percent-encoding at index {i} in string \"{value}\".");
+                        throw new FormatException($"Unterminated percent-encoding at index {i} in string \"{value}\".");
                     var hexString = value.Substring(i + 1, 2);
                     if (!byte.TryParse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out byte encodedValue))
-                        throw new ArgumentException($"Invalid percent-encoding at index {i} in string \"{value}\".");
+                        throw new FormatException($"Invalid percent-encoding at index {i} in string \"{value}\".");
                     sb.Append((char) encodedValue);
                     i += 2;
                 }
@@ -285,7 +285,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                 }
                 else
                 {
-                    throw new ArgumentException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
+                    throw new FormatException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
                 }
             }
             return sb.ToString();
@@ -514,7 +514,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                 }
                 else
                 {
-                    throw new ArgumentException($"More than one '=' in query expression {query}");
+                    throw new FormatException($"More than one '=' in query expression {query}");
                 }
             }
         }
