@@ -83,15 +83,12 @@ namespace Nito.UniformResourceIdentifiers
         public string Fragment { get; }
 
         /// <inheritdoc />
-        public string ToUriString() => Util.ToString(null, _userInfo, Host, Port, PathSegments, Query, Fragment);
-
-        /// <inheritdoc />
-        public override string ToString() => Util.ToString(null, null, Host, Port, PathSegments, Query, Fragment);
+        public override string ToString() => Util.ToString(null, _userInfo, Host, Port, PathSegments, Query, Fragment);
 
         /// <summary>
         /// Converts to a relative <see cref="Uri"/>.
         /// </summary>
-        public Uri ToUri() => new Uri(ToUriString(), UriKind.Relative);
+        public Uri ToUri() => new Uri(ToString(), UriKind.Relative);
 
         /// <summary>
         /// Parses a relative URI.
