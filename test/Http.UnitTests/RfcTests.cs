@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Nito.UniformResourceIdentifiers;
 using Nito.UniformResourceIdentifiers.Implementation;
 using Xunit;
 
-namespace Nito.UniformResourceIdentifiers.Http.UnitTests
+namespace Http.UnitTests
 {
     public class RfcTests
     {
