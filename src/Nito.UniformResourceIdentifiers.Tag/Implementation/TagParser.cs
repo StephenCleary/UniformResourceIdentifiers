@@ -51,13 +51,13 @@ namespace Nito.UniformResourceIdentifiers.Implementation
 
             // Coarse-parse it into sections.
             if (!CoarseParse(uri, out authorityName, out year, out month, out day, out specific, out fragment))
-                throw new InvalidOperationException($"Invalid URI reference \"{uri}\".");
+                throw new ArgumentException($"Invalid URI reference \"{uri}\".");
 
             // Decode and verify each one.
 
             authorityName = Parser.PercentDecode(authorityName, TagUtil.AuthorityNameCharIsSafe, "authority name", uri);
             if (authorityName == "")
-                throw new InvalidOperationException($"Empty authority name in URI reference \"{uri}\".");
+                throw new ArgumentException($"Empty authority name in URI reference \"{uri}\".");
             specific = Parser.PercentDecode(specific, TagUtil.SpecificCharIsSafe, "specific", uri);
             if (fragment != null)
                 fragment = Parser.PercentDecode(fragment, Util.FragmentCharIsSafe, "fragment", uri);

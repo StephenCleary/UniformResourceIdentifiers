@@ -56,7 +56,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         {
             var scheme = ApplyUriReference(builder, uri);
             if (scheme != expectedScheme)
-                throw new InvalidOperationException($"URI scheme \"{scheme}\" does not match expected scheme \"{expectedScheme ?? ""}\" in URI \"{uri}\".");
+                throw new ArgumentException($"URI scheme \"{scheme}\" does not match expected scheme \"{expectedScheme ?? ""}\" in URI \"{uri}\".", nameof(uri));
         }
     }
 }

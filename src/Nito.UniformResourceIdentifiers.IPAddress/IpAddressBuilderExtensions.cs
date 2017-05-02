@@ -25,7 +25,7 @@ namespace Nito.UniformResourceIdentifiers
                 return builder.WithHost(host.ToString());
             if (host.AddressFamily == AddressFamily.InterNetworkV6)
                 return builder.WithHost($"[{host.ToString().Replace("%", "%25")}]");
-            throw new InvalidOperationException($"IP Address is not an IPv4 or IPv6 address: {host}");
+            throw new ArgumentException($"IP Address is not an IPv4 or IPv6 address: {host}");
         }
     }
 }

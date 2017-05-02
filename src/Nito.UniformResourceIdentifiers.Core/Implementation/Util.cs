@@ -268,14 +268,14 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             {
                 var ch = value[i];
                 if (ch >= 256)
-                    throw new InvalidOperationException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
+                    throw new ArgumentException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
                 if (ch == '%')
                 {
                     if (i + 2 >= value.Length)
-                        throw new InvalidOperationException($"Unterminated percent-encoding at index {i} in string \"{value}\".");
+                        throw new ArgumentException($"Unterminated percent-encoding at index {i} in string \"{value}\".");
                     var hexString = value.Substring(i + 1, 2);
                     if (!byte.TryParse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out byte encodedValue))
-                        throw new InvalidOperationException($"Invalid percent-encoding at index {i} in string \"{value}\".");
+                        throw new ArgumentException($"Invalid percent-encoding at index {i} in string \"{value}\".");
                     sb.Append((char) encodedValue);
                     i += 2;
                 }
@@ -285,7 +285,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                 }
                 else
                 {
-                    throw new InvalidOperationException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
+                    throw new ArgumentException($"Invalid character \"{ch}\" at index {i} in string \"{value}\".");
                 }
             }
             return sb.ToString();
@@ -514,7 +514,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                 }
                 else
                 {
-                    throw new InvalidOperationException($"More than one '=' in query expression {query}");
+                    throw new ArgumentException($"More than one '=' in query expression {query}");
                 }
             }
         }

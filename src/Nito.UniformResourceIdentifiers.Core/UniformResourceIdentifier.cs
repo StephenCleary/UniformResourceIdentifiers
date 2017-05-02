@@ -43,7 +43,7 @@ namespace Nito.UniformResourceIdentifiers
         {
             var result = UniformResourceIdentifierReference.Parse(uri) as IUniformResourceIdentifier;
             if (result == null)
-                throw new InvalidOperationException($"URI reference is not a URI: {uri}");
+                throw new ArgumentException($"URI reference is not a URI: {uri}");
             return result;
         }
     }

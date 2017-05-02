@@ -112,18 +112,18 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             var isUri = TryCoarseParseUriReference(uriReference, out scheme, out authority, out path, out query, out fragment);
             CoarseParseAuthority(authority, out userInfo, out host, out port);
             if (!isUri)
-                throw new InvalidOperationException($"Invalid URI reference \"{uriReference}\".");
+                throw new ArgumentException($"Invalid URI reference \"{uriReference}\".", nameof(uriReference));
 
             // Decode and verify each one.
 
             if (scheme != null && !Util.IsValidScheme(scheme))
-                throw new InvalidOperationException($"Invalid scheme \"{scheme}\" in URI reference \"{uriReference}\".");
+                throw new ArgumentException($"Invalid scheme \"{scheme}\" in URI reference \"{uriReference}\".", nameof(uriReference));
             if (userInfo != null)
                 userInfo = PercentDecode(userInfo, Util.UserInfoCharIsSafe, "user info", uriReference);
             if (host != null)
                 host = Util.HostIsIpAddress(host) ? host : PercentDecode(host, Util.HostRegNameCharIsSafe, "host", uriReference);
             if (port != null && !Util.IsValidPort(port))
-                throw new InvalidOperationException($"Invalid port \"{port}\" in URI reference \"{uriReference}\".");
+                throw new ArgumentException($"Invalid port \"{port}\" in URI reference \"{uriReference}\".", nameof(uriReference));
             pathSegments = path.Split('/').Select(x => PercentDecode(x, Util.PathSegmentCharIsSafe, "path segment", uriReference)).ToList();
             if (query != null)
                 query = PercentDecode(query, Util.QueryCharIsSafe, "query", uriReference);
@@ -158,7 +158,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Invalid {part} \"{value}\" in URI reference \"{uriReference}\".", ex);
+                throw new ArgumentException($"Invalid {part} \"{value}\" in URI reference \"{uriReference}\".", ex);
             }
         }
     }
