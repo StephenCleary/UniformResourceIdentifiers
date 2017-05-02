@@ -54,6 +54,10 @@ namespace Core.UnitTests
             Assert.Equal(path, deconstructed.PathSegments);
             Assert.Equal(query, deconstructed.Query);
             Assert.Equal(fragment, deconstructed.Fragment);
+
+            var systemUri = uri.ToUri();
+            Assert.False(systemUri.IsAbsoluteUri);
+            Assert.Equal(uri.ToString(), systemUri.ToString());
         }
 
         [Fact]
@@ -67,6 +71,10 @@ namespace Core.UnitTests
 
             var deconstructed = new RelativeReferenceBuilder(uri).Build();
             Assert.Equal(new[] { ".", "g:x" }, deconstructed.PathSegments);
+
+            var systemUri = uri.ToUri();
+            Assert.False(systemUri.IsAbsoluteUri);
+            Assert.Equal(uri.ToString(), systemUri.ToString());
         }
     }
 }

@@ -73,6 +73,13 @@ namespace Core.UnitTests
             Assert.Equal(path, deconstructed.PathSegments);
             Assert.Equal(query, deconstructed.Query);
             Assert.Equal(fragment, deconstructed.Fragment);
+
+            if (expectedUrl != "foo://info.example.com?fred") // Bug in System.Uri will translate this to "foo://info.example.com/?fred"
+            {
+                var systemUri = uri.ToUri();
+                Assert.True(systemUri.IsAbsoluteUri);
+                Assert.Equal(uri.ToString(), systemUri.ToString());
+            }
         }
 
         private static GenericUniformResourceIdentifier CreateUri(IEnumerable<string> pathSegments, string scheme = "scheme", string userInfo = "user", string host = "host", string port = "8080", string query = "query", string fragment = "fragment")
