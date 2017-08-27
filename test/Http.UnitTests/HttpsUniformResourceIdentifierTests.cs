@@ -6,17 +6,17 @@ using Xunit;
 
 namespace Http.UnitTests
 {
-    public class HttpUniformResourceIdentifierTests
+    public class HttpsUniformResourceIdentifierTests
     {
         [Theory]
-        [InlineData("http://www.ietf.org/rfc/rfc2396.txt", null, "www.ietf.org", null, new[] { "", "rfc", "rfc2396.txt" }, null, null)]
+        [InlineData("https://www.ietf.org/rfc/rfc2396.txt", null, "www.ietf.org", null, new[] { "", "rfc", "rfc2396.txt" }, null, null)]
         public void RoundTripFormatting(string expectedUrl, string userInfo, string host, string port, IEnumerable<string> path, string query, string fragment)
         {
-            var uri = new HttpUniformResourceIdentifier(host, port, path, query, fragment);
+            var uri = new HttpsUniformResourceIdentifier(host, port, path, query, fragment);
             Assert.Equal(expectedUrl, uri.ToString());
 
-            var parsed = HttpUniformResourceIdentifier.Parse(uri.ToString());
-            Assert.Equal(HttpUniformResourceIdentifier.HttpScheme, ((IUniformResourceIdentifier) parsed).Scheme);
+            var parsed = HttpsUniformResourceIdentifier.Parse(uri.ToString());
+            Assert.Equal(HttpsUniformResourceIdentifier.HttpsScheme, ((IUniformResourceIdentifier) parsed).Scheme);
             Assert.Equal(userInfo, ((IUniformResourceIdentifierReference) parsed).UserInfo);
             Assert.Equal(host, parsed.Host);
             Assert.Equal(port, parsed.Port);
@@ -24,8 +24,8 @@ namespace Http.UnitTests
             Assert.Equal(query, parsed.Query);
             Assert.Equal(fragment, parsed.Fragment);
 
-            var deconstructed = new HttpUniformResourceIdentifierBuilder(uri).Build();
-            Assert.Equal(HttpUniformResourceIdentifier.HttpScheme, ((IUniformResourceIdentifier)deconstructed).Scheme);
+            var deconstructed = new HttpsUniformResourceIdentifierBuilder(uri).Build();
+            Assert.Equal(HttpsUniformResourceIdentifier.HttpsScheme, ((IUniformResourceIdentifier)deconstructed).Scheme);
             Assert.Equal(userInfo, ((IUniformResourceIdentifierReference) deconstructed).UserInfo);
             Assert.Equal(host, deconstructed.Host);
             Assert.Equal(port, deconstructed.Port);
@@ -39,6 +39,6 @@ namespace Http.UnitTests
         }
 
         [Fact]
-        public void Parse_InvalidScheme_ThrowsException() => Assert.Throws<ArgumentException>(() => HttpUniformResourceIdentifier.Parse("https://www.example.com/"));
+        public void Parse_InvalidScheme_ThrowsException() => Assert.Throws<ArgumentException>(() => HttpsUniformResourceIdentifier.Parse("http://www.example.com/"));
     }
 }

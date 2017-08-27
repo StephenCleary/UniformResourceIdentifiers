@@ -82,6 +82,18 @@ namespace Core.UnitTests
             }
         }
 
+        [Theory]
+        [InlineData("foo://example.com/", typeof(GenericUniformResourceIdentifier))]
+        [InlineData("g:h", typeof(GenericUniformResourceIdentifier))]
+        public void Parse_ResultsInCorrectType(string uri, Type expectedType)
+        {
+            var result = UniformResourceIdentifier.Parse(uri);
+            Assert.IsType(expectedType, result);
+        }
+
+        [Fact]
+        public void Parse_RelativeUri_Throws() => Assert.Throws<ArgumentException>(() => UniformResourceIdentifier.Parse("example.com"));
+
         private static GenericUniformResourceIdentifier CreateUri(IEnumerable<string> pathSegments, string scheme = "scheme", string userInfo = "user", string host = "host", string port = "8080", string query = "query", string fragment = "fragment")
             => new GenericUniformResourceIdentifier(scheme, userInfo, host, port, pathSegments, query, fragment);
     }
