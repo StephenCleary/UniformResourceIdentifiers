@@ -5,7 +5,7 @@
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix>pre-03</VersionSuffix>
     <Authors>Stephen Cleary</Authors>
-    <TargetFramework>netstandard1.0</TargetFramework>
+    <TargetFrameworks>netstandard1.0;netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -17,6 +17,9 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/StephenCleary/UniformResourceIdentifiers.git</RepositoryUrl>
     <RootNamespace>Nito.UniformResourceIdentifiers</RootNamespace>
+    <PublicSign>True</PublicSign>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,7 +27,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nito.Comparers" Version="5.0.3" />
+    <PackageReference Include="Nito.Comparers" Version="5.0.4" />
   </ItemGroup>
 
 </Project>
