@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Utilities and base types for HTTP and HTTPS URI builders and parsers.</Description>
     <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>pre-04</VersionSuffix>
+    <VersionSuffix>pre-05</VersionSuffix>
     <Authors>Stephen Cleary</Authors>
     <TargetFrameworks>netstandard1.0;netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
