@@ -15,13 +15,10 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/StephenCleary/UniformResourceIdentifiers.git</RepositoryUrl>
     <RootNamespace>Nito.UniformResourceIdentifiers</RootNamespace>
-    <PublicSign>True</PublicSign>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nito.Comparers" Version="5.0.4" />
+    <PackageReference Include="Nito.Comparers" Version="5.0.5" />
   </ItemGroup>
 
   <ItemGroup>
