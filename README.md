@@ -1,11 +1,8 @@
-# Uniform Resource Identifiers
+![Logo](src/icon.png)
+
+# Uniform Resource Identifiers [![Build status](https://github.com/StephenCleary/UniformResourceIdentifiers/workflows/Build/badge.svg)](https://github.com/StephenCleary/UniformResourceIdentifiers/actions?query=workflow%3ABuild) [![codecov](https://codecov.io/gh/StephenCleary/UniformResourceIdentifiers/branch/master/graph/badge.svg)](https://codecov.io/gh/StephenCleary/UniformResourceIdentifiers) [![NuGet version](https://badge.fury.io/nu/Nito.UniformResourceIdentifiers.svg)](https://www.nuget.org/packages/Nito.UniformResourceIdentifiers) [![API docs](https://img.shields.io/badge/API-dotnetapis-blue.svg)](http://dotnetapis.com/pkg/Nito.UniformResourceIdentifiers)
 
 Because apparently this is hard, or something.
-
-[![AppVeyor](https://img.shields.io/appveyor/ci/StephenCleary/UniformResourceIdentifiers.svg?style=plastic)](https://ci.appveyor.com/project/StephenCleary/UniformResourceIdentifiers) [![Coveralls](https://img.shields.io/coveralls/StephenCleary/UniformResourceIdentifiers.svg?style=plastic)](https://coveralls.io/r/StephenCleary/UniformResourceIdentifiers)
-[![NuGet Pre Release](https://img.shields.io/nuget/vpre/Nito.UniformResourceIdentifiers.svg?style=plastic)](https://www.nuget.org/packages/Nito.UniformResourceIdentifiers/)
-
-[API Docs](http://dotnetapis.com/pkg/Nito.UniformResourceIdentifiers)
 
 # Standards
 
