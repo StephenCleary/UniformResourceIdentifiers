@@ -1,0 +1,10 @@
+﻿[*.cs]
+
+# CA1054: URI parameters should not be strings
+dotnet_diagnostic.CA1054.severity = none
+
+# CA1055: URI-like return values should not be strings
+dotnet_diagnostic.CA1055.severity = none
+
+# CA1308: Normalize strings to uppercase
+dotnet_diagnostic.CA1308.severity = none

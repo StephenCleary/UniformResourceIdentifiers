@@ -13,7 +13,7 @@ namespace Nito.UniformResourceIdentifiers
     /// </summary>
     public sealed class HttpsUniformResourceIdentifierBuilder : ICommonBuilder<HttpsUniformResourceIdentifierBuilder>
     {
-        private string _host, _port, _query, _fragment;
+        private string? _host, _port, _query, _fragment;
         private readonly PathSegments _pathSegments = new PathSegments();
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Nito.UniformResourceIdentifiers
             BuilderUtil.ApplyUriReference(this, uri, HttpsUniformResourceIdentifier.HttpsScheme);
         }
 
-        HttpsUniformResourceIdentifierBuilder IBuilderWithUserInfo<HttpsUniformResourceIdentifierBuilder>.WithUserInfo(string userInfo)
+        HttpsUniformResourceIdentifierBuilder IBuilderWithUserInfo<HttpsUniformResourceIdentifierBuilder>.WithUserInfo(string? userInfo)
         {
             if (userInfo != null)
                 throw new InvalidOperationException("HTTP/HTTPS URIs can no longer have UserInfo portions, as of RFC7230.");
@@ -47,14 +47,14 @@ namespace Nito.UniformResourceIdentifiers
         }
 
         /// <inheritdoc />
-        public HttpsUniformResourceIdentifierBuilder WithHost(string host)
+        public HttpsUniformResourceIdentifierBuilder WithHost(string? host)
         {
             _host = host;
             return this;
         }
 
         /// <inheritdoc />
-        public HttpsUniformResourceIdentifierBuilder WithPort(string port)
+        public HttpsUniformResourceIdentifierBuilder WithPort(string? port)
         {
             _port = port;
             return this;
@@ -68,14 +68,14 @@ namespace Nito.UniformResourceIdentifiers
         }
 
         /// <inheritdoc />
-        public HttpsUniformResourceIdentifierBuilder WithQuery(string query)
+        public HttpsUniformResourceIdentifierBuilder WithQuery(string? query)
         {
             _query = query;
             return this;
         }
 
         /// <inheritdoc />
-        public HttpsUniformResourceIdentifierBuilder WithFragment(string fragment)
+        public HttpsUniformResourceIdentifierBuilder WithFragment(string? fragment)
         {
             _fragment = fragment;
             return this;

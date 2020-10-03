@@ -33,13 +33,13 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                 return false;
             if (!int.TryParse(dateParts.Groups[1].Value, NumberStyles.None, CultureInfo.InvariantCulture, out year))
                 return false;
-            if (dateParts.Groups[2].Value != "")
+            if (dateParts.Groups[2].Length != 0)
             {
                 if (!int.TryParse(dateParts.Groups[2].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var value))
                     return false;
                 month = value;
             }
-            if (dateParts.Groups[3].Value != "")
+            if (dateParts.Groups[3].Length != 0)
             {
                 if (!int.TryParse(dateParts.Groups[3].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var value))
                     return false;
@@ -64,22 +64,22 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <summary>
         /// A delegate for determining whether an authority name character is safe (does not require encoding).
         /// </summary>
-        public static readonly Func<byte, bool> AuthorityNameCharIsSafe = x => Util.IsUnreserved(x) || Util.IsSubcomponentDelimiter(x) || x == '@';
+        public static readonly Func<byte, bool> AuthorityNameCharIsSafe = x => Utility.IsUnreserved(x) || Utility.IsSubcomponentDelimiter(x) || x == '@';
 
         /// <summary>
         /// A delegate for determining whether a specific character is safe (does not require encoding).
         /// </summary>
-        public static readonly Func<byte, bool> SpecificCharIsSafe = Util.QueryCharIsSafe;
+        public static readonly Func<byte, bool> SpecificCharIsSafe = Utility.QueryCharIsSafe;
 
         /// <summary>
         /// Formats the URI components as a complete string. Components are assumed to be already validated.
         /// </summary>
-        public static string ToString(string authorityName, int year, int? month, int? day, string specific, string fragment)
+        public static string ToString(string authorityName, int year, int? month, int? day, string specific, string? fragment)
         {
             var sb = new StringBuilder();
             sb.Append(TagUniformResourceIdentifier.TagScheme);
             sb.Append(':');
-            sb.Append(Util.PercentEncode(authorityName, AuthorityNameCharIsSafe));
+            sb.Append(Utility.PercentEncode(authorityName, AuthorityNameCharIsSafe));
             sb.Append(',');
             sb.Append(year.ToString("D4", CultureInfo.InvariantCulture));
             if (month != null)
@@ -93,11 +93,11 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                 }
             }
             sb.Append(':');
-            sb.Append(Util.PercentEncode(specific, SpecificCharIsSafe));
+            sb.Append(Utility.PercentEncode(specific, SpecificCharIsSafe));
             if (fragment != null)
             {
                 sb.Append('#');
-                sb.Append(Util.PercentEncode(fragment, Util.FragmentCharIsSafe));
+                sb.Append(Utility.PercentEncode(fragment, Utility.FragmentCharIsSafe));
             }
             return sb.ToString();
         }

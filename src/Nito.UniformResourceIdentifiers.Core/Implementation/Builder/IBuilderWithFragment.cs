@@ -10,6 +10,6 @@ namespace Nito.UniformResourceIdentifiers.Implementation.Builder
         /// Applies the fragment string to this builder, overwriting any existing fragment.
         /// </summary>
         /// <param name="fragment">The fragment. May be <c>null</c> or the empty string.</param>
-        T WithFragment(string fragment);
+        T WithFragment(string? fragment);
     }
 }

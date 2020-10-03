@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Nito.UniformResourceIdentifiers.Implementation;
 using Nito.UniformResourceIdentifiers.Implementation.Builder;
 using Nito.UniformResourceIdentifiers.Implementation.Builder.Components;
@@ -10,7 +11,7 @@ namespace Nito.UniformResourceIdentifiers
     /// </summary>
     public sealed class GenericUniformResourceIdentifierBuilder : ICommonBuilder<GenericUniformResourceIdentifierBuilder>
     {
-        private string _scheme, _userInfo, _host, _port, _query, _fragment;
+        private string? _scheme, _userInfo, _host, _port, _query, _fragment;
         private readonly PathSegments _pathSegments = new PathSegments();
 
         /// <summary>
@@ -24,6 +25,7 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="uri">The URI used to set the builder's initial values.</param>
         public GenericUniformResourceIdentifierBuilder(GenericUniformResourceIdentifier uri)
         {
+            _ = uri ?? throw new ArgumentNullException(nameof(uri));
             BuilderUtil.ApplyUriReference(this, uri).WithScheme(uri.Scheme);
         }
 
@@ -40,27 +42,27 @@ namespace Nito.UniformResourceIdentifiers
         /// Applies the scheme to this builder, overwriting any existing scheme.
         /// </summary>
         /// <param name="scheme">The scheme.</param>
-        public GenericUniformResourceIdentifierBuilder WithScheme(string scheme)
+        public GenericUniformResourceIdentifierBuilder WithScheme(string? scheme)
         {
             _scheme = scheme;
             return this;
         }
 
-        GenericUniformResourceIdentifierBuilder IBuilderWithUserInfo<GenericUniformResourceIdentifierBuilder>.WithUserInfo(string userInfo)
+        GenericUniformResourceIdentifierBuilder IBuilderWithUserInfo<GenericUniformResourceIdentifierBuilder>.WithUserInfo(string? userInfo)
         {
             _userInfo = userInfo;
             return this;
         }
 
         /// <inheritdoc />
-        public GenericUniformResourceIdentifierBuilder WithHost(string host)
+        public GenericUniformResourceIdentifierBuilder WithHost(string? host)
         {
             _host = host;
             return this;
         }
 
         /// <inheritdoc />
-        public GenericUniformResourceIdentifierBuilder WithPort(string port)
+        public GenericUniformResourceIdentifierBuilder WithPort(string? port)
         {
             _port = port;
             return this;
@@ -74,14 +76,14 @@ namespace Nito.UniformResourceIdentifiers
         }
 
         /// <inheritdoc />
-        public GenericUniformResourceIdentifierBuilder WithQuery(string query)
+        public GenericUniformResourceIdentifierBuilder WithQuery(string? query)
         {
             _query = query;
             return this;
         }
 
         /// <inheritdoc />
-        public GenericUniformResourceIdentifierBuilder WithFragment(string fragment)
+        public GenericUniformResourceIdentifierBuilder WithFragment(string? fragment)
         {
             _fragment = fragment;
             return this;
@@ -90,6 +92,11 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Builds the unknown URI instance.
         /// </summary>
-        public GenericUniformResourceIdentifier Build() => new GenericUniformResourceIdentifier(_scheme, _userInfo, _host, _port, _pathSegments.Value, _query, _fragment);
+        public GenericUniformResourceIdentifier Build()
+        {
+            if (_scheme == null)
+                throw new InvalidOperationException("Scheme must be specified when building a URI.");
+            return new GenericUniformResourceIdentifier(_scheme, _userInfo, _host, _port, _pathSegments.Value, _query, _fragment);
+        }
     }
 }

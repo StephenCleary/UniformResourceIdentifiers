@@ -5,7 +5,9 @@ namespace Nito.UniformResourceIdentifiers.Implementation.Components
     /// <summary>
     /// Container for a normalized date.
     /// </summary>
+#pragma warning disable CA1815 // Override equals and operator equals on value types
     public struct NormalizedDate
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
         /// <summary>
         /// Normalizes a date.

@@ -26,8 +26,8 @@ namespace Nito.UniformResourceIdentifiers
         /// </summary>
         public static string TagScheme { get; } = "tag";
 
-        private static readonly Util.DelegateFactory<TagUniformResourceIdentifier> Factory = (userInfo, host, port, pathSegments, query, fragment) =>
-            Parse(Util.ToString(TagScheme, userInfo, host, port, pathSegments, query, fragment));
+        private static readonly Utility.DelegateFactory<TagUniformResourceIdentifier> Factory = (userInfo, host, port, pathSegments, query, fragment) =>
+            Parse(Utility.ToString(TagScheme, userInfo, host, port, pathSegments, query, fragment));
 
         /// <summary>
         /// Registers this scheme with the factories.
@@ -48,11 +48,13 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="day"></param>
         /// <param name="specific">The specific identifier string. If this consists of path segments, then dot segments are normalized.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
-        public TagUniformResourceIdentifier(string authorityName, int year, int? month, int? day, string specific, string fragment)
+        public TagUniformResourceIdentifier(string authorityName, int year, int? month, int? day, string specific, string? fragment)
         {
+            _ = specific ?? throw new ArgumentNullException(nameof(specific));
+
             // Technically, we do need to run remove_dot_segments here. Since `taggingEntity` cannot contain "/",
             //  and since remove_dot_segments will preserve the first segment on non-absolute paths, we can treat `specific` as though it were our path segments.
-            specific = string.Join("/", Util.RemoveDotSegments(specific.Split('/')));
+            specific = string.Join("/", Utility.RemoveDotSegments(specific.Split('/')));
 
             _authorityName = new NormalizedAuthorityName(authorityName);
             _date = new NormalizedDate(year, month, day);
@@ -98,26 +100,26 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Gets the fragment of this URI, e.g., "anchor-1". May be <c>null</c> or the empty string.
         /// </summary>
-        public string Fragment { get; }
-        string IUniformResourceIdentifierReference.UserInfo => _uri.Value.UserInfo;
-        string IUniformResourceIdentifierReference.Host => _uri.Value.Host;
-        string IUniformResourceIdentifierReference.Port => _uri.Value.Port;
+        public string? Fragment { get; }
+        string? IUniformResourceIdentifierReference.UserInfo => _uri.Value.UserInfo;
+        string? IUniformResourceIdentifierReference.Host => _uri.Value.Host;
+        string? IUniformResourceIdentifierReference.Port => _uri.Value.Port;
         IReadOnlyList<string> IUniformResourceIdentifierReference.PathSegments => _uri.Value.PathSegments;
-        string IUniformResourceIdentifierReference.Query => _uri.Value.Query;
-        string IUniformResourceIdentifierReference.Fragment => _uri.Value.Fragment;
+        string? IUniformResourceIdentifierReference.Query => _uri.Value.Query;
+        string? IUniformResourceIdentifierReference.Fragment => _uri.Value.Fragment;
 
         /// <inheritdoc />
-        public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
+        bool IEquatable<IUniformResourceIdentifier>.Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
 
         /// <inheritdoc />
-        public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
+        int IComparable<IUniformResourceIdentifier>.CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
 
         /// <inheritdoc />
         public override string ToString() => TagUtil.ToString(AuthorityName, DateYear, DateMonth, DateDay, Specific, Fragment);
 
-        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
+        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Utility.Resolve(this, relativeUri, Factory);
 
-        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
+        IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(IUniformResourceIdentifierReference referenceUri) => Utility.Resolve(this, referenceUri, Factory);
 
         /// <summary>
         /// Parses a URI.

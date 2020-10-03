@@ -10,6 +10,6 @@ namespace Nito.UniformResourceIdentifiers.Implementation.Builder
         /// Applies the host portion of the authority to this builder, overwriting any existing host.
         /// </summary>
         /// <param name="host">The host. May be <c>null</c> or the empty string.</param>
-        T WithHost(string host);
+        T WithHost(string? host);
     }
 }

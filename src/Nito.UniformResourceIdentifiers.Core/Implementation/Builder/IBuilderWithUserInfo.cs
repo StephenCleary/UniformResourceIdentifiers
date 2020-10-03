@@ -10,6 +10,6 @@
         /// Applies the user information portion of the authority to this builder, overwriting any existing user information. Note that user information is deprecated for most schemes, since it is inherently insecure.
         /// </summary>
         /// <param name="userInfo">The user information. May be <c>null</c> or the empty string.</param>
-        T WithUserInfo(string userInfo);
+        T WithUserInfo(string? userInfo);
     }
 }

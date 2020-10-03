@@ -8,7 +8,7 @@ using Nito.Comparers;
 using Nito.Comparers.Util;
 using Nito.UniformResourceIdentifiers.Implementation;
 using Nito.UniformResourceIdentifiers.Implementation.Components;
-using static Nito.UniformResourceIdentifiers.Implementation.Util;
+using static Nito.UniformResourceIdentifiers.Implementation.Utility;
 
 namespace Nito.UniformResourceIdentifiers
 {
@@ -43,11 +43,11 @@ namespace Nito.UniformResourceIdentifiers
         /// Constructs a new URI instance.
         /// </summary>
         /// <param name="host">The host name portion of the authority, if any. This is converted to lowercase. This may be <c>null</c> to indicate no host name, or the empty string to indicate an empty host name.</param>
-        /// <param name="port">The port portion of the authority, if any. This may be <c>null</c> to indicate no port, or the empty string to indicate an empty port. This must be <c>null</c>, the empty string, or a valid port as defined by <see cref="Util.IsValidPort"/>.</param>
+        /// <param name="port">The port portion of the authority, if any. This may be <c>null</c> to indicate no port, or the empty string to indicate an empty port. This must be <c>null</c>, the empty string, or a valid port as defined by <see cref="Utility.IsValidPort"/>.</param>
         /// <param name="pathSegments">The path segments. Dot segments are normalized. May not be <c>null</c>, neither may any element be <c>null</c>.</param>
         /// <param name="query">The query. This may be <c>null</c> to indicate no query, or the empty string to indicate an empty query.</param>
         /// <param name="fragment">The fragment. This may be <c>null</c> to indicate no fragment, or the empty string to indicate an empty fragment.</param>
-        public HttpUniformResourceIdentifier(string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
+        public HttpUniformResourceIdentifier(string? host, string? port, IEnumerable<string> pathSegments, string? query, string? fragment)
         {
             _host = new NormalizedHttpHost(host);
             _port = new NormalizedHttpPort(port);
@@ -58,37 +58,37 @@ namespace Nito.UniformResourceIdentifiers
 
         string IUniformResourceIdentifier.Scheme => HttpScheme;
 
-        string IUniformResourceIdentifierReference.UserInfo => null;
+        string? IUniformResourceIdentifierReference.UserInfo => null;
 
         /// <inheritdoc />
-        public string Host => _host.Value;
+        public string? Host => _host.Value;
 
         /// <inheritdoc />
-        public string Port => _port.Value;
+        public string? Port => _port.Value;
 
         /// <inheritdoc />
         public IReadOnlyList<string> PathSegments => _pathSegments.Value;
 
         /// <inheritdoc />
-        public string Query { get; }
+        public string? Query { get; }
 
         /// <inheritdoc />
-        public string Fragment { get; }
+        public string? Fragment { get; }
 
         /// <inheritdoc />
-        public bool Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
+        bool IEquatable<IUniformResourceIdentifier>.Equals(IUniformResourceIdentifier other) => ComparableImplementations.ImplementEquals(DefaultComparer, this, other);
 
         /// <inheritdoc />
-        public int CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
+        int IComparable<IUniformResourceIdentifier>.CompareTo(IUniformResourceIdentifier other) => ComparableImplementations.ImplementCompareTo(DefaultComparer, this, other);
 
         /// <inheritdoc />
-        public override string ToString() => Util.ToString(HttpScheme, ((IUniformResourceIdentifierReference) this).UserInfo, Host, Port, PathSegments, Query, Fragment);
+        public override string ToString() => Utility.ToString(HttpScheme, ((IUniformResourceIdentifierReference) this).UserInfo, Host, Port, PathSegments, Query, Fragment);
 
         /// <summary>
         /// Resolves a relative URI against this URI.
         /// </summary>
         /// <param name="relativeUri">The relative URI to resolve.</param>
-        public HttpUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Util.Resolve(this, relativeUri, Factory);
+        public HttpUniformResourceIdentifier Resolve(RelativeReference relativeUri) => Utility.Resolve(this, relativeUri, Factory);
 
         IUniformResourceIdentifier IUniformResourceIdentifier.Resolve(RelativeReference relativeUri) => Resolve(relativeUri);
 
@@ -96,7 +96,7 @@ namespace Nito.UniformResourceIdentifiers
         /// Resolves a reference URI against this URI.
         /// </summary>
         /// <param name="referenceUri">The reference URI to resolve.</param>
-        public IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Util.Resolve(this, referenceUri, Factory);
+        public IUniformResourceIdentifier Resolve(IUniformResourceIdentifierReference referenceUri) => Utility.Resolve(this, referenceUri, Factory);
 
         /// <summary>
         /// Parses an HTTP URI.

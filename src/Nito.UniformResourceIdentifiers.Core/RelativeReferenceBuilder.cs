@@ -13,7 +13,7 @@ namespace Nito.UniformResourceIdentifiers
     /// </summary>
     public sealed class RelativeReferenceBuilder : ICommonBuilder<RelativeReferenceBuilder>
     {
-        private string _userInfo, _host, _port, _query, _fragment;
+        private string? _userInfo, _host, _port, _query, _fragment;
         private readonly PathSegments _pathSegments = new PathSegments();
 
         /// <summary>
@@ -39,21 +39,21 @@ namespace Nito.UniformResourceIdentifiers
             BuilderUtil.ApplyUriReference(this, relativeReference, null);
         }
 
-        RelativeReferenceBuilder IBuilderWithUserInfo<RelativeReferenceBuilder>.WithUserInfo(string userInfo)
+        RelativeReferenceBuilder IBuilderWithUserInfo<RelativeReferenceBuilder>.WithUserInfo(string? userInfo)
         {
             _userInfo = userInfo;
             return this;
         }
 
         /// <inheritdoc />
-        public RelativeReferenceBuilder WithHost(string host)
+        public RelativeReferenceBuilder WithHost(string? host)
         {
             _host = host;
             return this;
         }
 
         /// <inheritdoc />
-        public RelativeReferenceBuilder WithPort(string port)
+        public RelativeReferenceBuilder WithPort(string? port)
         {
             _port = port;
             return this;
@@ -67,14 +67,14 @@ namespace Nito.UniformResourceIdentifiers
         }
 
         /// <inheritdoc />
-        public RelativeReferenceBuilder WithQuery(string query)
+        public RelativeReferenceBuilder WithQuery(string? query)
         {
             _query = query;
             return this;
         }
 
         /// <inheritdoc />
-        public RelativeReferenceBuilder WithFragment(string fragment)
+        public RelativeReferenceBuilder WithFragment(string? fragment)
         {
             _fragment = fragment;
             return this;

@@ -21,6 +21,8 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="host">The host IP address.</param>
         public static T WithHost<T>(this IBuilderWithHost<T> builder, IPAddress host)
         {
+            _ = builder ?? throw new ArgumentNullException(nameof(builder));
+            _ = host ?? throw new ArgumentNullException(nameof(host));
             if (host.AddressFamily == AddressFamily.InterNetwork)
                 return builder.WithHost(host.ToString());
             if (host.AddressFamily == AddressFamily.InterNetworkV6)

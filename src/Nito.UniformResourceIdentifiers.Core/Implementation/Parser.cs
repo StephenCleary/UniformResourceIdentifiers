@@ -29,17 +29,18 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="path">On return, contains the path. May be the empty string, but cannot be <c>null</c>.</param>
         /// <param name="query">On return, contains the query. May be <c>null</c> or the empty string.</param>
         /// <param name="fragment">On return, contains the fragment. May be <c>null</c> or the empty string.</param>
-        public static bool TryCoarseParseUriReference(string uriReference, out string scheme, out string authority, out string path, out string query, out string fragment)
+        public static bool TryCoarseParseUriReference(string uriReference, out string? scheme, out string? authority, out string path, out string? query, out string? fragment)
         {
-            scheme = authority = path = query = fragment = null;
+            path = "";
+            scheme = authority = query = fragment = null;
             var match = UriReferenceRegex.Match(uriReference);
             if (!match.Success)
                 return false;
-            scheme = match.Groups[1].Value == "" ? null : match.Groups[1].Value;
-            authority = match.Groups[2].Value == "" ? null : match.Groups[3].Value;
+            scheme = match.Groups[1].Value.Length == 0 ? null : match.Groups[1].Value;
+            authority = match.Groups[2].Value.Length == 0 ? null : match.Groups[3].Value;
             path = match.Groups[4].Value;
-            query = match.Groups[5].Value == "" ? null : match.Groups[6].Value;
-            fragment = match.Groups[7].Value == "" ? null : match.Groups[8].Value;
+            query = match.Groups[5].Value.Length == 0 ? null : match.Groups[6].Value;
+            fragment = match.Groups[7].Value.Length == 0 ? null : match.Groups[8].Value;
             return true;
         }
 
@@ -50,7 +51,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="userInfo">On return, contains the user info. May be <c>null</c> or the empty string.</param>
         /// <param name="host">On return, contains the host. May be <c>null</c> or the empty string.</param>
         /// <param name="port">On return, contains the port. May be <c>null</c> or the empty string.</param>
-        public static void CoarseParseAuthority(string authority, out string userInfo, out string host, out string port)
+        public static void CoarseParseAuthority(string? authority, out string? userInfo, out string? host, out string? port)
         {
             userInfo = host = port = null;
             if (authority == null)
@@ -66,7 +67,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
 
             // Strip off the Port.
             int colonDelimiter;
-            if (authority.StartsWith("["))
+            if (authority.StartsWith("[", StringComparison.Ordinal))
             {
                 // If the host starts with '[', then it can contain ':', so we have to first find the ']' and only look for a ':' after that.
                 var closeBracketIndex = authority.LastIndexOf(']');
@@ -100,35 +101,32 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="pathSegments">On return, contains the path segments. May be empty, but cannot be <c>null</c>.</param>
         /// <param name="query">On return, contains the query. May be <c>null</c> or the empty string.</param>
         /// <param name="fragment">On return, contains the fragment. May be <c>null</c> or the empty string.</param>
-        public static void ParseUriReference(string uriReference, out string scheme, out string userInfo, out string host, out string port, out IReadOnlyList<string> pathSegments, out string query, out string fragment)
+        public static void ParseUriReference(string uriReference, out string? scheme, out string? userInfo, out string? host, out string? port, out IReadOnlyList<string> pathSegments, out string? query, out string? fragment)
         {
-            pathSegments = null;
-
             // Unescape unreserved characters; this is always a safe operation, and only needs to be done once because "%%" is not a valid input anyway.
-            uriReference = Util.DecodeUnreserved(uriReference);
+            uriReference = Utility.DecodeUnreserved(uriReference);
 
             // Coarse-parse it into sections.
-            string authority, path;
-            var isUri = TryCoarseParseUriReference(uriReference, out scheme, out authority, out path, out query, out fragment);
+            var isUri = TryCoarseParseUriReference(uriReference, out scheme, out var authority, out var path, out query, out fragment);
             CoarseParseAuthority(authority, out userInfo, out host, out port);
             if (!isUri)
                 throw new FormatException($"Invalid URI reference \"{uriReference}\".");
 
             // Decode and verify each one.
 
-            if (scheme != null && !Util.IsValidScheme(scheme))
+            if (scheme != null && !Utility.IsValidScheme(scheme))
                 throw new FormatException($"Invalid scheme \"{scheme}\" in URI reference \"{uriReference}\".");
             if (userInfo != null)
-                userInfo = PercentDecode(userInfo, Util.UserInfoCharIsSafe, "user info", uriReference);
+                userInfo = PercentDecode(userInfo, Utility.UserInfoCharIsSafe, "user info", uriReference);
             if (host != null)
-                host = Util.HostIsIpAddress(host) ? host : PercentDecode(host, Util.HostRegNameCharIsSafe, "host", uriReference);
-            if (port != null && !Util.IsValidPort(port))
+                host = Utility.HostIsIpAddress(host) ? host : PercentDecode(host, Utility.HostRegNameCharIsSafe, "host", uriReference);
+            if (port != null && !Utility.IsValidPort(port))
                 throw new FormatException($"Invalid port \"{port}\" in URI reference \"{uriReference}\".");
-            pathSegments = path.Split('/').Select(x => PercentDecode(x, Util.PathSegmentCharIsSafe, "path segment", uriReference)).ToList();
+            pathSegments = path.Split('/').Select(x => PercentDecode(x, Utility.PathSegmentCharIsSafe, "path segment", uriReference)).ToList();
             if (query != null)
-                query = PercentDecode(query, Util.QueryCharIsSafe, "query", uriReference);
+                query = PercentDecode(query, Utility.QueryCharIsSafe, "query", uriReference);
             if (fragment != null)
-                fragment = PercentDecode(fragment, Util.FragmentCharIsSafe, "fragment", uriReference);
+                fragment = PercentDecode(fragment, Utility.FragmentCharIsSafe, "fragment", uriReference);
         }
 
         /// <summary>
@@ -154,7 +152,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         {
             try
             {
-                return Util.PercentDecode(value, isSafe);
+                return Utility.PercentDecode(value, isSafe);
             }
             catch (Exception ex)
             {

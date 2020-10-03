@@ -17,15 +17,22 @@ namespace Nito.UniformResourceIdentifiers
         /// </summary>
         /// <param name="this">The builder.</param>
         /// <param name="port">The port.</param>
-        public static T WithPort<T>(this IBuilderWithPort<T> @this, uint port) => @this.WithPort(port.ToString(CultureInfo.InvariantCulture));
+        public static T WithPort<T>(this IBuilderWithPort<T> @this, uint port)
+        {
+            _ = @this ?? throw new ArgumentNullException(nameof(@this));
+            return @this.WithPort(port.ToString(CultureInfo.InvariantCulture));
+        }
 
         /// <summary>
         /// Applies the path to this builder, overwriting any existing path. This method does not automatically prefix a forward slash to the resulting path.
         /// </summary>
         /// <param name="this">The builder.</param>
         /// <param name="segments">The path segments.</param>
-        public static T WithPrefixlessPathSegments<T>(this IBuilderWithPath<T> @this, params string[] segments) =>
-            @this.WithPrefixlessPathSegments(segments);
+        public static T WithPrefixlessPathSegments<T>(this IBuilderWithPath<T> @this, params string[] segments)
+        {
+            _ = @this ?? throw new ArgumentNullException(nameof(@this));
+            return @this.WithPrefixlessPathSegments(segments);
+        }
 
         /// <summary>
         /// Applies the path to this builder, overwriting any existing path. This method automatically prefixes a forward slash to the resulting path.
@@ -34,8 +41,8 @@ namespace Nito.UniformResourceIdentifiers
         /// <param name="segments">The path segments.</param>
         public static T WithPathSegments<T>(this IBuilderWithPath<T> @this, IEnumerable<string> segments)
         {
-            if (segments == null)
-                throw new ArgumentNullException(nameof(segments));
+            _ = @this ?? throw new ArgumentNullException(nameof(@this));
+            _ = segments ?? throw new ArgumentNullException(nameof(segments));
             return @this.WithPrefixlessPathSegments(Enumerable.Repeat("", 1).Concat(segments));
         }
 
@@ -49,7 +56,11 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Converts to a <see cref="Uri"/>.
         /// </summary>
-        public static Uri ToUri(this IUniformResourceIdentifier @this) => new Uri(@this.ToString(), UriKind.Absolute);
+        public static Uri ToUri(this IUniformResourceIdentifier @this)
+        {
+            _ = @this ?? throw new ArgumentNullException(nameof(@this));
+            return new Uri(@this.ToString(), UriKind.Absolute);
+        }
 
         /// <summary>
         /// Converts to a <see cref="Uri"/>.

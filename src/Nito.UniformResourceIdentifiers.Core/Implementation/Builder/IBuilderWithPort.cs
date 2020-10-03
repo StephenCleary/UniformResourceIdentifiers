@@ -10,6 +10,6 @@
         /// Applies the port portion of the authority to this builder, overwriting any existing port.
         /// </summary>
         /// <param name="port">The port. May be <c>null</c> or the empty string.</param>
-        T WithPort(string port);
+        T WithPort(string? port);
     }
 }

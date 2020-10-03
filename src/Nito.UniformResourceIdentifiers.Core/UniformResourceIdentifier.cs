@@ -14,13 +14,13 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// The generic URI comparer, which is used to compare URIs if their schemes match and the scheme does not implement <see cref="IUniformResourceIdentifierWithCustomComparison"/>.
         /// </summary>
-        private static IFullComparer<IUniformResourceIdentifier> GenericComparer { get; } = ComparerBuilder.For<IUniformResourceIdentifier>()
-            .OrderBy(x => x.Host, StringComparer.Ordinal)
-            .ThenBy(x => x.Port, Util.NumericStringComparer)
-            .ThenBy(x => x.UserInfo, StringComparer.Ordinal)
-            .ThenBy(x => x.PathSegments, ComparerBuilder.For<string>().OrderBy(x => x, StringComparer.Ordinal).Sequence())
-            .ThenBy(x => x.Query, StringComparer.Ordinal)
-            .ThenBy(x => x.Fragment, StringComparer.Ordinal);
+        private static IFullComparer<IUniformResourceIdentifier?> GenericComparer { get; } = ComparerBuilder.For<IUniformResourceIdentifier?>()
+            .OrderBy(x => x!.Host, StringComparer.Ordinal)
+            .ThenBy(x => x!.Port, Utility.NumericStringComparer)
+            .ThenBy(x => x!.UserInfo, StringComparer.Ordinal)
+            .ThenBy(x => x!.PathSegments, ComparerBuilder.For<string>().OrderBy(x => x, StringComparer.Ordinal).Sequence())
+            .ThenBy(x => x!.Query, StringComparer.Ordinal)
+            .ThenBy(x => x!.Fragment, StringComparer.Ordinal);
 
         /// <summary>
         /// Allows comparing any URIs.

@@ -11,7 +11,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
     /// <summary>
     /// Utility constants and methods useful for constructing URI parsers and builders conforming to RFC3986 (https://tools.ietf.org/html/rfc3986).
     /// </summary>
-    public static class Util
+    public static class Utility
     {
         /// <summary>
         /// Generates all the unreserved characters (see 2.3), in ASCII order.
@@ -35,6 +35,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// </summary>
         public static Encoding Utf8EncodingWithoutBom { get; } = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
+#pragma warning disable CA1819 // Properties should not return arrays
         /// <summary>
         /// All the unreserved characters (see 2.3), in ASCII order.
         /// </summary>
@@ -49,6 +50,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// All the subcomponent delimiter characters (<c>sub-delims</c>) (see 2.2), in ASCII order.
         /// </summary>
         public static byte[] SubcomponentDelimiterCharacters { get; } = { (byte) '!', (byte) '$', (byte) '&', (byte) '\'', (byte) '(', (byte) ')', (byte) '*', (byte) '+', (byte) ',', (byte) ';', (byte) '=' };
+#pragma warning restore CA1819 // Properties should not return arrays
 
         /// <summary>
         /// Map of the percent-encoded unreserved characters to their unencoded representation.
@@ -112,8 +114,10 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="octets">The octets of the address.</param>
         /// <param name="zoneId">The resulting zone id.</param> // TODO: Not yet supported
         /// <param name="octetsOffset">The index of <paramref name="octets"/> at which to begin writing.</param>
-        public static bool TryParseIpV6Address(string value, byte[] octets, out string zoneId, int octetsOffset = 0)
+        public static bool TryParseIpV6Address(string value, byte[] octets, out string? zoneId, int octetsOffset = 0)
         {
+            _ = octets ?? throw new ArgumentNullException(nameof(octets));
+            _ = value ?? throw new ArgumentNullException(nameof(value));
             if (octets.Length - 16 < octetsOffset)
                 throw new FormatException("Not enough remaining space in octets array.");
             zoneId = null;
@@ -183,12 +187,13 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="value">The string to test.</param>
         public static bool HostIsIpLiteral(string value)
         {
-            if (!value.StartsWith("[") || !value.EndsWith("]"))
+            _ = value ?? throw new ArgumentNullException(nameof(value));
+            if (!value.StartsWith("[", StringComparison.Ordinal) || !value.EndsWith("]", StringComparison.Ordinal))
                 return false;
             if (HostIPvFutureRegex.IsMatch(value))
                 return true;
             var octets = new byte[16];
-            return TryParseIpV6Address(value.Substring(1, value.Length - 2), octets, out string zoneId);
+            return TryParseIpV6Address(value.Substring(1, value.Length - 2), octets, out var zoneId);
         }
 
         /// <summary>
@@ -199,6 +204,8 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="octetsOffset">The index of <paramref name="octets"/> at which to begin writing.</param>
         public static bool TryParseIpV4Address(string value, byte[] octets, int octetsOffset = 0)
         {
+            _ = value ?? throw new ArgumentNullException(nameof(value));
+            _ = octets ?? throw new ArgumentNullException(nameof(octets));
             if (octets.Length - 4 < octetsOffset)
                 throw new FormatException("Not enough remaining space in octets array.");
             var octetStrings = value.Split('.');
@@ -244,6 +251,8 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="isSafe">A function determining whether a character is safe (i.e., does not need encoding).</param>
         public static string PercentEncode(string value, Func<byte, bool> isSafe)
         {
+            _ = value ?? throw new ArgumentNullException(nameof(value));
+            _ = isSafe ?? throw new ArgumentNullException(nameof(isSafe));
             var bytes = Utf8EncodingWithoutBom.GetBytes(value);
             var sb = new StringBuilder(bytes.Length);
             foreach (var ch in bytes)
@@ -263,6 +272,8 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="isSafe">A function determining whether a character is safe (i.e., does not need encoding).</param>
         public static string PercentDecode(string value, Func<byte, bool> isSafe)
         {
+            _ = value ?? throw new ArgumentNullException(nameof(value));
+            _ = isSafe ?? throw new ArgumentNullException(nameof(isSafe));
             var sb = new StringBuilder(value.Length);
             for (var i = 0; i != value.Length; ++i)
             {
@@ -368,13 +379,21 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// Whether the given path is empty.
         /// </summary>
         /// <param name="pathSegments">The path to test.</param>
-        public static bool PathIsEmpty(IReadOnlyList<string> pathSegments) => pathSegments.Count == 0 || (pathSegments.Count == 1 && pathSegments[0] == "");
+        public static bool PathIsEmpty(IReadOnlyList<string> pathSegments)
+        {
+            _ = pathSegments ?? throw new ArgumentNullException(nameof(pathSegments));
+            return pathSegments.Count == 0 || (pathSegments.Count == 1 && pathSegments[0].Length == 0);
+        }
 
         /// <summary>
         /// Whether the given path is absolute (i.e., starts with a forward-slash when converted to a string). Note that this does return <c>true</c> if the path starts with two forward-slashes (<c>//</c>).
         /// </summary>
         /// <param name="pathSegments">The path to test.</param>
-        public static bool PathIsAbsolute(IReadOnlyList<string> pathSegments) => pathSegments.Count > 1 && pathSegments[0] == "";
+        public static bool PathIsAbsolute(IReadOnlyList<string> pathSegments)
+        {
+            _ = pathSegments ?? throw new ArgumentNullException(nameof(pathSegments));
+            return pathSegments.Count > 1 && pathSegments[0].Length == 0;
+        }
 
         /// <summary>
         /// A delegate used to create a type of URI.
@@ -386,17 +405,25 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="pathSegments">The path segments.</param>
         /// <param name="query">The query string.</param>
         /// <param name="fragment">The fragment string.</param>
-        public delegate T DelegateFactory<out T>(string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment);
+        public delegate T DelegateFactory<out T>(string? userInfo, string? host, string? port, IEnumerable<string> pathSegments, string? query, string? fragment);
 
         /// <summary>
         /// Returns <c>true</c> if the authority is defined. Note that it is possible (though unusual) for the authority to be defined as the empty string.
         /// </summary>
-        public static bool AuthorityIsDefined(this IUniformResourceIdentifierReference @this) => @this.UserInfo != null || @this.Host != null || @this.Port != null;
+        public static bool AuthorityIsDefined(this IUniformResourceIdentifierReference @this)
+        {
+            _ = @this ?? throw new ArgumentNullException(nameof(@this));
+            return @this.UserInfo != null || @this.Host != null || @this.Port != null;
+        }
 
         /// <summary>
         /// Returns <c>true</c> if the path is empty.
         /// </summary>
-        public static bool PathIsEmpty(this IUniformResourceIdentifierReference @this) => PathIsEmpty(@this.PathSegments);
+        public static bool PathIsEmpty(this IUniformResourceIdentifierReference @this)
+        {
+            _ = @this ?? throw new ArgumentNullException(nameof(@this));
+            return PathIsEmpty(@this.PathSegments);
+        }
 
         /// <summary>
         /// Resolves a relative URI against a base URI.
@@ -408,8 +435,11 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         public static T Resolve<T>(T baseUri, RelativeReference relativeUri, DelegateFactory<T> factory)
             where T : IUniformResourceIdentifier
         {
+            _ = relativeUri ?? throw new ArgumentNullException(nameof(relativeUri));
+            _ = factory ?? throw new ArgumentNullException(nameof(factory));
+
             // See 5.2.2, except that referenceUri will always have a null Scheme.
-            string userInfo, host, port, query;
+            string? userInfo, host, port, query;
             IEnumerable<string> pathSegments;
             if (relativeUri.AuthorityIsDefined())
             {
@@ -487,7 +517,11 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// Decodes an individual <c>application/x-www-form-urlencoded</c> string. Always uses UTF-8 encoding.
         /// </summary>
         /// <param name="value">The string to decode.</param>
-        public static string FormUrlDecode(string value) => PercentDecode(value.Replace('+', ' '), FormUrlIsSafe);
+        public static string FormUrlDecode(string value)
+        {
+            _ = value ?? throw new ArgumentNullException(nameof(value));
+            return PercentDecode(value.Replace('+', ' '), FormUrlIsSafe);
+        }
 
         /// <summary>
         /// Decodes a sequence of name/value pairs using <c>application/x-www-form-urlencoded</c>. Always uses UTF-8 encoding.
@@ -495,18 +529,19 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="query">The query string to decode.</param>
         public static IEnumerable<KeyValuePair<string, string>> FormUrlDecodeValues(string query)
         {
+            _ = query ?? throw new ArgumentNullException(nameof(query));
             var pairs = query.Split('&');
             foreach (var pair in pairs)
             {
-                if (pair == "")
+                if (pair.Length == 0)
                 {
-                    yield return new KeyValuePair<string, string>("", null);
+                    yield return new KeyValuePair<string, string>("", "");
                     continue;
                 }
                 var parts = pair.Split('=');
                 if (parts.Length == 1)
                 {
-                    yield return new KeyValuePair<string, string>(FormUrlDecode(parts[0]), null);
+                    yield return new KeyValuePair<string, string>(FormUrlDecode(parts[0]), "");
                 }
                 else if (parts.Length == 2)
                 {
@@ -529,7 +564,7 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <param name="pathSegments">May not be <c>null</c>.</param>
         /// <param name="query">May be <c>null</c>.</param>
         /// <param name="fragment">May be <c>null</c>.</param>
-        public static string ToString(string scheme, string userInfo, string host, string port, IEnumerable<string> pathSegments, string query, string fragment)
+        public static string ToString(string? scheme, string? userInfo, string? host, string? port, IEnumerable<string> pathSegments, string? query, string? fragment)
         {
             // See 5.3, except Authority is split up into (UserInfo, Host, Port).
             var sb = new StringBuilder();
@@ -542,26 +577,26 @@ namespace Nito.UniformResourceIdentifiers.Implementation
                 sb.Append("//");
             if (userInfo != null)
             {
-                sb.Append(Util.PercentEncode(userInfo, Util.UserInfoCharIsSafe));
+                sb.Append(Utility.PercentEncode(userInfo, Utility.UserInfoCharIsSafe));
                 sb.Append('@');
             }
             if (host != null)
-                sb.Append(Util.HostIsIpAddress(host) ? host : Util.PercentEncode(host, Util.HostRegNameCharIsSafe));
+                sb.Append(Utility.HostIsIpAddress(host) ? host : Utility.PercentEncode(host, Utility.HostRegNameCharIsSafe));
             if (port != null)
             {
                 sb.Append(':');
                 sb.Append(port);
             }
-            sb.Append(string.Join("/", pathSegments.Select(x => Util.PercentEncode(x, Util.PathSegmentCharIsSafe))));
+            sb.Append(string.Join("/", pathSegments.Select(x => Utility.PercentEncode(x, Utility.PathSegmentCharIsSafe))));
             if (query != null)
             {
                 sb.Append('?');
-                sb.Append(Util.PercentEncode(query, Util.QueryCharIsSafe));
+                sb.Append(Utility.PercentEncode(query, Utility.QueryCharIsSafe));
             }
             if (fragment != null)
             {
                 sb.Append('#');
-                sb.Append(Util.PercentEncode(fragment, Util.FragmentCharIsSafe));
+                sb.Append(Utility.PercentEncode(fragment, Utility.FragmentCharIsSafe));
             }
             return sb.ToString();
         }
@@ -569,9 +604,8 @@ namespace Nito.UniformResourceIdentifiers.Implementation
         /// <summary>
         /// A numeric string comparer, capable of comparing numeric strings of any length. This comparer assumes its operands only consist of the digits 0-9 and have leading zeroes removed (this is true of the <see cref="IUniformResourceIdentifierReference.Port"/> values.
         /// </summary>
-        public static IFullComparer<string> NumericStringComparer { get; } = ComparerBuilder.For<string>()
-            .OrderBy(x => x.Length)
+        public static IFullComparer<string?> NumericStringComparer { get; } = ComparerBuilder.For<string?>()
+            .OrderBy(x => x!.Length)
             .ThenBy(x => x, StringComparer.Ordinal);
-
     }
 }

@@ -12,6 +12,6 @@ namespace Nito.UniformResourceIdentifiers
         /// <summary>
         /// Gets a proxy object used for comparison. If this is <c>null</c>, then a generic URI comparison is performed.
         /// </summary>
-        object SchemeSpecificComparerProxy { get; }
+        object? SchemeSpecificComparerProxy { get; }
     }
 }
