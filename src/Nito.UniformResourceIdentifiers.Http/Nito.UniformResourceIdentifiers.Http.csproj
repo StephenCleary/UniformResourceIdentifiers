@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Utilities and base types for HTTP and HTTPS URI builders and parsers.</Description>
-    <TargetFrameworks>netstandard1.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.0;netstandard2.0;net461</TargetFrameworks>
     <PackageTags>$(PackageTags);http;https</PackageTags>
   </PropertyGroup>
 

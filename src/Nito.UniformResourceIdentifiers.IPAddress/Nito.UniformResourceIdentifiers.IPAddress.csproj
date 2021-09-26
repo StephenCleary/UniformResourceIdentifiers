@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Utilities for using URIs with IPAddress.</Description>
-    <TargetFrameworks>netstandard1.3;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;net461</TargetFrameworks>
     <PackageTags>$(PackageTags);ipaddress</PackageTags>
   </PropertyGroup>
 

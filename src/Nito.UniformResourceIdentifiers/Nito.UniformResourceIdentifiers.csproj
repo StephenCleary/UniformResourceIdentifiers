@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Standard-compliant URI encoders and parsers</Description>
-    <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard2.0;net461</TargetFrameworks>
     <PackageTags>uri;url;uriref;http;https</PackageTags>
     <IsMetapackage>true</IsMetapackage>
   </PropertyGroup>
